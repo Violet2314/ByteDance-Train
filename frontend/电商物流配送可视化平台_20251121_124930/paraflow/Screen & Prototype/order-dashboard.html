@@ -1,0 +1,587 @@
+<!DOCTYPE html><html><head>
+    <style>@layer theme, base, paraflow, components, utilities;</style><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    
+    
+    
+    <style id="moxt-styled">@layer paraflow{@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&family=Open+Sans:wght@300;400;500;600;700;800&family=Montserrat:wght@100;200;300;400;500;600;700;800;900&family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Poppins:wght@100;200;300;400;500;600;700;800;900&family=Roboto+Condensed:wght@100;200;300;400;500;600;700;800;900&family=Roboto+Mono:wght@100;200;300;400;500;600;700&family=PT+Serif:wght@400;700&family=Arimo:wght@400;500;600;700&family=Raleway:wght@100;200;300;400;500;600;700;800;900&family=Nunito:wght@200;300;400;500;600;700&;800;900&family=Rubik:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@400;500;600;700;800;900&family=Ubuntu:wght@300;400;500;700&family=Merriweather:wght@300;400;500;600;700;800;900&family=Roboto+Slab:wght@100;200;300;400;500;600;700&family=Libre+Baskerville:wght@400;700&family=Inconsolata:wght@200;300;400;500;600;700;800;900&family=Dancing+Script:wght@400;500;600;700&family=Kanit:wght@100;200;300;400;500;600;700;800;900&display=swap')
+}</style>
+<!--FontAwesome version: 6.7.2--><link rel="stylesheet" href="https://static.paraflowcontent.com/public/css/font-awesome/font-awesome.672.css"><!--Tailwind version: 4.0.17--><script src="https://static.paraflowcontent.com/public/js/tailwind/tailwind.js"></script><!--iconify-icon version: 3.0.0--><script src="https://static.paraflowcontent.com/public/js/iconify/iconify-icon-3.0.0.js"></script></head>
+<body id="32:1" title="order-dashboard.html" orderindex="80" relativetransform="6020, 125" class="font-[-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif] flex w-[1440px] min-h-[900px]" style="line-height: 1.6;">
+
+<aside id="32:2" orderindex="80" style="background: rgba(253, 252, 250, 1);" class="shrink-0 min-w-fit">
+<div id="32:3" orderindex="80" class="flex flex-col w-64 h-full">
+
+<div id="32:4" orderindex="80" style="border-bottom-style: solid; border-color: rgba(232, 235, 230, 1);" class="border-b-[1px] p-6">
+<div id="32:5" orderindex="80" class="flex items-center gap-y-3 gap-x-3">
+<div id="32:6" orderindex="80" style="background-color: rgba(124, 170, 109, 1);" class="flex justify-center items-center w-8 h-8 rounded-lg">
+<iconify-icon id="32:7" orderindex="80" style="color: color-mix( in oklab , #fff 90% , transparent );" icon="lucide:truck" class="text-lg"></iconify-icon>
+</div>
+<div id="32:8" orderindex="81" class="flex flex-col">
+<span id="32:9" orderindex="80" style="color: rgba(58, 58, 58, 1);" class="text-lg font-semibold">物流配送平台</span>
+<span id="32:10" orderindex="81" style="color: rgba(107, 107, 107, 1);" class="text-xs">Logistics Platform</span>
+</div>
+</div>
+</div>
+
+<nav id="32:11" orderindex="81" style="flex-basis: 0%; padding: 1.5rem 1rem;" class="grow shrink">
+<div id="32:12" orderindex="80" class="flex flex-col gap-y-2 gap-x-2">
+
+<a id="32:13" orderindex="80" class="hover:bg-white/40 group flex items-center gap-y-3 gap-x-3 rounded-xl" style="padding: 0.75rem 1rem;" href="#">
+<div id="32:14" orderindex="80" class="flex justify-center items-center w-5 h-5">
+<iconify-icon id="32:15" orderindex="80" class="group-hover:text-[#5F8A52] text-base" style="color: rgba(124, 170, 109, 1);" icon="lucide:home"></iconify-icon>
+</div>
+<span id="32:16" orderindex="81" class="group-hover:text-[#5F8A52] text-base" style="color: rgba(58, 58, 58, 1);">首页</span>
+</a>
+
+<a id="32:17" orderindex="81" class="group flex items-center gap-y-3 gap-x-3 rounded-xl" style="background-color: color-mix( in oklab , #7CAA6D 8% , transparent ); padding: 0.75rem 1rem;" href="#">
+<div id="32:18" orderindex="80" class="flex justify-center items-center w-5 h-5">
+<iconify-icon id="32:19" orderindex="80" style="color: rgba(124, 170, 109, 1);" icon="lucide:package" class="text-base"></iconify-icon>
+</div>
+<span id="32:20" orderindex="81" style="color: rgba(124, 170, 109, 1);" class="text-base font-semibold">订单管理</span>
+</a>
+
+<a id="32:21" orderindex="82" class="hover:bg-white/40 group flex items-center gap-y-3 gap-x-3 rounded-xl" style="padding: 0.75rem 1rem;" href="#">
+<div id="32:22" orderindex="80" class="flex justify-center items-center w-5 h-5">
+<iconify-icon id="32:23" orderindex="80" class="group-hover:text-[#5F8A52] text-base" style="color: rgba(124, 170, 109, 1);" icon="lucide:map-pin"></iconify-icon>
+</div>
+<span id="32:24" orderindex="81" class="group-hover:text-[#5F8A52] text-base" style="color: rgba(58, 58, 58, 1);">配送管理</span>
+</a>
+
+<a id="32:25" orderindex="83" class="hover:bg-white/40 group flex items-center gap-y-3 gap-x-3 rounded-xl" style="padding: 0.75rem 1rem;" href="#">
+<div id="32:26" orderindex="80" class="flex justify-center items-center w-5 h-5">
+<iconify-icon id="32:27" orderindex="80" class="group-hover:text-[#5F8A52] text-base" style="color: rgba(124, 170, 109, 1);" icon="lucide:bar-chart-3"></iconify-icon>
+</div>
+<span id="32:28" orderindex="81" class="group-hover:text-[#5F8A52] text-base" style="color: rgba(58, 58, 58, 1);">数据看板</span>
+</a>
+
+<a id="32:29" orderindex="84" class="hover:bg-white/40 group flex items-center gap-y-3 gap-x-3 rounded-xl" style="padding: 0.75rem 1rem;" href="#">
+<div id="32:30" orderindex="80" class="flex justify-center items-center w-5 h-5">
+<iconify-icon id="32:31" orderindex="80" class="group-hover:text-[#5F8A52] text-base" style="color: rgba(124, 170, 109, 1);" icon="lucide:settings"></iconify-icon>
+</div>
+<span id="32:32" orderindex="81" class="group-hover:text-[#5F8A52] text-base" style="color: rgba(58, 58, 58, 1);">设置</span>
+</a>
+</div>
+</nav>
+
+<div id="32:33" orderindex="82" style="border-top-style: solid; padding: 1.5rem 1rem; border-color: rgba(232, 235, 230, 1);" class="border-t-[1px]">
+<div id="32:34" orderindex="80" style="background-color: color-mix( in oklab , #7CAA6D 8% , transparent );" class="p-4 rounded-xl">
+<div id="32:35" orderindex="80" class="flex items-start gap-y-3 gap-x-3">
+<div id="32:36" orderindex="80" class="flex justify-center items-center w-5 h-5">
+<iconify-icon id="32:37" orderindex="80" style="color: rgba(124, 170, 109, 1);" icon="lucide:help-circle" class="text-base"></iconify-icon>
+</div>
+<div id="32:38" orderindex="81" class="flex flex-col gap-y-1 gap-x-1">
+<span id="32:39" orderindex="80" style="color: rgba(58, 58, 58, 1);" class="text-sm font-semibold">需要帮助?</span>
+<span id="32:40" orderindex="81" style="color: rgba(107, 107, 107, 1);" class="text-xs">查看使用指南或联系客服</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</aside>
+
+<div id="32:41" orderindex="81" style="flex-basis: 0%;" class="overflow-x-hidden flex flex-col grow shrink min-h-[900px]">
+
+<header id="32:42" orderindex="80" style="background: rgba(254, 253, 251, 1);" class="w-full mr-4 ml-4">
+<div id="32:43" orderindex="80" style="padding: 1rem 2rem;" class="flex justify-between items-center">
+
+<div id="32:44" orderindex="80" class="flex items-center gap-y-6 gap-x-6">
+
+<div id="32:45" orderindex="80" style="background-color: color-mix( in oklab , #7CAA6D 8% , transparent ); padding: 0.5rem 1rem;" class="flex items-center gap-y-2 gap-x-2 rounded-full">
+<div id="32:46" orderindex="80" class="flex justify-center items-center w-4 h-4">
+<iconify-icon id="32:47" orderindex="80" style="color: rgba(124, 170, 109, 1);" icon="lucide:user-check" class="text-sm"></iconify-icon>
+</div>
+<span id="32:48" orderindex="81" style="color: rgba(124, 170, 109, 1);" class="text-sm font-semibold">商家端</span>
+</div>
+
+<div id="32:49" orderindex="81" class="flex items-center gap-y-6 gap-x-6">
+<a id="32:50" orderindex="80" style="color: rgba(124, 170, 109, 1);" href="#" class="text-base font-semibold">订单管理</a>
+<a id="32:51" orderindex="81" class="hover:text-[#7CAA6D] text-base" style="color: rgba(58, 58, 58, 1);" href="#">配送管理</a>
+<a id="32:52" orderindex="82" class="hover:text-[#7CAA6D] text-base" style="color: rgba(58, 58, 58, 1);" href="#">数据看板</a>
+</div>
+
+<div id="32:53" orderindex="82" style="background-color: color-mix( in oklab , #fff 85% , transparent ); padding: 0.625rem 1rem; border-color: rgba(229, 232, 227, 1);" class="flex items-center gap-y-3 gap-x-3 w-80 border-[1px] border-solid rounded-full">
+<div id="32:54" orderindex="80" class="flex justify-center items-center w-4 h-4">
+<iconify-icon id="32:55" orderindex="80" style="color: rgba(107, 107, 107, 1);" icon="lucide:search" class="text-sm"></iconify-icon>
+</div>
+<input id="32:56" orderindex="81" style="flex-basis: 0%; color: rgba(58, 58, 58, 1);" type="text" placeholder="搜索订单、运单号..." class="text-base bg-transparent grow shrink outline-none">
+</div>
+</div>
+
+<div id="32:57" orderindex="81" class="flex items-center gap-y-4 gap-x-4">
+
+<div id="32:58" orderindex="80" class="hover:bg-white/40 flex relative justify-center items-center w-10 h-10 rounded-full">
+<div id="32:59" orderindex="80" class="flex justify-center items-center w-5 h-5">
+<iconify-icon id="32:60" orderindex="80" style="color: rgba(58, 58, 58, 1);" icon="lucide:bell" class="text-base"></iconify-icon>
+</div>
+<div id="32:61" orderindex="81" style="background-color: rgba(217, 179, 173, 1); top: -0.125rem; right: -0.125rem;" class="flex absolute justify-center items-center w-5 h-5 rounded-full">
+<span id="32:62" orderindex="80" style="color: color-mix( in oklab , #fff 90% , transparent );" class="text-xs font-semibold">3</span>
+</div>
+</div>
+
+<div id="32:63" orderindex="81" class="flex items-center gap-y-3 gap-x-3">
+<img id="32:64" orderindex="80" style="border-color: color-mix( in oklab , #fff 60% , transparent );" alt="Professional business owner portrait, friendly smile, modern office background" src="https://static.paraflowcontent.com/public/resource/image/24fa2eb1-8afc-405e-b01e-1a7e05719a2e.jpeg" class="w-9 h-9 object-cover border-[2px] border-solid rounded-full">
+<div id="32:65" orderindex="81" class="flex flex-col">
+<span id="32:66" orderindex="80" style="color: rgba(58, 58, 58, 1);" class="text-sm font-semibold">张商家</span>
+<span id="32:67" orderindex="81" style="color: rgba(107, 107, 107, 1);" class="text-xs">在线</span>
+</div>
+<div id="32:68" orderindex="82" class="flex justify-center items-center w-4 h-4">
+<iconify-icon id="32:69" orderindex="80" style="color: rgba(107, 107, 107, 1);" icon="lucide:chevron-down" class="text-sm"></iconify-icon>
+</div>
+</div>
+</div>
+</div>
+</header>
+
+<main id="32:70" orderindex="81" style="flex-basis: 0%; background: rgba(253, 252, 249, 1);" class="grow shrink w-full pr-8 pl-8">
+
+<div id="32:71" orderindex="80" class="mb-6 pt-8">
+<div id="32:72" orderindex="80" class="flex items-center gap-y-2 gap-x-2 mb-3">
+<span id="32:73" orderindex="80" style="color: rgba(107, 107, 107, 1);" class="text-sm">首页</span>
+<div id="32:74" orderindex="81" class="flex justify-center items-center w-4 h-4">
+<iconify-icon id="32:75" orderindex="80" style="color: rgba(107, 107, 107, 1);" icon="lucide:chevron-right" class="text-xs"></iconify-icon>
+</div>
+<span id="32:76" orderindex="82" style="color: rgba(124, 170, 109, 1);" class="text-sm">订单管理</span>
+</div>
+<h1 id="32:77" orderindex="81" style="color: rgba(58, 58, 58, 1);" class="text-3xl font-semibold">订单管理仪表盘</h1>
+<p id="32:78" orderindex="82" style="color: rgba(107, 107, 107, 1);" class="text-base mt-2">查看、筛选和管理所有订单，支持按状态筛选、排序和批量操作</p>
+</div>
+
+<div id="32:79" orderindex="81" class="grid grid-cols-4 gap-y-6 gap-x-6 mb-8">
+
+<div id="32:80" orderindex="80" class="hover:shadow-[0_3px_14px_rgba(124,170,109,0.10)] p-6 rounded-2xl" style="background-color: color-mix( in oklab , #fff 85% , transparent ); box-shadow: 0 0 rgba(0, 0, 0, 0), 0 0 rgba(0, 0, 0, 0), 0 0 rgba(0, 0, 0, 0), 0 0 rgba(0, 0, 0, 0), 0 2px 10px rgba(124, 170, 109, 0.06);">
+<div id="32:81" orderindex="80" class="flex justify-between items-center mb-4">
+<div id="32:82" orderindex="80" style="background-color: color-mix( in oklab , #EED8B5 8% , transparent );" class="flex justify-center items-center w-10 h-10 rounded-xl">
+<iconify-icon id="32:83" orderindex="80" style="color: rgba(238, 216, 181, 1);" icon="lucide:clock" class="text-lg"></iconify-icon>
+</div>
+<span id="32:84" orderindex="81" style="background-color: rgba(249, 237, 207, 1); color: rgba(238, 216, 181, 1); padding: 0.25rem 0.5rem;" class="text-xs font-semibold rounded-full">待处理</span>
+</div>
+<div id="32:85" orderindex="81" class="flex flex-col gap-y-1 gap-x-1">
+<span id="32:86" orderindex="80" style="color: rgba(58, 58, 58, 1);" class="text-2xl font-semibold">43</span>
+<span id="32:87" orderindex="81" style="color: rgba(107, 107, 107, 1);" class="text-sm">待发货订单</span>
+</div>
+</div>
+
+<div id="32:88" orderindex="81" class="hover:shadow-[0_3px_14px_rgba(124,170,109,0.10)] p-6 rounded-2xl" style="background-color: color-mix( in oklab , #fff 85% , transparent ); box-shadow: 0 0 rgba(0, 0, 0, 0), 0 0 rgba(0, 0, 0, 0), 0 0 rgba(0, 0, 0, 0), 0 0 rgba(0, 0, 0, 0), 0 2px 10px rgba(124, 170, 109, 0.06);">
+<div id="32:89" orderindex="80" class="flex justify-between items-center mb-4">
+<div id="32:90" orderindex="80" style="background-color: color-mix( in oklab , #A3C4C4 8% , transparent );" class="flex justify-center items-center w-10 h-10 rounded-xl">
+<iconify-icon id="32:91" orderindex="80" style="color: rgba(163, 196, 196, 1);" icon="lucide:truck" class="text-lg"></iconify-icon>
+</div>
+<span id="32:92" orderindex="81" style="background-color: rgba(200, 222, 239, 1); color: rgba(123, 156, 184, 1); padding: 0.25rem 0.5rem;" class="text-xs font-semibold rounded-full">运输中</span>
+</div>
+<div id="32:93" orderindex="81" class="flex flex-col gap-y-1 gap-x-1">
+<span id="32:94" orderindex="80" style="color: rgba(58, 58, 58, 1);" class="text-2xl font-semibold">127</span>
+<span id="32:95" orderindex="81" style="color: rgba(107, 107, 107, 1);" class="text-sm">运输中订单</span>
+</div>
+</div>
+
+<div id="32:96" orderindex="82" class="hover:shadow-[0_3px_14px_rgba(124,170,109,0.10)] p-6 rounded-2xl" style="background-color: color-mix( in oklab , #fff 85% , transparent ); box-shadow: 0 0 rgba(0, 0, 0, 0), 0 0 rgba(0, 0, 0, 0), 0 0 rgba(0, 0, 0, 0), 0 0 rgba(0, 0, 0, 0), 0 2px 10px rgba(124, 170, 109, 0.06);">
+<div id="32:97" orderindex="80" class="flex justify-between items-center mb-4">
+<div id="32:98" orderindex="80" style="background-color: color-mix( in oklab , #C8DFC0 8% , transparent );" class="flex justify-center items-center w-10 h-10 rounded-xl">
+<iconify-icon id="32:99" orderindex="80" style="color: rgba(200, 223, 192, 1);" icon="lucide:check-circle" class="text-lg"></iconify-icon>
+</div>
+<span id="32:100" orderindex="81" style="background-color: rgba(231, 243, 227, 1); color: rgba(200, 223, 192, 1); padding: 0.25rem 0.5rem;" class="text-xs font-semibold rounded-full">已完成</span>
+</div>
+<div id="32:101" orderindex="81" class="flex flex-col gap-y-1 gap-x-1">
+<span id="32:102" orderindex="80" style="color: rgba(58, 58, 58, 1);" class="text-2xl font-semibold">1,847</span>
+<span id="32:103" orderindex="81" style="color: rgba(107, 107, 107, 1);" class="text-sm">已完成订单</span>
+</div>
+</div>
+
+<div id="32:104" orderindex="83" class="hover:shadow-[0_3px_14px_rgba(124,170,109,0.10)] p-6 rounded-2xl" style="background-color: color-mix( in oklab , #fff 85% , transparent ); box-shadow: 0 0 rgba(0, 0, 0, 0), 0 0 rgba(0, 0, 0, 0), 0 0 rgba(0, 0, 0, 0), 0 0 rgba(0, 0, 0, 0), 0 2px 10px rgba(124, 170, 109, 0.06);">
+<div id="32:105" orderindex="80" class="flex justify-between items-center mb-4">
+<div id="32:106" orderindex="80" style="background-color: color-mix( in oklab , #D9B3AD 8% , transparent );" class="flex justify-center items-center w-10 h-10 rounded-xl">
+<iconify-icon id="32:107" orderindex="80" style="color: rgba(217, 179, 173, 1);" icon="lucide:alert-triangle" class="text-lg"></iconify-icon>
+</div>
+<span id="32:108" orderindex="81" style="background-color: rgba(245, 221, 217, 1); color: rgba(217, 179, 173, 1); padding: 0.25rem 0.5rem;" class="text-xs font-semibold rounded-full">异常</span>
+</div>
+<div id="32:109" orderindex="81" class="flex flex-col gap-y-1 gap-x-1">
+<span id="32:110" orderindex="80" style="color: rgba(58, 58, 58, 1);" class="text-2xl font-semibold">8</span>
+<span id="32:111" orderindex="81" style="color: rgba(107, 107, 107, 1);" class="text-sm">异常订单</span>
+</div>
+</div>
+</div>
+
+<div id="32:112" orderindex="82" style="background-color: color-mix( in oklab , #fff 85% , transparent ); box-shadow: 0 0 rgba(0, 0, 0, 0), 0 0 rgba(0, 0, 0, 0), 0 0 rgba(0, 0, 0, 0), 0 0 rgba(0, 0, 0, 0), 0 2px 10px rgba(124, 170, 109, 0.06);" class="mb-6 p-6 rounded-2xl">
+<div id="32:113" orderindex="80" class="flex justify-between items-center">
+<div id="32:114" orderindex="80" class="flex items-center gap-y-6 gap-x-6">
+
+<div id="32:115" orderindex="80" class="flex items-center gap-y-2 gap-x-2">
+<span id="32:116" orderindex="80" style="color: rgba(58, 58, 58, 1);" class="text-sm font-semibold">订单状态:</span>
+<div id="32:117" orderindex="81" class="overflow-x-auto flex gap-y-3 gap-x-3">
+<label id="32:118" orderindex="80">
+<input id="32:119" orderindex="80" class="peer overflow-x-hidden overflow-y-hidden whitespace-nowrap absolute w-px h-px -m-px" style="clip-path: inset( 50% ); padding: 0; border-width: 0;" type="radio" checked="">
+<div id="32:120" orderindex="81" class="hover:opacity-80 text-sm whitespace-nowrap font-semibold rounded-full" style="background-color: rgba(124, 170, 109, 1); color: color-mix( in oklab , #fff 90% , transparent ); padding: 0.5rem 1rem;">全部</div>
+</label>
+<label id="32:121" orderindex="81">
+<input id="32:122" orderindex="80" class="peer overflow-x-hidden overflow-y-hidden whitespace-nowrap absolute w-px h-px -m-px" style="clip-path: inset( 50% ); padding: 0; border-width: 0;" type="radio">
+<div id="32:123" orderindex="81" class="hover:opacity-80 text-sm whitespace-nowrap rounded-full" style="background-color: color-mix( in oklab , #fff 60% , transparent ); color: rgba(107, 107, 107, 1); padding: 0.5rem 1rem;">待发货</div>
+</label>
+<label id="32:124" orderindex="82">
+<input id="32:125" orderindex="80" class="peer overflow-x-hidden overflow-y-hidden whitespace-nowrap absolute w-px h-px -m-px" style="clip-path: inset( 50% ); padding: 0; border-width: 0;" type="radio">
+<div id="32:126" orderindex="81" class="hover:opacity-80 text-sm whitespace-nowrap rounded-full" style="background-color: color-mix( in oklab , #fff 60% , transparent ); color: rgba(107, 107, 107, 1); padding: 0.5rem 1rem;">运输中</div>
+</label>
+<label id="32:127" orderindex="83">
+<input id="32:128" orderindex="80" class="peer overflow-x-hidden overflow-y-hidden whitespace-nowrap absolute w-px h-px -m-px" style="clip-path: inset( 50% ); padding: 0; border-width: 0;" type="radio">
+<div id="32:129" orderindex="81" class="hover:opacity-80 text-sm whitespace-nowrap rounded-full" style="background-color: color-mix( in oklab , #fff 60% , transparent ); color: rgba(107, 107, 107, 1); padding: 0.5rem 1rem;">已完成</div>
+</label>
+</div>
+</div>
+
+<div id="32:130" orderindex="81" class="flex items-center gap-y-2 gap-x-2">
+<span id="32:131" orderindex="80" style="color: rgba(58, 58, 58, 1);" class="text-sm">时间范围:</span>
+<div id="32:132" orderindex="81" class="hover:border-[#D4D9D0] flex items-center gap-y-2 gap-x-2 border-[1px] border-solid rounded-full" style="background-color: color-mix( in oklab , #fff 85% , transparent ); padding: 0.5rem 1rem; border-color: rgba(229, 232, 227, 1);">
+<span id="32:133" orderindex="80" style="color: rgba(58, 58, 58, 1);" class="text-sm">最近7天</span>
+<div id="32:134" orderindex="81" class="flex justify-center items-center w-4 h-4">
+<iconify-icon id="32:135" orderindex="80" style="color: rgba(107, 107, 107, 1);" icon="lucide:chevron-down" class="text-xs"></iconify-icon>
+</div>
+</div>
+</div>
+
+<div id="32:136" orderindex="82" style="background-color: color-mix( in oklab , #fff 85% , transparent ); padding: 0.5rem 1rem; border-color: rgba(229, 232, 227, 1);" class="flex items-center gap-y-3 gap-x-3 w-60 border-[1px] border-solid rounded-full">
+<div id="32:137" orderindex="80" class="flex justify-center items-center w-4 h-4">
+<iconify-icon id="32:138" orderindex="80" style="color: rgba(107, 107, 107, 1);" icon="lucide:search" class="text-sm"></iconify-icon>
+</div>
+<input id="32:139" orderindex="81" style="flex-basis: 0%; color: rgba(58, 58, 58, 1);" type="text" placeholder="订单号 / 收货人" class="text-sm bg-transparent grow shrink outline-none">
+</div>
+</div>
+<div id="32:140" orderindex="81" class="flex items-center gap-y-4 gap-x-4">
+
+<div id="32:141" orderindex="80" class="hover:border-[#D4D9D0] flex items-center gap-y-2 gap-x-2 border-[1px] border-solid rounded-full" style="background-color: color-mix( in oklab , #fff 85% , transparent ); padding: 0.5rem 1rem; border-color: rgba(229, 232, 227, 1);">
+<div id="32:142" orderindex="80" class="flex justify-center items-center w-4 h-4">
+<iconify-icon id="32:143" orderindex="80" style="color: rgba(107, 107, 107, 1);" icon="lucide:arrow-up-down" class="text-sm"></iconify-icon>
+</div>
+<span id="32:144" orderindex="81" style="color: rgba(58, 58, 58, 1);" class="text-sm">按创建时间</span>
+</div>
+
+<button id="32:145" orderindex="81" class="hover:bg-white/80 flex items-center gap-y-2 gap-x-2 border-[1px] border-solid rounded-full" style="background-color: color-mix( in oklab , #fff 60% , transparent ); color: rgba(58, 58, 58, 1); padding: 0.5rem 1.25rem; border-color: rgba(229, 232, 227, 1);">
+<div id="32:146" orderindex="80" class="flex justify-center items-center w-4 h-4">
+<iconify-icon id="32:147" orderindex="80" icon="lucide:package-check" class="text-sm"></iconify-icon>
+</div>
+<span id="32:148" orderindex="81" class="text-sm font-semibold">批量发货</span>
+</button>
+<button id="32:149" orderindex="82" class="hover:bg-[#5F8A52] flex items-center gap-y-2 gap-x-2 rounded-full" style="background-color: rgba(124, 170, 109, 1); color: color-mix( in oklab , #fff 90% , transparent ); padding: 0.5rem 1.25rem;">
+<div id="32:150" orderindex="80" class="flex justify-center items-center w-4 h-4">
+<iconify-icon id="32:151" orderindex="80" icon="lucide:download" class="text-sm"></iconify-icon>
+</div>
+<span id="32:152" orderindex="81" class="text-sm font-semibold">导出订单</span>
+</button>
+</div>
+</div>
+</div>
+
+<div id="32:153" orderindex="83" style="background-color: color-mix( in oklab , #fff 85% , transparent ); box-shadow: 0 0 rgba(0, 0, 0, 0), 0 0 rgba(0, 0, 0, 0), 0 0 rgba(0, 0, 0, 0), 0 0 rgba(0, 0, 0, 0), 0 2px 10px rgba(124, 170, 109, 0.06);" class="overflow-x-hidden overflow-y-hidden mb-8 rounded-2xl">
+
+<div id="32:154" orderindex="80" style="background-color: color-mix( in oklab , #7CAA6D 8% , transparent ); border-bottom-style: solid; padding: 1rem 1.5rem; border-color: rgba(232, 235, 230, 1);" class="border-b-[1px]">
+<div id="32:155" orderindex="80" class="flex items-center">
+<div id="32:156" orderindex="80" class="flex justify-center w-8">
+<label id="32:157" orderindex="80" class="flex items-center">
+<input id="32:158" orderindex="80" class="peer overflow-x-hidden overflow-y-hidden whitespace-nowrap absolute w-px h-px -m-px" style="clip-path: inset( 50% ); padding: 0; border-width: 0;" type="checkbox">
+<div id="32:159" orderindex="81" style="background-color: color-mix( in oklab , #fff 60% , transparent );" class="flex justify-center items-center w-5 h-5 text-transparent rounded-md">
+<iconify-icon id="32:160" orderindex="80" icon="lucide:check" class="text-xs"></iconify-icon>
+</div>
+</label>
+</div>
+<div id="32:161" orderindex="81" class="gri <div class= grid grow shrink" style="flex-basis: 0%;">
+<span id="32:162" orderindex="80" style="color: rgba(58, 58, 58, 1);" class="text-sm font-semibold">订单号</span>
+</div>
+<div id="32:163" orderindex="82" class="w-48 pr-4 pl-4">
+<span id="32:164" orderindex="80" style="color: rgba(58, 58, 58, 1);" class="text-sm font-semibold">收货人信息</span>
+</div>
+<div id="32:165" orderindex="83" style="flex-basis: 0%;" class="grow shrink pr-4 pl-4">
+<span id="32:166" orderindex="80" style="color: rgba(58, 58, 58, 1);" class="text-sm font-semibold">商品信息</span>
+</div>
+<div id="32:167" orderindex="84" class="w-24 pr-4 pl-4">
+<span id="32:168" orderindex="80" style="color: rgba(58, 58, 58, 1);" class="text-sm font-semibold">订单金额</span>
+</div>
+<div id="32:169" orderindex="85" class="w-24 pr-4 pl-4">
+<span id="32:170" orderindex="80" style="color: rgba(58, 58, 58, 1);" class="text-sm font-semibold">订单状态</span>
+</div>
+<div id="32:171" orderindex="86" class="w-32 pr-4 pl-4">
+<span id="32:172" orderindex="80" style="color: rgba(58, 58, 58, 1);" class="text-sm font-semibold">创建时间</span>
+</div>
+<div id="32:173" orderindex="87" class="w-32 pr-4 pl-4">
+<span id="32:174" orderindex="80" style="color: rgba(58, 58, 58, 1);" class="text-sm font-semibold">操作</span>
+</div>
+</div>
+</div>
+
+<div id="32:175" orderindex="81">
+
+<div id="32:176" orderindex="80" class="hover:bg-[#7CAA6D]/5 border-b-[1px]" style="border-top-style: NaN; border-bottom-style: NaN; border-top-width: 0; padding: 1rem 1.5rem; border-color: rgba(232, 235, 230, 1);">
+<div id="32:177" orderindex="80" class="flex items-center">
+<div id="32:178" orderindex="80" class="flex justify-center w-8">
+<label id="32:179" orderindex="80" class="flex items-center">
+<input id="32:180" orderindex="80" class="peer overflow-x-hidden overflow-y-hidden whitespace-nowrap absolute w-px h-px -m-px" style="clip-path: inset( 50% ); padding: 0; border-width: 0;" type="checkbox">
+<div id="32:181" orderindex="81" style="background-color: color-mix( in oklab , #7CAA6D 8% , transparent );" class="flex justify-center items-center w-5 h-5 text-transparent rounded-md">
+<iconify-icon id="32:182" orderindex="80" icon="lucide:check" class="text-xs"></iconify-icon>
+</div>
+</label>
+</div>
+<div id="32:183" orderindex="81" class="w-32 pr-4 pl-4">
+<span id="32:184" orderindex="80" style="color: rgba(124, 170, 109, 1);" class="text-sm font-semibold">#20240115001</span>
+</div>
+<div id="32:185" orderindex="82" class="w-48 pr-4 pl-4">
+<div id="32:186" orderindex="80" class="flex flex-col gap-y-1 gap-x-1">
+<span id="32:187" orderindex="80" style="color: rgba(58, 58, 58, 1);" class="text-sm font-semibold">李先生</span>
+<span id="32:188" orderindex="81" style="color: rgba(107, 107, 107, 1);" class="text-xs">138****8888</span>
+<span id="32:189" orderindex="82" style="color: rgba(107, 107, 107, 1);" class="text-xs">上海市浦东新区...</span>
+</div>
+</div>
+<div id="32:190" orderindex="83" style="flex-basis: 0%;" class="grow shrink pr-4 pl-4">
+<div id="32:191" orderindex="80" class="flex items-center gap-y-3 gap-x-3">
+<img id="32:192" orderindex="80" alt="Fresh organic vegetables package, colorful variety" src="https://static.paraflowcontent.com/public/resource/image/abcb75cc-70ab-41e6-a84a-33290452a007.jpeg" class="w-10 h-10 object-cover rounded-lg">
+<div id="32:193" orderindex="81" class="flex flex-col gap-y-1 gap-x-1">
+<span id="32:194" orderindex="80" style="color: rgba(58, 58, 58, 1);" class="text-sm font-semibold">新鲜蔬菜礼盒</span>
+<span id="32:195" orderindex="81" style="color: rgba(107, 107, 107, 1);" class="text-xs">数量: 2</span>
+</div>
+</div>
+</div>
+<div id="32:196" orderindex="84" class="w-24 pr-4 pl-4">
+<span id="32:197" orderindex="80" style="color: rgba(58, 58, 58, 1);" class="text-sm font-semibold">¥168.00</span>
+</div>
+<div id="32:198" orderindex="85" class="w-24 pr-4 pl-4">
+<span id="32:199" orderindex="80" style="background-color: rgba(249, 237, 207, 1); color: rgba(238, 216, 181, 1); padding: 0.25rem 0.75rem;" class="text-xs font-semibold rounded-full">待发货</span>
+</div>
+<div id="32:200" orderindex="86" class="w-32 pr-4 pl-4">
+<span id="32:201" orderindex="80" style="color: rgba(107, 107, 107, 1);" class="text-sm">01-15 14:30</span>
+</div>
+<div id="32:202" orderindex="87" class="w-32 pr-4 pl-4">
+<div id="32:203" orderindex="80" class="flex items-center gap-y-2 gap-x-2">
+<button id="32:204" orderindex="80" class="hover:text-[#5F8A52] text-sm" style="color: rgba(124, 170, 109, 1);">查看</button>
+<button id="32:205" orderindex="81" class="hover:bg-[#5F8A52] text-xs rounded-full" style="background-color: rgba(124, 170, 109, 1); color: color-mix( in oklab , #fff 90% , transparent ); padding: 0.25rem 0.75rem;">发货</button>
+</div>
+</div>
+</div>
+</div>
+
+<div id="32:206" orderindex="81" class="hover:bg-[#7CAA6D]/5 border-b-[1px]" style="border-top-style: NaN; border-bottom-style: NaN; border-top-width: 0; padding: 1rem 1.5rem; border-color: rgba(232, 235, 230, 1);">
+<div id="32:207" orderindex="80" class="flex items-center">
+<div id="32:208" orderindex="80" class="flex justify-center w-8">
+<label id="32:209" orderindex="80" class="flex items-center">
+<input id="32:210" orderindex="80" class="peer overflow-x-hidden overflow-y-hidden whitespace-nowrap absolute w-px h-px -m-px" style="clip-path: inset( 50% ); padding: 0; border-width: 0;" type="checkbox">
+<div id="32:211" orderindex="81" style="background-color: color-mix( in oklab , #7CAA6D 8% , transparent );" class="flex justify-center items-center w-5 h-5 text-transparent rounded-md">
+<iconify-icon id="32:212" orderindex="80" icon="lucide:check" class="text-xs"></iconify-icon>
+</div>
+</label>
+</div>
+<div id="32:213" orderindex="81" class="w-32 pr-4 pl-4">
+<span id="32:214" orderindex="80" style="color: rgba(124, 170, 109, 1);" class="text-sm font-semibold">#20240115002</span>
+</div>
+<div id="32:215" orderindex="82" class="w-48 pr-4 pl-4">
+<div id="32:216" orderindex="80" class="flex flex-col gap-y-1 gap-x-1">
+<span id="32:217" orderindex="80" style="color: rgba(58, 58, 58, 1);" class="text-sm font-semibold">王女士</span>
+<span id="32:218" orderindex="81" style="color: rgba(107, 107, 107, 1);" class="text-xs">186****9999</span>
+<span id="32:219" orderindex="82" style="color: rgba(107, 107, 107, 1);" class="text-xs">北京市朝阳区...</span>
+</div>
+</div>
+<div id="32:220" orderindex="83" style="flex-basis: 0%;" class="grow shrink pr-4 pl-4">
+<div id="32:221" orderindex="80" class="flex items-center gap-y-3 gap-x-3">
+<img id="32:222" orderindex="80" alt="Premium organic fruit basket with seasonal fruits" src="https://static.paraflowcontent.com/public/resource/image/244775eb-9a7d-49eb-9283-094b2b197083.jpeg" class="w-10 h-10 object-cover rounded-lg">
+<div id="32:223" orderindex="81" class="flex flex-col gap-y-1 gap-x-1">
+<span id="32:224" orderindex="80" style="color: rgba(58, 58, 58, 1);" class="text-sm font-semibold">精选水果礼盒</span>
+<span id="32:225" orderindex="81" style="color: rgba(107, 107, 107, 1);" class="text-xs">数量: 1</span>
+</div>
+</div>
+</div>
+<div id="32:226" orderindex="84" class="w-24 pr-4 pl-4">
+<span id="32:227" orderindex="80" style="color: rgba(58, 58, 58, 1);" class="text-sm font-semibold">¥258.00</span>
+</div>
+<div id="32:228" orderindex="85" class="w-24 pr-4 pl-4">
+<span id="32:229" orderindex="80" style="background-color: rgba(200, 222, 239, 1); color: rgba(123, 156, 184, 1); padding: 0.25rem 0.75rem;" class="text-xs font-semibold rounded-full">运输中</span>
+</div>
+<div id="32:230" orderindex="86" class="w-32 pr-4 pl-4">
+<span id="32:231" orderindex="80" style="color: rgba(107, 107, 107, 1);" class="text-sm">01-15 10:15</span>
+</div>
+<div id="32:232" orderindex="87" class="w-32 pr-4 pl-4">
+<div id="32:233" orderindex="80" class="flex items-center gap-y-2 gap-x-2">
+<button id="32:234" orderindex="80" class="hover:text-[#5F8A52] text-sm" style="color: rgba(124, 170, 109, 1);">查看</button>
+<button id="32:235" orderindex="81" class="hover:text-[#7B9CB8] text-sm" style="color: rgba(163, 196, 196, 1);">跟踪</button>
+</div>
+</div>
+</div>
+</div>
+
+<div id="32:236" orderindex="82" class="hover:bg-[#7CAA6D]/5 border-b-[1px]" style="border-top-style: NaN; border-bottom-style: NaN; border-top-width: 0; padding: 1rem 1.5rem; border-color: rgba(232, 235, 230, 1);">
+<div id="32:237" orderindex="80" class="flex items-center">
+<div id="32:238" orderindex="80" class="flex justify-center w-8">
+<label id="32:239" orderindex="80" class="flex items-center">
+<input id="32:240" orderindex="80" class="peer overflow-x-hidden overflow-y-hidden whitespace-nowrap absolute w-px h-px -m-px" style="clip-path: inset( 50% ); padding: 0; border-width: 0;" type="checkbox">
+<div id="32:241" orderindex="81" style="background-color: color-mix( in oklab , #7CAA6D 8% , transparent );" class="flex justify-center items-center w-5 h-5 text-transparent rounded-md">
+<iconify-icon id="32:242" orderindex="80" icon="lucide:check" class="text-xs"></iconify-icon>
+</div>
+</label>
+</div>
+<div id="32:243" orderindex="81" class="w-32 pr-4 pl-4">
+<span id="32:244" orderindex="80" style="color: rgba(124, 170, 109, 1);" class="text-sm font-semibold">#20240114098</span>
+</div>
+<div id="32:245" orderindex="82" class="w-48 pr-4 pl-4">
+<div id="32:246" orderindex="80" class="flex flex-col gap-y-1 gap-x-1">
+<span id="32:247" orderindex="80" style="color: rgba(58, 58, 58, 1);" class="text-sm font-semibold">张先生</span>
+<span id="32:248" orderindex="81" style="color: rgba(107, 107, 107, 1);" class="text-xs">139****7777</span>
+<span id="32:249" orderindex="82" style="color: rgba(107, 107, 107, 1);" class="text-xs">深圳市南山区...</span>
+</div>
+</div>
+<div id="32:250" orderindex="83" style="flex-basis: 0%;" class="grow shrink pr-4 pl-4">
+<div id="32:251" orderindex="80" class="flex items-center gap-y-3 gap-x-3">
+<img id="32:252" orderindex="80" alt="Organic grain and cereal variety pack" src="https://static.paraflowcontent.com/public/resource/image/58a157dc-364f-4afe-ad61-f923b79574fc.jpeg" class="w-10 h-10 object-cover rounded-lg">
+<div id="32:253" orderindex="81" class="flex flex-col gap-y-1 gap-x-1">
+<span id="32:254" orderindex="80" style="color: rgba(58, 58, 58, 1);" class="text-sm font-semibold">有机杂粮组合</span>
+<span id="32:255" orderindex="81" style="color: rgba(107, 107, 107, 1);" class="text-xs">数量: 3</span>
+</div>
+</div>
+</div>
+<div id="32:256" orderindex="84" class="w-24 pr-4 pl-4">
+<span id="32:257" orderindex="80" style="color: rgba(58, 58, 58, 1);" class="text-sm font-semibold">¥328.00</span>
+</div>
+<div id="32:258" orderindex="85" class="w-24 pr-4 pl-4">
+<span id="32:259" orderindex="80" style="background-color: rgba(231, 243, 227, 1); color: rgba(200, 223, 192, 1); padding: 0.25rem 0.75rem;" class="text-xs font-semibold rounded-full">已完成</span>
+</div>
+<div id="32:260" orderindex="86" class="w-32 pr-4 pl-4">
+<span id="32:261" orderindex="80" style="color: rgba(107, 107, 107, 1);" class="text-sm">01-14 16:22</span>
+</div>
+<div id="32:262" orderindex="87" class="w-32 pr-4 pl-4">
+<div id="32:263" orderindex="80" class="flex items-center gap-y-2 gap-x-2">
+<button id="32:264" orderindex="80" class="hover:text-[#5F8A52] text-sm" style="color: rgba(124, 170, 109, 1);">查看</button>
+<button id="32:265" orderindex="81" class="hover:text-[#3A3A3A] text-sm" style="color: rgba(107, 107, 107, 1);">评价</button>
+</div>
+</div>
+</div>
+</div>
+
+<div id="32:266" orderindex="83" class="hover:bg-[#7CAA6D]/5 border-b-[1px]" style="border-top-style: NaN; border-bottom-style: NaN; border-top-width: 0; padding: 1rem 1.5rem; border-color: rgba(232, 235, 230, 1);">
+<div id="32:267" orderindex="80" class="flex items-center">
+<div id="32:268" orderindex="80" class="flex justify-center w-8">
+<label id="32:269" orderindex="80" class="flex items-center">
+<input id="32:270" orderindex="80" class="peer overflow-x-hidden overflow-y-hidden whitespace-nowrap absolute w-px h-px -m-px" style="clip-path: inset( 50% ); padding: 0; border-width: 0;" type="checkbox">
+<div id="32:271" orderindex="81" style="background-color: color-mix( in oklab , #7CAA6D 8% , transparent );" class="flex justify-center items-center w-5 h-5 text-transparent rounded-md">
+<iconify-icon id="32:272" orderindex="80" icon="lucide:check" class="text-xs"></iconify-icon>
+</div>
+</label>
+</div>
+<div id="32:273" orderindex="81" class="w-32 pr-4 pl-4">
+<span id="32:274" orderindex="80" style="color: rgba(124, 170, 109, 1);" class="text-sm font-semibold">#20240115003</span>
+</div>
+<div id="32:275" orderindex="82" class="w-48 pr-4 pl-4">
+<div id="32:276" orderindex="80" class="flex flex-col gap-y-1 gap-x-1">
+<span id="32:277" orderindex="80" style="color: rgba(58, 58, 58, 1);" class="text-sm font-semibold">赵女士</span>
+<span id="32:278" orderindex="81" style="color: rgba(107, 107, 107, 1);" class="text-xs">158****6666</span>
+<span id="32:279" orderindex="82" style="color: rgba(107, 107, 107, 1);" class="text-xs">广州市天河区...</span>
+</div>
+</div>
+<div id="32:280" orderindex="83" style="flex-basis: 0%;" class="grow shrink pr-4 pl-4">
+<div id="32:281" orderindex="80" class="flex items-center gap-y-3 gap-x-3">
+<img id="32:282" orderindex="80" alt="Fresh seafood deluxe combo package" src="https://static.paraflowcontent.com/public/resource/image/b2fefc47-0714-4454-9329-3c5d675b4644.jpeg" class="w-10 h-10 object-cover rounded-lg">
+<div id="32:283" orderindex="81" class="flex flex-col gap-y-1 gap-x-1">
+<span id="32:284" orderindex="80" style="color: rgba(58, 58, 58, 1);" class="text-sm font-semibold">海鲜大礼包</span>
+<span id="32:285" orderindex="81" style="color: rgba(107, 107, 107, 1);" class="text-xs">数量: 1</span>
+</div>
+</div>
+</div>
+<div id="32:286" orderindex="84" class="w-24 pr-4 pl-4">
+<span id="32:287" orderindex="80" style="color: rgba(58, 58, 58, 1);" class="text-sm font-semibold">¥488.00</span>
+</div>
+<div id="32:288" orderindex="85" class="w-24 pr-4 pl-4">
+<span id="32:289" orderindex="80" style="background-color: rgba(245, 221, 217, 1); color: rgba(217, 179, 173, 1); padding: 0.25rem 0.75rem;" class="text-xs font-semibold rounded-full">异常</span>
+</div>
+<div id="32:290" orderindex="86" class="w-32 pr-4 pl-4">
+<span id="32:291" orderindex="80" style="color: rgba(107, 107, 107, 1);" class="text-sm">01-15 09:45</span>
+</div>
+<div id="32:292" orderindex="87" class="w-32 pr-4 pl-4">
+<div id="32:293" orderindex="80" class="flex items-center gap-y-2 gap-x-2">
+<button id="32:294" orderindex="80" class="hover:text-[#5F8A52] text-sm" style="color: rgba(124, 170, 109, 1);">查看</button>
+<button id="32:295" orderindex="81" class="hover:text-[#C8A49F] text-sm" style="color: rgba(217, 179, 173, 1);">处理</button>
+</div>
+</div>
+</div>
+</div>
+
+<div id="32:296" orderindex="84" class="hover:bg-[#7CAA6D]/5" style="padding: 1rem 1.5rem;">
+<div id="32:297" orderindex="80" class="flex items-center">
+<div id="32:298" orderindex="80" class="flex justify-center w-8">
+<label id="32:299" orderindex="80" class="flex items-center">
+<input id="32:300" orderindex="80" class="peer overflow-x-hidden overflow-y-hidden whitespace-nowrap absolute w-px h-px -m-px" style="clip-path: inset( 50% ); padding: 0; border-width: 0;" type="checkbox">
+<div id="32:301" orderindex="81" style="background-color: color-mix( in oklab , #7CAA6D 8% , transparent );" class="flex justify-center items-center w-5 h-5 text-transparent rounded-md">
+<iconify-icon id="32:302" orderindex="80" icon="lucide:check" class="text-xs"></iconify-icon>
+</div>
+</label>
+</div>
+<div id="32:303" orderindex="81" class="w-32 pr-4 pl-4">
+<span id="32:304" orderindex="80" style="color: rgba(124, 170, 109, 1);" class="text-sm font-semibold">#20240115004</span>
+</div>
+<div id="32:305" orderindex="82" class="w-48 pr-4 pl-4">
+<div id="32:306" orderindex="80" class="flex flex-col gap-y-1 gap-x-1">
+<span id="32:307" orderindex="80" style="color: rgba(58, 58, 58, 1);" class="text-sm font-semibold">孙先生</span>
+<span id="32:308" orderindex="81" style="color: rgba(107, 107, 107, 1);" class="text-xs">177****5555</span>
+<span id="32:309" orderindex="82" style="color: rgba(107, 107, 107, 1);" class="text-xs">杭州市西湖区...</span>
+</div>
+</div>
+<div id="32:310" orderindex="83" style="flex-basis: 0%;" class="grow shrink pr-4 pl-4">
+<div id="32:311" orderindex="80" class="flex items-center gap-y-3 gap-x-3">
+<img id="32:312" orderindex="80" alt="Premium organic tea selection gift box" src="https://static.paraflowcontent.com/public/resource/image/a15cbcf7-e63a-4aa4-add0-aed05399e6e8.jpeg" class="w-10 h-10 object-cover rounded-lg">
+<div id="32:313" orderindex="81" class="flex flex-col gap-y-1 gap-x-1">
+<span id="32:314" orderindex="80" style="color: rgba(58, 58, 58, 1);" class="text-sm font-semibold">精选茶叶礼盒</span>
+<span id="32:315" orderindex="81" style="color: rgba(107, 107, 107, 1);" class="text-xs">数量: 2</span>
+</div>
+</div>
+</div>
+<div id="32:316" orderindex="84" class="w-24 pr-4 pl-4">
+<span id="32:317" orderindex="80" style="color: rgba(58, 58, 58, 1);" class="text-sm font-semibold">¥398.00</span>
+</div>
+<div id="32:318" orderindex="85" class="w-24 pr-4 pl-4">
+<span id="32:319" orderindex="80" style="background-color: rgba(249, 237, 207, 1); color: rgba(238, 216, 181, 1); padding: 0.25rem 0.75rem;" class="text-xs font-semibold rounded-full">待发货</span>
+</div>
+<div id="32:320" orderindex="86" class="w-32 pr-4 pl-4">
+<span id="32:321" orderindex="80" style="color: rgba(107, 107, 107, 1);" class="text-sm">01-15 08:20</span>
+</div>
+<div id="32:322" orderindex="87" class="w-32 pr-4 pl-4">
+<div id="32:323" orderindex="80" class="flex items-center gap-y-2 gap-x-2">
+<button id="32:324" orderindex="80" class="hover:text-[#5F8A52] text-sm" style="color: rgba(124, 170, 109, 1);">查看</button>
+<button id="32:325" orderindex="81" class="hover:bg-[#5F8A52] text-xs rounded-full" style="background-color: rgba(124, 170, 109, 1); color: color-mix( in oklab , #fff 90% , transparent ); padding: 0.25rem 0.75rem;">发货</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div id="32:326" orderindex="84" class="flex justify-between items-center pb-8">
+<div id="32:327" orderindex="80" class="flex items-center gap-y-2 gap-x-2">
+<span id="32:328" orderindex="80" style="color: rgba(107, 107, 107, 1);" class="text-sm">共 248 个订单</span>
+<div id="32:329" orderindex="81" class="flex items-center gap-y-2 gap-x-2 ml-4">
+<span id="32:330" orderindex="80" style="color: rgba(107, 107, 107, 1);" class="text-sm">每页显示</span>
+<div id="32:331" orderindex="81" class="hover:border-[#D4D9D0] flex items-center gap-y-2 gap-x-2 border-[1px] border-solid rounded-lg" style="background-color: color-mix( in oklab , #fff 85% , transparent ); padding: 0.25rem 0.75rem; border-color: rgba(229, 232, 227, 1);">
+<span id="32:332" orderindex="80" style="color: rgba(58, 58, 58, 1);" class="text-sm">20</span>
+<div id="32:333" orderindex="81" class="flex justify-center items-center w-3 h-3">
+<iconify-icon id="32:334" orderindex="80" style="color: rgba(107, 107, 107, 1);" icon="lucide:chevron-down" class="text-xs"></iconify-icon>
+</div>
+</div>
+</div>
+</div>
+<div id="32:335" orderindex="81" class="flex items-center gap-y-2 gap-x-2">
+<button id="32:336" orderindex="80" class="hover:bg-white/80 flex justify-center items-center w-8 h-8 border-[1px] border-solid rounded-lg" style="background-color: color-mix( in oklab , #fff 60% , transparent ); border-color: rgba(229, 232, 227, 1);" disabled="">
+<iconify-icon id="32:337" orderindex="80" style="color: rgba(196, 196, 196, 1);" icon="lucide:chevron-left" class="text-sm"></iconify-icon>
+</button>
+<button id="32:338" orderindex="81" style="background-color: rgba(124, 170, 109, 1); color: color-mix( in oklab , #fff 90% , transparent );" class="flex justify-center items-center w-8 h-8 rounded-lg">
+<span id="32:339" orderindex="80" class="text-sm font-semibold">1</span>
+</button>
+<button id="32:340" orderindex="82" class="hover:bg-white/80 flex justify-center items-center w-8 h-8 rounded-lg" style="background-color: color-mix( in oklab , #fff 60% , transparent );">
+<span id="32:341" orderindex="80" style="color: rgba(58, 58, 58, 1);" class="text-sm">2</span>
+</button>
+<button id="32:342" orderindex="83" class="hover:bg-white/80 flex justify-center items-center w-8 h-8 rounded-lg" style="background-color: color-mix( in oklab , #fff 60% , transparent );">
+<span id="32:343" orderindex="80" style="color: rgba(58, 58, 58, 1);" class="text-sm">3</span>
+</button>
+<span id="32:344" orderindex="84" style="color: rgba(107, 107, 107, 1);" class="text-sm pr-2 pl-2">...</span>
+<button id="32:345" orderindex="85" class="hover:bg-white/80 flex justify-center items-center w-8 h-8 rounded-lg" style="background-color: color-mix( in oklab , #fff 60% , transparent );">
+<span id="32:346" orderindex="80" style="color: rgba(58, 58, 58, 1);" class="text-sm">13</span>
+</button>
+<button id="32:347" orderindex="86" class="hover:bg-white/80 flex justify-center items-center w-8 h-8 border-[1px] border-solid rounded-lg" style="background-color: color-mix( in oklab , #fff 60% , transparent ); border-color: rgba(229, 232, 227, 1);">
+<iconify-icon id="32:348" orderindex="80" style="color: rgba(58, 58, 58, 1);" icon="lucide:chevron-right" class="text-sm"></iconify-icon>
+</button>
+</div>
+</div>
+</main>
+</div>
+
+
+</body></html>

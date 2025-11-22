@@ -1,0 +1,450 @@
+<!DOCTYPE html><html><head>
+    <style>@layer theme, base, paraflow, components, utilities;</style><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    
+    
+    
+    <style id="moxt-styled">@layer paraflow{@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&family=Open+Sans:wght@300;400;500;600;700;800&family=Montserrat:wght@100;200;300;400;500;600;700;800;900&family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Poppins:wght@100;200;300;400;500;600;700;800;900&family=Roboto+Condensed:wght@100;200;300;400;500;600;700;800;900&family=Roboto+Mono:wght@100;200;300;400;500;600;700&family=PT+Serif:wght@400;700&family=Arimo:wght@400;500;600;700&family=Raleway:wght@100;200;300;400;500;600;700;800;900&family=Nunito:wght@200;300;400;500;600;700&;800;900&family=Rubik:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@400;500;600;700;800;900&family=Ubuntu:wght@300;400;500;700&family=Merriweather:wght@300;400;500;600;700;800;900&family=Roboto+Slab:wght@100;200;300;400;500;600;700&family=Libre+Baskerville:wght@400;700&family=Inconsolata:wght@200;300;400;500;600;700;800;900&family=Dancing+Script:wght@400;500;600;700&family=Kanit:wght@100;200;300;400;500;600;700;800;900&display=swap')
+}</style>
+<!--FontAwesome version: 6.7.2--><link rel="stylesheet" href="https://static.paraflowcontent.com/public/css/font-awesome/font-awesome.672.css"><!--Tailwind version: 4.0.17--><script src="https://static.paraflowcontent.com/public/js/tailwind/tailwind.js"></script><!--iconify-icon version: 3.0.0--><script src="https://static.paraflowcontent.com/public/js/iconify/iconify-icon-3.0.0.js"></script></head>
+<body id="34:1" title="data-dashboard.html" orderindex="80" relativetransform="8980, 125" class="font-[-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif] flex w-[1440px] min-h-[900px]" style="line-height: 1.6;">
+
+<aside id="34:2" orderindex="80" style="background: rgba(253, 252, 250, 1);" class="shrink-0 min-w-fit">
+<div id="34:3" orderindex="80" class="flex flex-col w-64 h-full">
+
+<div id="34:4" orderindex="80" style="border-bottom-style: solid; border-color: rgba(232, 235, 230, 1);" class="border-b-[1px] p-6">
+<div id="34:5" orderindex="80" class="flex items-center gap-y-3 gap-x-3">
+<div id="34:6" orderindex="80" style="background-color: rgba(124, 170, 109, 1);" class="flex justify-center items-center w-8 h-8 rounded-lg">
+<iconify-icon id="34:7" orderindex="80" style="color: color-mix( in oklab , #fff 90% , transparent );" icon="lucide:truck" class="text-lg"></iconify-icon>
+</div>
+<div id="34:8" orderindex="81" class="flex flex-col">
+<span id="34:9" orderindex="80" style="color: rgba(58, 58, 58, 1);" class="text-lg font-semibold">物流配送平台</span>
+<span id="34:10" orderindex="81" style="color: rgba(107, 107, 107, 1);" class="text-xs">Logistics Platform</span>
+</div>
+</div>
+</div>
+
+<nav id="34:11" orderindex="81" style="flex-basis: 0%; padding: 1.5rem 1rem;" class="grow shrink">
+<div id="34:12" orderindex="80" class="flex flex-col gap-y-2 gap-x-2">
+
+<a id="34:13" orderindex="80" class="hover:bg-white/40 group flex items-center gap-y-3 gap-x-3 rounded-xl" style="padding: 0.75rem 1rem;" href="#">
+<div id="34:14" orderindex="80" class="flex justify-center items-center w-5 h-5">
+<iconify-icon id="34:15" orderindex="80" class="group-hover:text-[#5F8A52] text-base" style="color: rgba(124, 170, 109, 1);" icon="lucide:home"></iconify-icon>
+</div>
+<span id="34:16" orderindex="81" class="group-hover:text-[#5F8A52] text-base" style="color: rgba(58, 58, 58, 1);">首页</span>
+</a>
+
+<a id="34:17" orderindex="81" class="hover:bg-white/40 group flex items-center gap-y-3 gap-x-3 rounded-xl" style="padding: 0.75rem 1rem;" href="#">
+<div id="34:18" orderindex="80" class="flex justify-center items-center w-5 h-5">
+<iconify-icon id="34:19" orderindex="80" class="group-hover:text-[#5F8A52] text-base" style="color: rgba(124, 170, 109, 1);" icon="lucide:package"></iconify-icon>
+</div>
+<span id="34:20" orderindex="81" class="group-hover:text-[#5F8A52] text-base" style="color: rgba(58, 58, 58, 1);">订单管理</span>
+</a>
+
+<a id="34:21" orderindex="82" class="hover:bg-white/40 group flex items-center gap-y-3 gap-x-3 rounded-xl" style="padding: 0.75rem 1rem;" href="#">
+<div id="34:22" orderindex="80" class="flex justify-center items-center w-5 h-5">
+<iconify-icon id="34:23" orderindex="80" class="group-hover:text-[#5F8A52] text-base" style="color: rgba(124, 170, 109, 1);" icon="lucide:map-pin"></iconify-icon>
+</div>
+<span id="34:24" orderindex="81" class="group-hover:text-[#5F8A52] text-base" style="color: rgba(58, 58, 58, 1);">配送管理</span>
+</a>
+
+<a id="34:25" orderindex="83" class="group flex items-center gap-y-3 gap-x-3 rounded-xl" style="background-color: color-mix( in oklab , #7CAA6D 15% , transparent ); padding: 0.75rem 1rem;" href="#">
+<div id="34:26" orderindex="80" class="flex justify-center items-center w-5 h-5">
+<iconify-icon id="34:27" orderindex="80" style="color: rgba(124, 170, 109, 1);" icon="lucide:bar-chart-3" class="text-base"></iconify-icon>
+</div>
+<span id="34:28" orderindex="81" style="color: rgba(124, 170, 109, 1);" class="text-base font-semibold">数据看板</span>
+</a>
+
+<a id="34:29" orderindex="84" class="hover:bg-white/40 group flex items-center gap-y-3 gap-x-3 rounded-xl" style="padding: 0.75rem 1rem;" href="#">
+<div id="34:30" orderindex="80" class="flex justify-center items-center w-5 h-5">
+<iconify-icon id="34:31" orderindex="80" class="group-hover:text-[#5F8A52] text-base" style="color: rgba(124, 170, 109, 1);" icon="lucide:settings"></iconify-icon>
+</div>
+<span id="34:32" orderindex="81" class="group-hover:text-[#5F8A52] text-base" style="color: rgba(58, 58, 58, 1);">设置</span>
+</a>
+</div>
+</nav>
+
+<div id="34:33" orderindex="82" style="border-top-style: solid; padding: 1.5rem 1rem; border-color: rgba(232, 235, 230, 1);" class="border-t-[1px]">
+<div id="34:34" orderindex="80" style="background-color: color-mix( in oklab , #7CAA6D 8% , transparent );" class="p-4 rounded-xl">
+<div id="34:35" orderindex="80" class="flex items-start gap-y-3 gap-x-3">
+<div id="34:36" orderindex="80" class="flex justify-center items-center w-5 h-5">
+<iconify-icon id="34:37" orderindex="80" style="color: rgba(124, 170, 109, 1);" icon="lucide:help-circle" class="text-base"></iconify-icon>
+</div>
+<div id="34:38" orderindex="81" class="flex flex-col gap-y-1 gap-x-1">
+<span id="34:39" orderindex="80" style="color: rgba(58, 58, 58, 1);" class="text-sm font-semibold">需要帮助?</span>
+<span id="34:40" orderindex="81" style="color: rgba(107, 107, 107, 1);" class="text-xs">查看使用指南或联系客服</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</aside>
+
+<div id="34:41" orderindex="81" style="flex-basis: 0%;" class="overflow-x-hidden flex flex-col grow shrink min-h-[900px]">
+
+<header id="34:42" orderindex="80" style="background: rgba(254, 253, 251, 1);" class="w-full mr-4 ml-4">
+<div id="34:43" orderindex="80" style="padding: 1rem 2rem;" class="flex justify-between items-center">
+
+<div id="34:44" orderindex="80" class="flex items-center gap-y-6 gap-x-6">
+
+<div id="34:45" orderindex="80" class="flex items-center gap-y-2 gap-x-2">
+<div id="34:46" orderindex="80" class="flex justify-center items-center w-6 h-6">
+<iconify-icon id="34:47" orderindex="80" style="color: rgba(124, 170, 109, 1);" icon="lucide:truck" class="text-lg"></iconify-icon>
+</div>
+<span id="34:48" orderindex="81" style="color: rgba(124, 170, 109, 1);" class="text-lg font-semibold">物流平台</span>
+</div>
+
+<nav id="34:49" orderindex="81" class="flex items-center gap-y-6 gap-x-6">
+<a id="34:50" orderindex="80" class="hover:text-[#7CAA6D] text-base" style="color: rgba(58, 58, 58, 1);" href="#">订单管理</a>
+<a id="34:51" orderindex="81" class="hover:text-[#7CAA6D] text-base" style="color: rgba(58, 58, 58, 1);" href="#">配送管理</a>
+<a id="34:52" orderindex="82" style="color: rgba(124, 170, 109, 1);" href="#" class="text-base font-semibold">数据看板</a>
+</nav>
+
+<div id="34:53" orderindex="82" style="background-color: color-mix( in oklab , #fff 85% , transparent ); padding: 0.625rem 1rem; border-color: rgba(229, 232, 227, 1);" class="flex items-center gap-y-3 gap-x-3 w-80 border-[1px] border-solid rounded-full">
+<div id="34:54" orderindex="80" class="flex justify-center items-center w-4 h-4">
+<iconify-icon id="34:55" orderindex="80" style="color: rgba(107, 107, 107, 1);" icon="lucide:search" class="text-sm"></iconify-icon>
+</div>
+<input id="34:56" orderindex="81" style="flex-basis: 0%; color: rgba(58, 58, 58, 1);" type="text" placeholder="搜索订单、物流信息..." class="text-base bg-transparent grow shrink outline-none">
+</div>
+</div>
+
+<div id="34:57" orderindex="81" class="flex items-center gap-y-4 gap-x-4">
+
+<div id="34:58" orderindex="80" class="hover:bg-white/40 flex relative justify-center items-center w-10 h-10 rounded-full">
+<div id="34:59" orderindex="80" class="flex justify-center items-center w-5 h-5">
+<iconify-icon id="34:60" orderindex="80" style="color: rgba(58, 58, 58, 1);" icon="lucide:bell" class="text-base"></iconify-icon>
+</div>
+<div id="34:61" orderindex="81" style="background-color: rgba(217, 179, 173, 1); top: -0.125rem; right: -0.125rem;" class="flex absolute justify-center items-center w-5 h-5 rounded-full">
+<span id="34:62" orderindex="80" style="color: color-mix( in oklab , #fff 90% , transparent );" class="text-xs font-semibold">5</span>
+</div>
+</div>
+
+<div id="34:63" orderindex="81" class="flex items-center gap-y-3 gap-x-3">
+<img id="34:64" orderindex="80" style="border-color: color-mix( in oklab , #fff 60% , transparent );" alt="Professional business manager headshot, confident expression, modern office environment" src="https://static.paraflowcontent.com/public/resource/image/197a568d-52af-46e0-a35a-a19b4882bf08.jpeg" class="w-9 h-9 object-cover border-[2px] border-solid rounded-full">
+<div id="34:65" orderindex="81" class="flex flex-col">
+<span id="34:66" orderindex="80" style="color: rgba(58, 58, 58, 1);" class="text-sm font-semibold">张商家</span>
+<span id="34:67" orderindex="81" style="color: rgba(107, 107, 107, 1);" class="text-xs">在线</span>
+</div>
+<div id="34:68" orderindex="82" class="flex justify-center items-center w-4 h-4">
+<iconify-icon id="34:69" orderindex="80" style="color: rgba(107, 107, 107, 1);" icon="lucide:chevron-down" class="text-sm"></iconify-icon>
+</div>
+</div>
+</div>
+</div>
+</header>
+
+<main id="34:70" orderindex="81" style="background: rgba(253, 252, 249, 1);" class="w-full pr-8 pl-8">
+
+<div id="34:71" orderindex="80" class="flex justify-between items-center mb-6 pt-6">
+<div id="34:72" orderindex="80" class="flex flex-col gap-y-1 gap-x-1">
+<h1 id="34:73" orderindex="80" style="color: rgba(58, 58, 58, 1);" class="text-2xl font-semibold">数据看板</h1>
+<div id="34:74" orderindex="81" style="color: rgba(107, 107, 107, 1);" class="text-sm flex items-center gap-y-2 gap-x-2">
+<span id="34:75" orderindex="80">数据更新时间: 2024年1月15日 14:30</span>
+<div id="34:76" orderindex="81" style="background-color: rgba(107, 107, 107, 1);" class="w-1 h-1 rounded-full"></div>
+<span id="34:77" orderindex="82">实时数据</span>
+</div>
+</div>
+<div id="34:78" orderindex="81" class="flex items-center gap-y-3 gap-x-3">
+
+<div id="34:79" orderindex="80" style="background-color: color-mix( in oklab , #fff 85% , transparent ); border-color: rgba(229, 232, 227, 1);" class="flex items-center gap-y-1 gap-x-1 p-1 border-[1px] border-solid rounded-full">
+<button id="34:80" orderindex="80" style="background-color: rgba(124, 170, 109, 1); color: color-mix( in oklab , #fff 90% , transparent ); padding: 0.375rem 0.75rem;" class="text-sm font-semibold rounded-full">今日</button>
+<button id="34:81" orderindex="81" class="hover:bg-white/40 text-sm rounded-full" style="color: rgba(107, 107, 107, 1); padding: 0.375rem 0.75rem;">本周</button>
+<button id="34:82" orderindex="82" class="hover:bg-white/40 text-sm rounded-full" style="color: rgba(107, 107, 107, 1); padding: 0.375rem 0.75rem;">本月</button>
+<button id="34:83" orderindex="83" class="hover:bg-white/40 text-sm rounded-full" style="color: rgba(107, 107, 107, 1); padding: 0.375rem 0.75rem;">自定义</button>
+</div>
+
+<button id="34:84" orderindex="81" class="hover:bg-white/40 flex justify-center items-center w-10 h-10 rounded-full">
+<div id="34:85" orderindex="80" class="flex justify-center items-center w-5 h-5">
+<iconify-icon id="34:86" orderindex="80" style="color: rgba(124, 170, 109, 1);" icon="lucide:refresh-cw" class="text-base"></iconify-icon>
+</div>
+</button>
+</div>
+</div>
+
+<div id="34:87" orderindex="81" class="grid grid-cols-4 gap-y-6 gap-x-6 mb-8">
+
+<div id="34:88" orderindex="80" class="hover:shadow-[0_3px_14px_rgba(124,170,109,0.10)] p-6 rounded-2xl" style="background-color: color-mix( in oklab , #fff 85% , transparent ); box-shadow: 0 0 rgba(0, 0, 0, 0), 0 0 rgba(0, 0, 0, 0), 0 0 rgba(0, 0, 0, 0), 0 0 rgba(0, 0, 0, 0), 0 2px 10px rgba(124, 170, 109, 0.06);">
+<div id="34:89" orderindex="80" class="flex justify-between items-center mb-4">
+<div id="34:90" orderindex="80" style="background-color: color-mix( in oklab , #7CAA6D 8% , transparent );" class="flex justify-center items-center w-10 h-10 rounded-xl">
+<iconify-icon id="34:91" orderindex="80" style="color: rgba(124, 170, 109, 1);" icon="lucide:shopping-bag" class="text-lg"></iconify-icon>
+</div>
+<span id="34:92" orderindex="81" style="background-color: rgba(231, 243, 227, 1); color: rgba(200, 223, 192, 1); padding: 0.25rem 0.5rem;" class="text-xs font-semibold rounded-full">+15%</span>
+</div>
+<div id="34:93" orderindex="81" class="flex flex-col gap-y-1 gap-x-1">
+<span id="34:94" orderindex="80" style="color: rgba(58, 58, 58, 1);" class="text-2xl font-semibold">2,847</span>
+<span id="34:95" orderindex="81" style="color: rgba(107, 107, 107, 1);" class="text-sm">总订单量</span>
+</div>
+</div>
+
+<div id="34:96" orderindex="81" class="hover:shadow-[0_3px_14px_rgba(124,170,109,0.10)] p-6 rounded-2xl" style="background-color: color-mix( in oklab , #fff 85% , transparent ); box-shadow: 0 0 rgba(0, 0, 0, 0), 0 0 rgba(0, 0, 0, 0), 0 0 rgba(0, 0, 0, 0), 0 0 rgba(0, 0, 0, 0), 0 2px 10px rgba(124, 170, 109, 0.06);">
+<div id="34:97" orderindex="80" class="flex justify-between items-center mb-4">
+<div id="34:98" orderindex="80" style="background-color: color-mix( in oklab , #A3C4C4 8% , transparent );" class="flex justify-center items-center w-10 h-10 rounded-xl">
+<iconify-icon id="34:99" orderindex="80" style="color: rgba(163, 196, 196, 1);" icon="lucide:clock" class="text-lg"></iconify-icon>
+</div>
+<span id="34:100" orderindex="81" style="background-color: rgba(200, 222, 239, 1); color: rgba(123, 156, 184, 1); padding: 0.25rem 0.5rem;" class="text-xs font-semibold rounded-full">-8%</span>
+</div>
+<div id="34:101" orderindex="81" class="flex flex-col gap-y-1 gap-x-1">
+<span id="34:102" orderindex="80" style="color: rgba(58, 58, 58, 1);" class="text-2xl font-semibold">18.5h</span>
+<span id="34:103" orderindex="81" style="color: rgba(107, 107, 107, 1);" class="text-sm">平均配送时长</span>
+</div>
+</div>
+
+<div id="34:104" orderindex="82" class="hover:shadow-[0_3px_14px_rgba(124,170,109,0.10)] p-6 rounded-2xl" style="background-color: color-mix( in oklab , #fff 85% , transparent ); box-shadow: 0 0 rgba(0, 0, 0, 0), 0 0 rgba(0, 0, 0, 0), 0 0 rgba(0, 0, 0, 0), 0 0 rgba(0, 0, 0, 0), 0 2px 10px rgba(124, 170, 109, 0.06);">
+<div id="34:105" orderindex="80" class="flex justify-between items-center mb-4">
+<div id="34:106" orderindex="80" style="background-color: color-mix( in oklab , #C8DFC0 8% , transparent );" class="flex justify-center items-center w-10 h-10 rounded-xl">
+<iconify-icon id="34:107" orderindex="80" style="color: rgba(200, 223, 192, 1);" icon="lucide:check-circle" class="text-lg"></iconify-icon>
+</div>
+<div id="34:108" orderindex="81" class="flex justify-center items-center w-4 h-4">
+<iconify-icon id="34:109" orderindex="80" style="color: rgba(200, 223, 192, 1);" icon="lucide:trending-up" class="text-sm"></iconify-icon>
+</div>
+</div>
+<div id="34:110" orderindex="81" class="flex flex-col gap-y-1 gap-x-1">
+<span id="34:111" orderindex="80" style="color: rgba(58, 58, 58, 1);" class="text-2xl font-semibold">96.8%</span>
+<span id="34:112" orderindex="81" style="color: rgba(107, 107, 107, 1);" class="text-sm">配送完成率</span>
+</div>
+</div>
+
+<div id="34:113" orderindex="83" class="hover:shadow-[0_3px_14px_rgba(124,170,109,0.10)] p-6 rounded-2xl" style="background-color: color-mix( in oklab , #fff 85% , transparent ); box-shadow: 0 0 rgba(0, 0, 0, 0), 0 0 rgba(0, 0, 0, 0), 0 0 rgba(0, 0, 0, 0), 0 0 rgba(0, 0, 0, 0), 0 2px 10px rgba(124, 170, 109, 0.06);">
+<div id="34:114" orderindex="80" class="flex justify-between items-center mb-4">
+<div id="34:115" orderindex="80" style="background-color: color-mix( in oklab , #EED8B5 8% , transparent );" class="flex justify-center items-center w-10 h-10 rounded-xl">
+<iconify-icon id="34:116" orderindex="80" style="color: rgba(238, 216, 181, 1);" icon="lucide:alert-triangle" class="text-lg"></iconify-icon>
+</div>
+<span id="34:117" orderindex="81" style="background-color: rgba(249, 237, 207, 1); color: rgba(238, 216, 181, 1); padding: 0.25rem 0.5rem;" class="text-xs font-semibold rounded-full">+3%</span>
+</div>
+<div id="34:118" orderindex="81" class="flex flex-col gap-y-1 gap-x-1">
+<span id="34:119" orderindex="80" style="color: rgba(58, 58, 58, 1);" class="text-2xl font-semibold">47</span>
+<span id="34:120" orderindex="81" style="color: rgba(107, 107, 107, 1);" class="text-sm">异常订单数量</span>
+</div>
+</div>
+</div>
+
+<div id="34:121" orderindex="82" class="flex flex-col gap-y-8 gap-x-8">
+
+<div id="34:122" orderindex="80" class="grid grid-cols-2 gap-y-8 gap-x-8">
+
+<div id="34:123" orderindex="80" style="background-color: color-mix( in oklab , #fff 85% , transparent ); box-shadow: 0 0 rgba(0, 0, 0, 0), 0 0 rgba(0, 0, 0, 0), 0 0 rgba(0, 0, 0, 0), 0 0 rgba(0, 0, 0, 0), 0 2px 10px rgba(124, 170, 109, 0.06);" class="p-6 rounded-2xl">
+<div id="34:124" orderindex="80" class="flex justify-between items-center mb-6">
+<h3 id="34:125" orderindex="80" style="color: rgba(58, 58, 58, 1);" class="text-lg font-semibold">区域订单密度热力图</h3>
+<div id="34:126" orderindex="81" class="flex items-center gap-y-3 gap-x-3">
+
+<select id="34:127" orderindex="80" style="background-color: color-mix( in oklab , #fff 85% , transparent ); color: rgba(58, 58, 58, 1); padding: 0.375rem 0.75rem; border-color: rgba(229, 232, 227, 1);" class="text-sm border-[1px] border-solid rounded-full">
+<option id="34:128" orderindex="80">全国</option>
+<option id="34:129" orderindex="81">华东地区</option>
+<option id="34:130" orderindex="82">华南地区</option>
+<option id="34:131" orderindex="83">华北地区</option>
+</select>
+</div>
+</div>
+
+<div id="34:132" orderindex="81" class="relative mb-4">
+<img id="34:133" orderindex="80" alt="China map with heat overlay showing order density distribution across provinces and cities, red to yellow gradient" src="https://static.paraflowcontent.com/public/resource/image/4f2b084a-7c40-4139-bd88-bfa19b249c8a.jpeg" class="w-full h-72 object-cover rounded-xl">
+</div>
+
+<div id="34:134" orderindex="82" class="flex justify-center items-center gap-y-6 gap-x-6">
+<div id="34:135" orderindex="80" class="flex items-center gap-y-2 gap-x-2">
+<div id="34:136" orderindex="80" style="background-color: rgba(200, 223, 192, 1);" class="w-4 h-4 rounded-sm"></div>
+<span id="34:137" orderindex="81" style="color: rgba(107, 107, 107, 1);" class="text-sm">低密度</span>
+</div>
+<div id="34:138" orderindex="81" class="flex items-center gap-y-2 gap-x-2">
+<div id="34:139" orderindex="80" style="background-color: rgba(238, 216, 181, 1);" class="w-4 h-4 rounded-sm"></div>
+<span id="34:140" orderindex="81" style="color: rgba(107, 107, 107, 1);" class="text-sm">中密度</span>
+</div>
+<div id="34:141" orderindex="82" class="flex items-center gap-y-2 gap-x-2">
+<div id="34:142" orderindex="80" style="background-color: rgba(217, 179, 173, 1);" class="w-4 h-4 rounded-sm"></div>
+<span id="34:143" orderindex="81" style="color: rgba(107, 107, 107, 1);" class="text-sm">高密度</span>
+</div>
+</div>
+</div>
+
+<div id="34:144" orderindex="81" style="background-color: color-mix( in oklab , #fff 85% , transparent ); box-shadow: 0 0 rgba(0, 0, 0, 0), 0 0 rgba(0, 0, 0, 0), 0 0 rgba(0, 0, 0, 0), 0 0 rgba(0, 0, 0, 0), 0 2px 10px rgba(124, 170, 109, 0.06);" class="p-6 rounded-2xl">
+<div id="34:145" orderindex="80" class="flex justify-between items-center mb-6">
+<h3 id="34:146" orderindex="80" style="color: rgba(58, 58, 58, 1);" class="text-lg font-semibold">配送时效分析</h3>
+<button id="34:147" orderindex="81" class="hover:bg-[#7CAA6D]/15 text-sm flex items-center gap-y-2 gap-x-2 rounded-full" style="background-color: color-mix( in oklab , #7CAA6D 8% , transparent ); color: rgba(124, 170, 109, 1); padding: 0.375rem 0.75rem;">
+<div id="34:148" orderindex="80" class="flex justify-center items-center w-4 h-4">
+<iconify-icon id="34:149" orderindex="80" icon="lucide:download" class="text-sm"></iconify-icon>
+</div>
+<span id="34:150" orderindex="81">数据导出</span>
+</button>
+</div>
+
+<div id="34:151" orderindex="81" class="mb-6">
+<img id="34:152" orderindex="80" class="slot w-[500px] h-[180px] max-w-full" alt="description: {
+                                &quot;tooltip&quot;: {
+                                    &quot;trigger&quot;: &quot;axis&quot;,
+                                    &quot;axisPointer&quot;: {&quot;type&quot;: &quot;shadow&quot;}
+                                },
+                                &quot;grid&quot;: {&quot;top&quot;: 12, &quot;right&quot;: 12, &quot;bottom&quot;: 12, &quot;left&quot;: 12, &quot;containLabel&quot;: true},
+                                &quot;xAxis&quot;: {
+                                    &quot;type&quot;: &quot;category&quot;,
+                                    &quot;data&quot;: [&quot;0-12h&quot;, &quot;12-24h&quot;, &quot;1-2天&quot;, &quot;2-3天&quot;, &quot;3天以上&quot;],
+                                    &quot;axisLine&quot;: {&quot;show&quot;: false},
+                                    &quot;axisTick&quot;: {&quot;show&quot;: false}
+                                },
+                                &quot;yAxis&quot;: {
+                                    &quot;type&quot;: &quot;value&quot;,
+                                    &quot;axisLine&quot;: {&quot;show&quot;: false},
+                                    &quot;axisTick&quot;: {&quot;show&quot;: false},
+                                    &quot;splitLine&quot;: {&quot;lineStyle&quot;: {&quot;color&quot;: &quot;#f0f0f0&quot;}}
+                                },
+                                &quot;series&quot;: [{
+                                    &quot;type&quot;: &quot;bar&quot;,
+                                    &quot;data&quot;: [1240, 856, 342, 128, 45],
+                                    &quot;itemStyle&quot;: {&quot;color&quot;: &quot;#7CAA6D&quot;, &quot;borderRadius&quot;: [4, 4, 0, 0]}
+                                }]
+                            }, width: 500px, height: 180px" src="https://static.paraflowcontent.com/public/resource/image/2494b631-0b20-4238-81dc-23e37e876a47.svg" placeholder="https://via.placeholder.com/500x180" width="500px" height="180px">
+</div>
+
+<div id="34:153" orderindex="82">
+<img id="34:154" orderindex="80" class="slot w-[500px] h-[140px] max-w-full" alt="description: {
+                                &quot;tooltip&quot;: {&quot;trigger&quot;: &quot;axis&quot;},
+                                &quot;grid&quot;: {&quot;top&quot;: 12, &quot;right&quot;: 12, &quot;bottom&quot;: 12,
+                                &quot;grid&quot;: {&quot;top&quot;: 12, &quot;right&quot;: 12, &quot;bottom&quot;: 12, &quot;left&quot;: 12, &quot;containLabel&quot;: true},
+                                &quot;xAxis&quot;: {
+                                    &quot;type&quot;: &quot;category&quot;,
+                                    &quot;data&quot;: [&quot;1月10日&quot;, &quot;1月11日&quot;, &quot;1月12日&quot;, &quot;1月13日&quot;, &quot;1月14日&quot;, &quot;1月15日&quot;],
+                                    &quot;axisLine&quot;: {&quot;show&quot;: false},
+                                    &quot;axisTick&quot;: {&quot;show&quot;: false}
+                                },
+                                &quot;yAxis&quot;: {
+                                    &quot;type&quot;: &quot;value&quot;,
+                                    &quot;axisLine&quot;: {&quot;show&quot;: false},
+                                    &quot;axisTick&quot;: {&quot;show&quot;: false},
+                                    &quot;splitLine&quot;: {&quot;lineStyle&quot;: {&quot;color&quot;: &quot;#f0f0f0&quot;}}
+                                },
+                                &quot;series&quot;: [
+                                    {
+                                        &quot;name&quot;: &quot;顺丰&quot;,
+                                        &quot;type&quot;: &quot;line&quot;,
+                                        &quot;data&quot;: [18.2, 17.8, 18.5, 17.9, 18.1, 17.6],
+                                        &quot;itemStyle&quot;: {&quot;color&quot;: &quot;#7CAA6D&quot;},
+                                        &quot;smooth&quot;: true
+                                    },
+                                    {
+                                        &quot;name&quot;: &quot;中通&quot;,
+                                        &quot;type&quot;: &quot;line&quot;,
+                                        &quot;data&quot;: [22.1, 21.8, 22.3, 21.9, 22.0, 21.7],
+                                        &quot;itemStyle&quot;: {&quot;color&quot;: &quot;#A3C4C4&quot;},
+                                        &quot;smooth&quot;: true
+                                    },
+                                    {
+                                        &quot;name&quot;: &quot;圆通&quot;,
+                                        &quot;type&quot;: &quot;line&quot;,
+                                        &quot;data&quot;: [24.5, 24.2, 24.8, 24.1, 24.3, 23.9],
+                                        &quot;itemStyle&quot;: {&quot;color&quot;: &quot;#B8ADA3&quot;},
+                                        &quot;smooth&quot;: true
+                                    }
+                                ]
+                            }, width: 500px, height: 140px" src="https://static.paraflowcontent.com/public/resource/image/957c2790-a79d-4084-a02c-9af64367e86f.svg" placeholder="https://via.placeholder.com/500x140" width="500px" height="140px">
+</div>
+</div>
+</div>
+
+<div id="34:155" orderindex="81" style="background-color: color-mix( in oklab , #fff 85% , transparent ); box-shadow: 0 0 rgba(0, 0, 0, 0), 0 0 rgba(0, 0, 0, 0), 0 0 rgba(0, 0, 0, 0), 0 0 rgba(0, 0, 0, 0), 0 2px 10px rgba(124, 170, 109, 0.06);" class="p-6 rounded-2xl">
+<h3 id="34:156" orderindex="80" style="color: rgba(58, 58, 58, 1);" class="text-lg mb-6 font-semibold">异常订单监控</h3>
+<div id="34:157" orderindex="81" class="grid grid-cols-3 gap-y-6 gap-x-6">
+
+<div id="34:158" orderindex="80" style="grid-column-start: span 2; grid-column-end: span 2;">
+<h4 id="34:159" orderindex="80" style="color: rgba(58, 58, 58, 1);" class="text-base mb-4 font-semibold">异常订单实时列表</h4>
+<div id="34:160" orderindex="81">
+
+<div id="34:161" orderindex="80" style="background-color: color-mix( in oklab , #7CAA6D 8% , transparent ); margin-top: 0; color: rgba(107, 107, 107, 1);" class="text-sm grid grid-cols-6 gap-y-3 gap-x-3 mb-3 font-semibold p-3 rounded-xl">
+<span id="34:162" orderindex="80">订单号</span>
+<span id="34:163" orderindex="81">异常类型</span>
+<span id="34:164" orderindex="82">收货地址</span>
+<span id="34:165" orderindex="83">异常时长</span>
+<span id="34:166" orderindex="84">当前状态</span>
+<span id="34:167" orderindex="85">操作</span>
+</div>
+
+<div id="34:168" orderindex="81" class="hover:bg-[#7CAA6D]/5 grid grid-cols-6 gap-y-3 gap-x-3 mb-3 p-3 rounded-xl" style="margin-top: 0;">
+<span id="34:169" orderindex="80" style="color: rgba(58, 58, 58, 1);" class="text-sm font-semibold">#202401150001</span>
+<span id="34:170" orderindex="81" style="background-color: rgba(245, 221, 217, 1); color: rgba(217, 179, 173, 1); padding: 0.25rem 0.5rem;" class="text-xs w-fit font-semibold rounded-full">超时</span>
+<span id="34:171" orderindex="82" style="color: rgba(107, 107, 107, 1);" class="text-sm">北京市朝阳区</span>
+<span id="34:172" orderindex="83" style="color: rgba(107, 107, 107, 1);" class="text-sm">6小时</span>
+<span id="34:173" orderindex="84" style="color: rgba(107, 107, 107, 1);" class="text-sm">配送中</span>
+<div id="34:174" orderindex="85" class="flex gap-y-2 gap-x-2">
+<button id="34:175" orderindex="80" class="hover:underline text-xs" style="color: rgba(124, 170, 109, 1);">详情</button>
+<button id="34:176" orderindex="81" class="hover:underline text-xs" style="color: rgba(124, 170, 109, 1);">联系</button>
+</div>
+</div>
+<div id="34:177" orderindex="82" class="hover:bg-[#7CAA6D]/5 grid grid-cols-6 gap-y-3 gap-x-3 mb-3 p-3 rounded-xl" style="margin-top: 0;">
+<span id="34:178" orderindex="80" style="color: rgba(58, 58, 58, 1);" class="text-sm font-semibold">#202401150002</span>
+<span id="34:179" orderindex="81" style="background-color: rgba(249, 237, 207, 1); color: rgba(238, 216, 181, 1); padding: 0.25rem 0.5rem;" class="text-xs w-fit font-semibold rounded-full">滞留</span>
+<span id="34:180" orderindex="82" style="color: rgba(107, 107, 107, 1);" class="text-sm">上海市浦东新区</span>
+<span id="34:181" orderindex="83" style="color: rgba(107, 107, 107, 1);" class="text-sm">12小时</span>
+<span id="34:182" orderindex="84" style="color: rgba(107, 107, 107, 1);" class="text-sm">转运中</span>
+<div id="34:183" orderindex="85" class="flex gap-y-2 gap-x-2">
+<button id="34:184" orderindex="80" class="hover:underline text-xs" style="color: rgba(124, 170, 109, 1);">详情</button>
+<button id="34:185" orderindex="81" class="hover:underline text-xs" style="color: rgba(124, 170, 109, 1);">联系</button>
+</div>
+</div>
+<div id="34:186" orderindex="83" class="hover:bg-[#7CAA6D]/5 grid grid-cols-6 gap-y-3 gap-x-3 p-3 rounded-xl">
+<span id="34:187" orderindex="80" style="color: rgba(58, 58, 58, 1);" class="text-sm font-semibold">#202401150003</span>
+<span id="34:188" orderindex="81" style="background-color: rgba(245, 221, 217, 1); color: rgba(217, 179, 173, 1); padding: 0.25rem 0.5rem;" class="text-xs w-fit font-semibold rounded-full">投诉</span>
+<span id="34:189" orderindex="82" style="color: rgba(107, 107, 107, 1);" class="text-sm">广州市天河区</span>
+<span id="34:190" orderindex="83" style="color: rgba(107, 107, 107, 1);" class="text-sm">2天</span>
+<span id="34:191" orderindex="84" style="color: rgba(107, 107, 107, 1);" class="text-sm">已签收</span>
+<div id="34:192" orderindex="85" class="flex gap-y-2 gap-x-2">
+<button id="34:193" orderindex="80" class="hover:underline text-xs" style="color: rgba(124, 170, 109, 1);">详情</button>
+<button id="34:194" orderindex="81" class="hover:underline text-xs" style="color: rgba(124, 170, 109, 1);">联系</button>
+</div>
+</div>
+</div>
+</div>
+
+<div id="34:195" orderindex="81">
+
+<div id="34:196" orderindex="80" style="margin-top: 0;" class="mb-6">
+<h4 id="34:197" orderindex="80" style="color: rgba(58, 58, 58, 1);" class="text-base mb-4 font-semibold">异常类型分布</h4>
+<img id="34:198" orderindex="81" class="slot w-[300px] h-[200px] max-w-full" alt="description: {
+                                    &quot;tooltip&quot;: {&quot;trigger&quot;: &quot;item&quot;},
+                                    &quot;grid&quot;: {&quot;top&quot;: 12, &quot;right&quot;: 12, &quot;bottom&quot;: 12, &quot;left&quot;: 12, &quot;containLabel&quot;: true},
+                                    &quot;series&quot;: [{
+                                        &quot;type&quot;: &quot;pie&quot;,
+                                        &quot;radius&quot;: &quot;70%&quot;,
+                                        &quot;center&quot;: [&quot;50%&quot;, &quot;50%&quot;],
+                                        &quot;data&quot;: [
+                                            {&quot;value&quot;: 25, &quot;name&quot;: &quot;配送超时&quot;, &quot;itemStyle&quot;: {&quot;color&quot;: &quot;#D9B3AD&quot;}},
+                                            {&quot;value&quot;: 15, &quot;name&quot;: &quot;包裹滞留&quot;, &quot;itemStyle&quot;: {&quot;color&quot;: &quot;#EED8B5&quot;}},
+                                            {&quot;value&quot;: 7, &quot;name&quot;: &quot;客户投诉&quot;, &quot;itemStyle&quot;: {&quot;color&quot;: &quot;#7CAA6D&quot;}}
+                                        ],
+                                        &quot;itemStyle&quot;: {&quot;borderRadius&quot;: 0}
+                                    }]
+                                }, width: 300px, height: 200px" src="https://static.paraflowcontent.com/public/resource/image/f2d91e88-2605-4db1-a2a8-59022e0a841a.svg" placeholder="https://via.placeholder.com/300x200" width="300px" height="200px">
+</div>
+
+<div id="34:199" orderindex="81">
+<h4 id="34:200" orderindex="80" style="color: rgba(58, 58, 58, 1);" class="text-base mb-4 font-semibold">异常趋势</h4>
+<img id="34:201" orderindex="81" class="slot w-[300px] h-[160px] max-w-full" alt="description: {
+                                    &quot;tooltip&quot;: {&quot;trigger&quot;: &quot;axis&quot;},
+                                    &quot;grid&quot;: {&quot;top&quot;: 12, &quot;right&quot;: 12, &quot;bottom&quot;: 12, &quot;left&quot;: 12, &quot;containLabel&quot;: true},
+                                    &quot;xAxis&quot;: {
+                                        &quot;type&quot;: &quot;category&quot;,
+                                        &quot;data&quot;: [&quot;1月10日&quot;, &quot;1月11日&quot;, &quot;1月12日&quot;, &quot;1月13日&quot;, &quot;1月14日&quot;, &quot;1月15日&quot;],
+                                        &quot;axisLine&quot;: {&quot;show&quot;: false},
+                                        &quot;axisTick&quot;: {&quot;show&quot;: false}
+                                    },
+                                    &quot;yAxis&quot;: {
+                                        &quot;type&quot;: &quot;value&quot;,
+                                        &quot;axisLine&quot;: {&quot;show&quot;: false},
+                                        &quot;axisTick&quot;: {&quot;show&quot;: false},
+                                        &quot;splitLine&quot;: {&quot;lineStyle&quot;: {&quot;color&quot;: &quot;#f0f0f0&quot;}}
+                                    },
+                                    &quot;series&quot;: [{
+                                        &quot;type&quot;: &quot;line&quot;,
+                                        &quot;data&quot;: [42, 38, 45, 52, 49, 47],
+                                        &quot;itemStyle&quot;: {&quot;color&quot;: &quot;#D9B3AD&quot;},
+                                        &quot;smooth&quot;: true,
+                                        &quot;areaStyle&quot;: {&quot;color&quot;: &quot;rgba(217, 179, 173, 0.1)&quot;}
+                                    }]
+                                }, width: 300px, height: 160px" src="https://static.paraflowcontent.com/public/resource/image/f268cbea-e938-45f5-9bf2-c927518ead26.svg" placeholder="https://via.placeholder.com/300x160" width="300px" height="160px">
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+
+
+</body></html>

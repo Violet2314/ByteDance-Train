@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply font-base text-text-primary bg-bg-page;
+  background: radial-gradient(circle at 50% 20%, rgba(161, 196, 147, 0.10) 0%, transparent 60%), radial-gradient(circle at 85% 75%, rgba(210, 190, 165, 0.08) 0%, transparent 55%), #FDFCF9;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-primary-base/20 rounded-full;
+}
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-primary-base/40;
+}
