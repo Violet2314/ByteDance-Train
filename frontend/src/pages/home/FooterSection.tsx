@@ -71,7 +71,7 @@ export default function FooterSection() {
   }, [])
 
   return (
-    <section ref={sectionRef} className="min-h-screen bg-[#74B868] relative flex flex-col justify-between overflow-hidden font-mono">
+    <section id="about" ref={sectionRef} className="min-h-screen bg-[#74B868] relative flex flex-col justify-between overflow-hidden font-mono">
       
       {/* Industrial Blueprint Overlay */}
       <div className="absolute inset-0 pointer-events-none opacity-20">

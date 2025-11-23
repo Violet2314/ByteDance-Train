@@ -216,7 +216,7 @@ export default function AdvantagesSection() {
   ]
 
   return (
-    <section ref={horizontalSectionRef} className="h-screen bg-[#0B0F19] relative overflow-hidden flex items-center font-mono">
+    <section id="solutions" ref={horizontalSectionRef} className="h-screen bg-[#0B0F19] relative overflow-hidden flex items-center font-mono">
       <GridBackground />
       
       {/* Right Fade / White Edge Indicator */}

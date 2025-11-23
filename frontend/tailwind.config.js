@@ -17,7 +17,7 @@ export default {
             primary: '#FDFCFA',
             secondary: '#FEFDFB',
           },
-          page: '#FDFCF9',
+          page: '#F8F9FB',
         },
         text: {
           primary: '#3A3A3A',

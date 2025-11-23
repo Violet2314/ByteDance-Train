@@ -1,11 +1,10 @@
 import React, { useState } from 'react'
-import { Table, Tag, Button, Input, Select, Space, Card } from 'antd'
-import { Search, Filter, Eye, Truck } from 'lucide-react'
+import { Table, Button, Input, Select, ConfigProvider } from 'antd'
+import { Search, Truck, Package, RefreshCw } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useGetOrdersQuery } from '../services/api'
 import type { Order } from '@logistics/shared'
 import dayjs from 'dayjs'
-import { motion } from 'framer-motion'
 
 export default function MerchantDashboard() {
   const [status, setStatus] = useState<string | undefined>(undefined)
@@ -17,15 +16,15 @@ export default function MerchantDashboard() {
       title: '订单号',
       dataIndex: 'id',
       key: 'id',
-      render: (text: string) => <span className="font-medium text-text-primary">{text}</span>,
+      render: (text: string) => <span className="font-mono font-bold text-[#0B0F19]">{text}</span>,
     },
     {
-      title: '收货人',
+      title: '收件人',
       key: 'recipient',
       render: (_: any, record: Order) => (
         <div className="flex flex-col">
-          <span className="text-text-primary font-medium">{record.recipient.name}</span>
-          <span className="text-text-tertiary text-xs">{record.recipient.phone}</span>
+          <span className="font-bold text-gray-800">{record.recipient.name}</span>
+          <span className="text-gray-400 text-xs font-mono">{record.recipient.phone}</span>
         </div>
       ),
     },
@@ -33,99 +32,117 @@ export default function MerchantDashboard() {
       title: '金额',
       dataIndex: 'amount',
       key: 'amount',
-      render: (amount: number) => <span className="font-medium">¥{amount.toFixed(2)}</span>,
+      render: (amount: number) => <span className="font-mono font-medium">¥{amount.toFixed(2)}</span>,
     },
     {
       title: '状态',
       dataIndex: 'status',
       key: 'status',
       render: (status: string) => {
-        const colors: Record<string, string> = {
-          pending: 'warning',
-          in_transit: 'processing',
-          signed: 'success',
+        const config: Record<string, { color: string; label: string; bg: string }> = {
+          pending: { color: '#F59E0B', label: '待处理', bg: '#FEF3C7' },
+          in_transit: { color: '#3B82F6', label: '运输中', bg: '#DBEAFE' },
+          signed: { color: '#10B981', label: '已送达', bg: '#D1FAE5' },
         }
-        const labels: Record<string, string> = {
-          pending: '待发货',
-          in_transit: '运输中',
-          signed: '已签收',
-        }
-        return <Tag color={colors[status]}>{labels[status]}</Tag>
+        const conf = config[status]
+        return (
+          <span className="px-3 py-1 rounded-full text-xs font-bold tracking-wider" style={{ color: conf.color, backgroundColor: conf.bg }}>
+            {conf.label}
+          </span>
+        )
       },
     },
     {
-      title: '创建时间',
+      title: '日期',
       dataIndex: 'createdAt',
       key: 'createdAt',
-      render: (date: string) => <span className="text-text-secondary">{dayjs(date).format('YYYY-MM-DD HH:mm')}</span>,
+      render: (date: string) => <span className="text-gray-400 font-mono text-xs">{dayjs(date).format('YYYY-MM-DD HH:mm')}</span>,
     },
     {
       title: '操作',
       key: 'action',
       render: (_: any, record: Order) => (
-        <Space size="middle">
-          <Link to={`/merchant/orders/${record.id}`}>
-            <Button type="text" icon={<Eye size={16} />} className="text-primary-base hover:text-primary-darker">详情</Button>
-          </Link>
-        </Space>
+        <Link to={`/merchant/orders/${record.id}`}>
+          <Button type="text" size="small" className="text-[#74B868] hover:text-[#5da052] hover:bg-[#74B868]/10 font-medium">
+            查看
+          </Button>
+        </Link>
       ),
     },
   ]
 
   return (
-    <motion.div 
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="space-y-6"
-    >
-      <div className="flex items-center justify-between">
+    <div className="space-y-8">
+      {/* Header Section */}
+      <div className="flex items-end justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-text-primary">订单管理</h1>
-          <p className="text-text-tertiary mt-1">查看和管理所有订单发货状态</p>
+          <div className="flex items-center gap-2 text-[#74B868] mb-2">
+             <Package size={20} />
+             <span className="font-mono text-xs tracking-widest uppercase">物流控制台</span>
+          </div>
+          <h1 className="text-4xl font-black text-[#0B0F19] tracking-tight">订单管理</h1>
         </div>
-        <Button type="primary" icon={<Truck size={16} />} className="bg-primary-base hover:bg-primary-darker border-none shadow-lg shadow-primary-base/30">
-          批量发货
-        </Button>
+        <div className="flex gap-3">
+           <Button icon={<RefreshCw size={16} />} className="rounded-xl border-gray-300 hover:border-[#74B868] hover:text-[#74B868]" />
+           <Button type="primary" icon={<Truck size={16} />} className="bg-[#0B0F19] hover:!bg-[#2a3142] border-none h-10 px-6 rounded-xl font-bold shadow-lg shadow-[#0B0F19]/20">
+             批量发货
+           </Button>
+        </div>
       </div>
 
-      <Card className="border-none shadow-subtle bg-white/80 backdrop-blur-sm">
-        <div className="flex flex-wrap gap-4 mb-6">
+      {/* Filter Bar */}
+      <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-200 flex flex-wrap gap-4 items-center">
           <Input 
             prefix={<Search size={16} className="text-gray-400" />} 
-            placeholder="搜索订单号/收货人" 
-            className="w-64" 
+            placeholder="搜索订单号 / 姓名" 
+            className="w-64 h-10 rounded-xl bg-gray-50 border-transparent hover:bg-white hover:border-[#74B868] focus:bg-white focus:border-[#74B868] transition-all" 
           />
           <Select 
-            placeholder="订单状态" 
+            placeholder="状态" 
             allowClear 
-            className="w-40"
+            className="w-40 h-10"
             onChange={setStatus}
             options={[
-              { value: 'pending', label: '待发货' },
+              { value: 'pending', label: '待处理' },
               { value: 'in_transit', label: '运输中' },
-              { value: 'signed', label: '已签收' },
+              { value: 'signed', label: '已送达' },
             ]}
           />
           <Select 
             defaultValue="createdAt" 
-            className="w-40"
+            className="w-40 h-10"
             onChange={setSort}
             options={[
-              { value: 'createdAt', label: '按时间排序' },
-              { value: 'amount', label: '按金额排序' },
+              { value: 'createdAt', label: '最新优先' },
+              { value: 'amount', label: '金额最高' },
             ]}
           />
-        </div>
+      </div>
 
-        <Table 
-          columns={columns} 
-          dataSource={data?.data} 
-          rowKey="id" 
-          loading={isLoading}
-          pagination={{ pageSize: 10 }}
-        />
-      </Card>
-    </motion.div>
+      {/* Data Table */}
+      <div className="bg-white rounded-3xl shadow-xl shadow-gray-100/50 border border-gray-200 overflow-hidden">
+        <ConfigProvider
+          theme={{
+            components: {
+              Table: {
+                headerBg: '#F8F9FB',
+                headerColor: '#6B7280',
+                headerSplitColor: 'transparent',
+                rowHoverBg: '#F0FDF4',
+              }
+            }
+          }}
+        >
+          <Table 
+            columns={columns} 
+            dataSource={data?.data} 
+            rowKey="id" 
+            loading={isLoading}
+            pagination={{ pageSize: 8 }}
+            className="[&_.ant-table-thead_th]:!font-bold [&_.ant-table-thead_th]:!text-xs [&_.ant-table-thead_th]:!tracking-wider"
+          />
+        </ConfigProvider>
+      </div>
+    </div>
   )
 }

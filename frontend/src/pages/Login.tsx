@@ -1,28 +1,63 @@
-import React, { useState } from 'react'
+import React, { useState, useRef, useLayoutEffect } from 'react'
 import { Button, Input, Checkbox, Form, message } from 'antd'
-import { User, Lock, Eye, EyeOff, Truck } from 'lucide-react'
+import { User, Lock, Eye, EyeOff, ArrowRight, Truck, Globe, Zap, Shield } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import gsap from 'gsap'
+import Navbar from '../components/Navbar'
 
 export default function Login() {
   const navigate = useNavigate()
   const [role, setRole] = useState<'user' | 'merchant'>('user')
   const [loading, setLoading] = useState(false)
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  useLayoutEffect(() => {
+    const ctx = gsap.context(() => {
+      // Global Background Orbs Animation
+      gsap.to(".bg-orb", {
+        x: "random(-100, 100)",
+        y: "random(-50, 50)",
+        scale: "random(0.8, 1.2)",
+        duration: "random(10, 20)",
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut",
+        stagger: 2
+      })
+
+      // Artistic Background Animation (Left Side Elements)
+      gsap.to(".art-shape", {
+        y: "random(-30, 30)",
+        rotation: "random(-15, 15)",
+        duration: "random(4, 7)",
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut",
+        stagger: 0.2
+      })
+      
+      // Subtle pulse for the brand color elements
+      gsap.to(".brand-pulse", {
+        boxShadow: "0 0 30px rgba(116, 184, 104, 0.4)",
+        duration: 2,
+        repeat: -1,
+        yoyo: true
+      })
+    }, containerRef)
+    return () => ctx.revert()
+  }, [])
 
   const onFinish = async (values: any) => {
     setLoading(true)
     try {
       console.log('Login values:', { ...values, role })
-      // 模拟登录延迟
       await new Promise(resolve => setTimeout(resolve, 800))
-      
       message.success('登录成功')
-      
-      // 根据角色跳转
       if (role === 'merchant') {
         navigate('/merchant')
       } else {
-        navigate('/tracking/search') // 用户端跳转到查询页
+        navigate('/tracking')
       }
     } catch (error) {
       message.error('登录失败，请重试')
@@ -32,173 +67,150 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen flex w-full bg-white">
-      {/* Left Side - Branding & Illustration */}
-      <div className="hidden lg:flex lg:w-1/2 bg-[#F8F9FB] flex-col items-center justify-center p-12 relative overflow-hidden">
-        <div className="z-10 flex flex-col items-center text-center max-w-lg">
-          {/* Logo Area */}
-          <div className="flex items-center gap-3 mb-8">
-            <div className="w-12 h-12 bg-[#74B868] rounded-xl flex items-center justify-center text-white shadow-lg shadow-[#74B868]/20">
-              <Truck size={24} />
-            </div>
-            <div className="text-left">
-              <h1 className="text-2xl font-bold text-gray-800 leading-none">物流配送</h1>
-              <p className="text-xs text-gray-500 tracking-wider">可视化平台</p>
-            </div>
-          </div>
-
-          {/* Slogan */}
-          <div className="mb-12 space-y-2">
-            <h2 className="text-xl text-gray-600 font-medium">智能物流，高效配送</h2>
-            <h2 className="text-xl text-gray-600 font-medium">全程可视，实时追踪</h2>
-          </div>
-
-          {/* Dashboard Illustration Placeholder */}
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="w-full aspect-[4/3] bg-[#DCE5F0] rounded-2xl shadow-2xl border-4 border-white overflow-hidden relative group"
-          >
-            {/* Mock UI Elements inside the illustration */}
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-slate-100 p-4">
-               {/* Header Mock */}
-               <div className="h-8 bg-white rounded-lg shadow-sm mb-4 w-full flex items-center px-3 gap-2">
-                  <div className="w-3 h-3 rounded-full bg-red-400"></div>
-                  <div className="w-3 h-3 rounded-full bg-yellow-400"></div>
-                  <div className="w-3 h-3 rounded-full bg-green-400"></div>
-               </div>
-               {/* Content Mock */}
-               <div className="flex gap-4 h-[calc(100%-3rem)]">
-                  <div className="w-1/4 bg-white rounded-lg shadow-sm h-full p-2 space-y-2">
-                    <div className="h-20 bg-blue-100 rounded w-full"></div>
-                    <div className="h-8 bg-slate-100 rounded w-full"></div>
-                    <div className="h-8 bg-slate-100 rounded w-full"></div>
-                  </div>
-                  <div className="flex-1 bg-white rounded-lg shadow-sm h-full relative overflow-hidden">
-                    {/* Map Mock */}
-                    <div className="absolute inset-0 bg-[#EBF1F6] flex items-center justify-center">
-                      <div className="text-slate-300 font-bold text-4xl opacity-20">MAP VIEW</div>
-                      {/* Dots representing locations */}
-                      <div className="absolute top-1/3 left-1/4 w-3 h-3 bg-[#74B868] rounded-full shadow-lg shadow-[#74B868]/40 animate-pulse"></div>
-                      <div className="absolute bottom-1/3 right-1/3 w-3 h-3 bg-orange-400 rounded-full shadow-lg shadow-orange-400/40"></div>
-                      {/* Connecting line */}
-                      <svg className="absolute inset-0 w-full h-full pointer-events-none">
-                        <path d="M 200 200 Q 400 100 600 300" stroke="#94A3B8" strokeWidth="2" strokeDasharray="4 4" fill="none" />
-                      </svg>
-                    </div>
-                  </div>
-               </div>
-            </div>
-          </motion.div>
-        </div>
+    <div ref={containerRef} className="min-h-screen w-full bg-white relative overflow-hidden flex flex-col font-sans selection:bg-[#74B868] selection:text-white">
+      
+      {/* Global Ambient Background (Green Orbs) */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+         <div className="bg-orb absolute top-[-10%] left-[-10%] w-[600px] h-[600px] rounded-full bg-[#74B868]/5 blur-[120px]" />
+         <div className="bg-orb absolute top-[40%] right-[-5%] w-[500px] h-[500px] rounded-full bg-[#74B868]/10 blur-[100px]" />
+         <div className="bg-orb absolute bottom-[-20%] left-[30%] w-[700px] h-[700px] rounded-full bg-[#74B868]/5 blur-[150px]" />
       </div>
 
-      {/* Right Side - Login Form */}
-      <div className="w-full lg:w-1/2 flex flex-col items-center justify-center p-8 md:p-24 bg-white">
-        <div className="w-full max-w-[400px]">
-          <div className="text-center mb-10">
-            <h2 className="text-3xl font-bold text-gray-800 mb-3">欢迎登录</h2>
-            <p className="text-gray-400 text-sm">请输入您的账号信息</p>
-          </div>
+      <Navbar role="guest" enableEntranceAnimation={true} />
+      
+      <div className="flex-1 flex pt-16 relative z-10">
+        {/* Left Side - Artistic Visual */}
+        <div className="hidden lg:flex w-1/2 relative items-center justify-center p-12">
+           {/* Abstract Shapes (Local) */}
+           <div className="absolute inset-0 overflow-hidden pointer-events-none">
+              <div className="art-shape absolute top-[10%] left-[10%] w-64 h-64 bg-gradient-to-br from-[#74B868]/10 to-transparent rounded-full blur-3xl" />
+              <div className="art-shape absolute bottom-[20%] right-[10%] w-96 h-96 bg-gradient-to-tr from-blue-500/5 to-transparent rounded-full blur-3xl" />
+           </div>
 
-          {/* Role Switcher */}
-          <div className="flex justify-center gap-12 mb-10 border-b border-gray-100 pb-2">
-            <button
-              onClick={() => setRole('user')}
-              className={`pb-2 text-sm font-medium transition-all relative ${
-                role === 'user' ? 'text-gray-800' : 'text-gray-400 hover:text-gray-600'
-              }`}
-            >
-              用户端
-              {role === 'user' && (
-                <motion.div layoutId="activeTab" className="absolute bottom-[-9px] left-0 right-0 h-[2px] bg-[#74B868]" />
-              )}
-            </button>
-            <button
-              onClick={() => setRole('merchant')}
-              className={`pb-2 text-sm font-medium transition-all relative ${
-                role === 'merchant' ? 'text-gray-800' : 'text-gray-400 hover:text-gray-600'
-              }`}
-            >
-              商家端
-              {role === 'merchant' && (
-                <motion.div layoutId="activeTab" className="absolute bottom-[-9px] left-0 right-0 h-[2px] bg-[#74B868]" />
-              )}
-            </button>
-          </div>
-
-          <Form
-            name="login"
-            initialValues={{ remember: true }}
-            onFinish={onFinish}
-            layout="vertical"
-            size="large"
-            className="space-y-4"
-          >
-            <div className="space-y-1">
-              <label className="text-xs text-gray-500 font-medium ml-1">账号</label>
-              <Form.Item
-                name="username"
-                rules={[{ required: true, message: '请输入账号!' }]}
-                className="mb-4"
+           {/* Content Container */}
+           <div className="relative z-10 max-w-lg">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8 }}
               >
-                <Input 
-                  prefix={<User size={18} className="text-gray-400 mr-2" />} 
-                  placeholder="请输入用户名或邮箱" 
-                  className="rounded-full bg-gray-50 border-gray-200 hover:border-[#74B868] focus:border-[#74B868] h-12 px-4"
-                />
-              </Form.Item>
-            </div>
+                <div className="w-16 h-16 bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl shadow-[#74B868]/10 flex items-center justify-center mb-8 brand-pulse border border-white/50">
+                   <Truck size={32} className="text-[#74B868]" />
+                </div>
+                <h1 className="text-5xl font-bold text-gray-900 mb-6 tracking-tight">
+                  Logistics<br/>
+                  <span className="text-[#74B868]">Reimagined.</span>
+                </h1>
+                <p className="text-gray-500 text-lg leading-relaxed mb-12">
+                  Seamlessly connect your supply chain with our next-generation visualization platform.
+                </p>
+                
+                {/* Feature List */}
+                <div className="space-y-6">
+                   {[
+                     { title: "Real-time Tracking", desc: "Precision down to the meter", icon: <Globe size={20} /> },
+                     { title: "Smart Analytics", desc: "AI-driven insights", icon: <Zap size={20} /> },
+                     { title: "Secure Delivery", desc: "Bank-grade encryption", icon: <Shield size={20} /> }
+                   ].map((item, idx) => (
+                     <motion.div 
+                       key={idx}
+                       initial={{ opacity: 0, x: -20 }}
+                       animate={{ opacity: 1, x: 0 }}
+                       transition={{ delay: 0.4 + idx * 0.1 }}
+                       className="flex items-center gap-4 group"
+                     >
+                        <div className="w-10 h-10 rounded-full bg-white/80 backdrop-blur-sm border border-gray-100 flex items-center justify-center text-gray-400 group-hover:text-[#74B868] group-hover:border-[#74B868] transition-all shadow-sm">
+                           {item.icon}
+                        </div>
+                        <div>
+                           <div className="font-bold text-gray-800">{item.title}</div>
+                           <div className="text-xs text-gray-400">{item.desc}</div>
+                        </div>
+                     </motion.div>
+                   ))}
+                </div>
+              </motion.div>
+           </div>
+        </div>
 
-            <div className="space-y-1">
-              <label className="text-xs text-gray-500 font-medium ml-1">密码</label>
-              <Form.Item
-                name="password"
-                rules={[{ required: true, message: '请输入密码!' }]}
-                className="mb-2"
+        {/* Right Side - Login Form */}
+        <div className="w-full lg:w-1/2 flex items-center justify-center p-8 relative">
+           <motion.div 
+             initial={{ opacity: 0, y: 20 }}
+             animate={{ opacity: 1, y: 0 }}
+             transition={{ duration: 0.6, delay: 0.2 }}
+             className="w-full max-w-md bg-white/80 backdrop-blur-xl p-8 rounded-3xl border border-gray-200 shadow-2xl shadow-gray-200/50"
+           >
+              <div className="text-center mb-10">
+                 <h2 className="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h2>
+                 <p className="text-gray-500">Please enter your details to sign in</p>
+              </div>
+
+              {/* Role Tabs */}
+              <div className="bg-gray-100/50 p-1 rounded-xl flex mb-8">
+                 {(['user', 'merchant'] as const).map((r) => (
+                   <button
+                     key={r}
+                     onClick={() => setRole(r)}
+                     className={`flex-1 py-3 text-sm font-bold rounded-lg transition-all duration-300 ${
+                       role === r 
+                         ? 'bg-white text-[#74B868] shadow-sm' 
+                         : 'text-gray-400 hover:text-gray-600'
+                     }`}
+                   >
+                     {r === 'user' ? 'User Portal' : 'Merchant Portal'}
+                   </button>
+                 ))}
+              </div>
+
+              <Form
+                name="login"
+                onFinish={onFinish}
+                layout="vertical"
+                size="large"
+                className="space-y-4"
               >
-                <Input.Password 
-                  prefix={<Lock size={18} className="text-gray-400 mr-2" />} 
-                  placeholder="请输入密码" 
-                  iconRender={(visible) => (visible ? <Eye size={18} className="text-gray-400" /> : <EyeOff size={18} className="text-gray-400" />)}
-                  className="rounded-full bg-gray-50 border-gray-200 hover:border-[#74B868] focus:border-[#74B868] h-12 px-4"
-                />
-              </Form.Item>
-            </div>
+                <Form.Item
+                  name="username"
+                  rules={[{ required: true, message: 'Please input your username!' }]}
+                >
+                  <Input 
+                    prefix={<User size={18} className="text-gray-400" />} 
+                    placeholder="Username" 
+                    className="h-12 rounded-xl bg-white/50 border-gray-200 hover:bg-white hover:border-[#74B868] focus:bg-white focus:border-[#74B868] transition-all"
+                  />
+                </Form.Item>
 
-            <div className="flex items-center justify-between mb-8">
-              <Form.Item name="remember" valuePropName="checked" noStyle>
-                <Checkbox className="text-gray-400 text-sm hover:text-[#74B868]">记住我</Checkbox>
-              </Form.Item>
-              <a className="text-[#74B868] hover:text-[#5da052] font-medium text-sm" href="#">
-                忘记密码?
-              </a>
-            </div>
+                <Form.Item
+                  name="password"
+                  rules={[{ required: true, message: 'Please input your password!' }]}
+                >
+                  <Input.Password 
+                    prefix={<Lock size={18} className="text-gray-400" />} 
+                    placeholder="Password" 
+                    iconRender={(visible) => (visible ? <Eye size={18} className="text-gray-400" /> : <EyeOff size={18} className="text-gray-400" />)}
+                    className="h-12 rounded-xl bg-white/50 border-gray-200 hover:bg-white hover:border-[#74B868] focus:bg-white focus:border-[#74B868] transition-all"
+                  />
+                </Form.Item>
 
-            <Form.Item className="mb-0">
-              <Button 
-                type="primary" 
-                htmlType="submit" 
-                loading={loading}
-                block 
-                className="h-12 rounded-full bg-[#74B868] hover:!bg-[#5da052] border-none shadow-lg shadow-[#74B868]/30 font-medium text-lg tracking-wide"
-              >
-                登 录
-              </Button>
-            </Form.Item>
-          </Form>
+                <div className="flex items-center justify-between">
+                  <Form.Item name="remember" valuePropName="checked" noStyle>
+                    <Checkbox className="text-gray-500">Remember me</Checkbox>
+                  </Form.Item>
+                  <a className="text-[#74B868] font-medium hover:underline" href="#">Forgot password?</a>
+                </div>
 
-          <div className="mt-16 text-center space-y-4">
-            <p className="text-xs text-gray-400">
-              © 2025 物流配送可视化平台 · 保留所有权利
-            </p>
-            <div className="flex justify-center gap-4 text-xs text-gray-400">
-              <a href="#" className="hover:text-gray-600 transition-colors">使用条款</a>
-              <span className="text-gray-300">|</span>
-              <a href="#" className="hover:text-gray-600 transition-colors">隐私政策</a>
-            </div>
-          </div>
+                <Button 
+                  type="primary" 
+                  htmlType="submit" 
+                  loading={loading}
+                  block 
+                  className="h-12 rounded-xl bg-[#74B868] hover:!bg-[#63a055] border-none text-lg font-bold shadow-lg shadow-[#74B868]/20 mt-4"
+                >
+                  Sign In
+                </Button>
+              </Form>
+           </motion.div>
         </div>
       </div>
     </div>
