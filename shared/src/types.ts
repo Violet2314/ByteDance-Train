@@ -33,6 +33,20 @@ export interface OrderStatusPayload {
   ts: number
 }
 
+export interface User {
+  id: string
+  username: string
+  role: 'user' | 'merchant' | 'admin'
+  avatar?: string
+}
+
+export interface Merchant {
+  id: string
+  name: string
+  contact: string
+  address: string
+}
+
 // WebSocket Events
 export interface ServerToClientEvents {
   'track:update': (payload: TrackPoint) => void;

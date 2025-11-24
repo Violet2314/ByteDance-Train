@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import gsap from 'gsap'
 import Navbar from '../components/Navbar'
+import { mockUser, mockMerchant } from '../mocks/data'
 
 export default function Login() {
   const navigate = useNavigate()
@@ -52,11 +53,16 @@ export default function Login() {
     setLoading(true)
     try {
       console.log('Login values:', { ...values, role })
+      // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 800))
-      message.success('登录成功')
+      
       if (role === 'merchant') {
+        localStorage.setItem('user', JSON.stringify(mockMerchant))
+        message.success('商家登录成功')
         navigate('/merchant')
       } else {
+        localStorage.setItem('user', JSON.stringify(mockUser))
+        message.success('用户登录成功')
         navigate('/tracking')
       }
     } catch (error) {
@@ -98,19 +104,19 @@ export default function Login() {
                    <Truck size={32} className="text-[#74B868]" />
                 </div>
                 <h1 className="text-5xl font-bold text-gray-900 mb-6 tracking-tight">
-                  Logistics<br/>
-                  <span className="text-[#74B868]">Reimagined.</span>
+                  重塑<br/>
+                  <span className="text-[#74B868]">物流体验</span>
                 </h1>
                 <p className="text-gray-500 text-lg leading-relaxed mb-12">
-                  Seamlessly connect your supply chain with our next-generation visualization platform.
+                  通过我们的下一代可视化平台无缝连接您的供应链。
                 </p>
                 
                 {/* Feature List */}
                 <div className="space-y-6">
                    {[
-                     { title: "Real-time Tracking", desc: "Precision down to the meter", icon: <Globe size={20} /> },
-                     { title: "Smart Analytics", desc: "AI-driven insights", icon: <Zap size={20} /> },
-                     { title: "Secure Delivery", desc: "Bank-grade encryption", icon: <Shield size={20} /> }
+                     { title: "实时追踪", desc: "精确到米", icon: <Globe size={20} /> },
+                     { title: "智能分析", desc: "AI 驱动的洞察", icon: <Zap size={20} /> },
+                     { title: "安全交付", desc: "银行级加密", icon: <Shield size={20} /> }
                    ].map((item, idx) => (
                      <motion.div 
                        key={idx}
@@ -142,8 +148,8 @@ export default function Login() {
              className="w-full max-w-md bg-white/80 backdrop-blur-xl p-8 rounded-3xl border border-gray-200 shadow-2xl shadow-gray-200/50"
            >
               <div className="text-center mb-10">
-                 <h2 className="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h2>
-                 <p className="text-gray-500">Please enter your details to sign in</p>
+                 <h2 className="text-3xl font-bold text-gray-900 mb-2">欢迎回来</h2>
+                 <p className="text-gray-500">请输入您的详细信息以登录</p>
               </div>
 
               {/* Role Tabs */}
@@ -158,7 +164,7 @@ export default function Login() {
                          : 'text-gray-400 hover:text-gray-600'
                      }`}
                    >
-                     {r === 'user' ? 'User Portal' : 'Merchant Portal'}
+                     {r === 'user' ? '用户入口' : '商家入口'}
                    </button>
                  ))}
               </div>
@@ -172,22 +178,22 @@ export default function Login() {
               >
                 <Form.Item
                   name="username"
-                  rules={[{ required: true, message: 'Please input your username!' }]}
+                  rules={[{ required: true, message: '请输入用户名！' }]}
                 >
                   <Input 
                     prefix={<User size={18} className="text-gray-400" />} 
-                    placeholder="Username" 
+                    placeholder="用户名" 
                     className="h-12 rounded-xl bg-white/50 border-gray-200 hover:bg-white hover:border-[#74B868] focus:bg-white focus:border-[#74B868] transition-all"
                   />
                 </Form.Item>
 
                 <Form.Item
                   name="password"
-                  rules={[{ required: true, message: 'Please input your password!' }]}
+                  rules={[{ required: true, message: '请输入密码！' }]}
                 >
                   <Input.Password 
                     prefix={<Lock size={18} className="text-gray-400" />} 
-                    placeholder="Password" 
+                    placeholder="密码" 
                     iconRender={(visible) => (visible ? <Eye size={18} className="text-gray-400" /> : <EyeOff size={18} className="text-gray-400" />)}
                     className="h-12 rounded-xl bg-white/50 border-gray-200 hover:bg-white hover:border-[#74B868] focus:bg-white focus:border-[#74B868] transition-all"
                   />
@@ -195,9 +201,9 @@ export default function Login() {
 
                 <div className="flex items-center justify-between">
                   <Form.Item name="remember" valuePropName="checked" noStyle>
-                    <Checkbox className="text-gray-500">Remember me</Checkbox>
+                    <Checkbox className="text-gray-500">记住我</Checkbox>
                   </Form.Item>
-                  <a className="text-[#74B868] font-medium hover:underline" href="#">Forgot password?</a>
+                  <a className="text-[#74B868] font-medium hover:underline" href="#">忘记密码？</a>
                 </div>
 
                 <Button 
@@ -207,7 +213,7 @@ export default function Login() {
                   block 
                   className="h-12 rounded-xl bg-[#74B868] hover:!bg-[#63a055] border-none text-lg font-bold shadow-lg shadow-[#74B868]/20 mt-4"
                 >
-                  Sign In
+                  登录
                 </Button>
               </Form>
            </motion.div>

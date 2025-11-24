@@ -144,23 +144,23 @@ export default function HeroSection() {
         <div className="lg:col-span-6 space-y-8 relative">
           <div className="hero-content-item inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-gray-200 shadow-sm text-[#74B868] text-xs font-mono tracking-widest uppercase">
             <span className="w-2 h-2 rounded-full bg-[#74B868] animate-pulse" />
-            System Online
+            系统在线
           </div>
           
           <h1 className="hero-content-item text-6xl md:text-7xl lg:text-8xl font-black text-gray-900 tracking-tighter leading-[0.9]">
-            GLOBAL <br/>
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#74B868] to-emerald-600">SCALE</span>
+            物流配送 <br/>
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#74B868] to-emerald-600">可视化平台</span>
           </h1>
           
           <p className="hero-content-item text-xl text-gray-500 max-w-lg leading-relaxed font-light">
-            Redefining logistics with AI-driven precision. 
-            <strong className="text-gray-800 font-semibold"> Faster, Smarter, Greener.</strong>
+            可视化物流管理。
+            <strong className="text-gray-800 font-semibold"> 更快、更智能。</strong>
           </p>
           
           <div className="hero-content-item flex flex-wrap gap-4 pt-4">
-            <Link to="/register">
+            <Link to="/login">
               <Button type="primary" size="large" className="h-14 px-10 rounded-full bg-[#74B868] hover:bg-[#63a055] border-none text-lg font-bold shadow-xl shadow-[#74B868]/20 flex items-center gap-2 group transition-all hover:scale-105">
-                Start Now 
+                立即开始 
                 <ArrowRight className="group-hover:translate-x-1 transition-transform" size={20} />
               </Button>
             </Link>
@@ -171,7 +171,7 @@ export default function HeroSection() {
                  ))}
                </div>
                <div className="text-sm text-gray-500">
-                 <span className="font-bold text-gray-900">2k+</span> Active Users
+                 <span className="font-bold text-gray-900">2k+</span> 活跃用户
                </div>
             </div>
           </div>
@@ -193,8 +193,8 @@ export default function HeroSection() {
                       <Truck size={20} />
                     </div>
                     <div>
-                      <div className="text-xs font-bold text-gray-900">FLEET STATUS</div>
-                      <div className="text-[10px] text-gray-400 font-mono">LIVE TRACKING</div>
+                      <div className="text-xs font-bold text-gray-900">车队状态</div>
+                      <div className="text-[10px] text-gray-400 font-mono">实时追踪</div>
                     </div>
                   </div>
                   <div className="flex gap-1">
@@ -240,22 +240,22 @@ export default function HeroSection() {
                    >
                       <div className="flex items-center gap-2 mb-1">
                         <Box size={12} className="text-[#74B868]" />
-                        <span className="text-[10px] font-bold text-gray-800">Package #8291</span>
+                        <span className="text-[10px] font-bold text-gray-800">包裹 #8291</span>
                       </div>
-                      <div className="text-[10px] text-gray-400">Arriving in 25 min</div>
+                      <div className="text-[10px] text-gray-400">25分钟后送达</div>
                    </motion.div>
                 </div>
 
                 {/* Stats Grid */}
                 <div className="grid grid-cols-2 gap-4">
                   <div className="p-4 rounded-2xl bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-                    <div className="text-gray-400 text-xs mb-1">Efficiency</div>
+                    <div className="text-gray-400 text-xs mb-1">效率</div>
                     <div className="text-xl font-bold text-gray-900 flex items-center gap-2">
                       98% <span className="text-[10px] text-[#74B868] bg-[#74B868]/10 px-1.5 py-0.5 rounded">+2.4%</span>
                     </div>
                   </div>
                   <div className="p-4 rounded-2xl bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-                    <div className="text-gray-400 text-xs mb-1">Deliveries</div>
+                    <div className="text-gray-400 text-xs mb-1">配送量</div>
                     <div className="text-xl font-bold text-gray-900">1,284</div>
                   </div>
                 </div>
@@ -268,7 +268,7 @@ export default function HeroSection() {
               >
                 <div className="flex items-center gap-3 mb-3">
                   <div className="p-2 bg-blue-50 rounded-lg text-blue-500 bg-blue-50"><Globe size={18} /></div>
-                  <span className="text-xs font-bold text-gray-800">Global Reach</span>
+                  <span className="text-xs font-bold text-gray-800">物流管理</span>
                 </div>
                 <div className="flex -space-x-2">
                    {[1,2,3,4].map(i => (
@@ -285,7 +285,7 @@ export default function HeroSection() {
                 className="floating-card absolute bottom-20 -left-8 w-44 p-4 bg-white/80 backdrop-blur-md border border-white/60 rounded-2xl shadow-xl z-10"
               >
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-bold text-gray-800">Revenue</span>
+                  <span className="text-xs font-bold text-gray-800">营收</span>
                   <BarChart3 size={14} className="text-gray-400" />
                 </div>
                 <div className="h-16 flex items-end gap-1">

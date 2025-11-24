@@ -21,7 +21,7 @@ export default function TrackingMap({ points, currentPoint, startPoint, endPoint
     let AMap: any = null;
 
     AMapLoader.load({
-      key: 'YOUR_AMAP_KEY', // 替换为你的高德地图 Key
+      key: '6d736976336dac732baf2fe3d00c4254', // 替换为你的高德地图 Key
       version: '2.0',
       plugins: ['AMap.MoveAnimation', 'AMap.Polyline'],
     }).then((AMapLoaded) => {
@@ -64,23 +64,7 @@ export default function TrackingMap({ points, currentPoint, startPoint, endPoint
       }
       
       // Start/End Markers
-      if (startPoint && !startMarkerInstance.current) {
-         startMarkerInstance.current = new AMap.Marker({
-            position: [startPoint.lng, startPoint.lat],
-            content: '<div style="background:#7CAA6D;width:12px;height:12px;border-radius:50%;border:2px solid white;box-shadow:0 2px 4px rgba(0,0,0,0.2);"></div>',
-            offset: new AMap.Pixel(-6, -6),
-         })
-         mapInstance.current.add(startMarkerInstance.current)
-      }
-      
-      if (endPoint && !endMarkerInstance.current) {
-         endMarkerInstance.current = new AMap.Marker({
-            position: [endPoint.lng, endPoint.lat],
-            content: '<div style="background:#D9B3AD;width:12px;height:12px;border-radius:50%;border:2px solid white;box-shadow:0 2px 4px rgba(0,0,0,0.2);"></div>',
-            offset: new AMap.Pixel(-6, -6),
-         })
-         mapInstance.current.add(endMarkerInstance.current)
-      }
+      updateMarkers(AMap);
 
     }).catch(e => {
       console.error(e)
@@ -92,9 +76,54 @@ export default function TrackingMap({ points, currentPoint, startPoint, endPoint
         mapInstance.current = null
         polylineInstance.current = null
         markerInstance.current = null
+        startMarkerInstance.current = null
+        endMarkerInstance.current = null
       }
     }
   }, [])
+
+  // Helper to update markers
+  const updateMarkers = (AMap: any) => {
+      if (!mapInstance.current || !AMap) return;
+
+      // Start Marker
+      if (startPoint) {
+          if (!startMarkerInstance.current) {
+             startMarkerInstance.current = new AMap.Marker({
+                position: [startPoint.lng, startPoint.lat],
+                content: '<div style="background:#3B82F6;width:12px;height:12px;border-radius:50%;border:2px solid white;box-shadow:0 2px 4px rgba(0,0,0,0.2);"></div>',
+                offset: new AMap.Pixel(-6, -6),
+                zIndex: 100,
+             })
+             mapInstance.current.add(startMarkerInstance.current)
+          } else {
+             startMarkerInstance.current.setPosition([startPoint.lng, startPoint.lat])
+          }
+      }
+
+      // End Marker
+      if (endPoint) {
+          if (!endMarkerInstance.current) {
+             endMarkerInstance.current = new AMap.Marker({
+                position: [endPoint.lng, endPoint.lat],
+                content: '<div style="background:#3B82F6;width:12px;height:12px;border-radius:50%;border:2px solid white;box-shadow:0 2px 4px rgba(0,0,0,0.2);"></div>',
+                offset: new AMap.Pixel(-6, -6),
+                zIndex: 100,
+             })
+             mapInstance.current.add(endMarkerInstance.current)
+          } else {
+             endMarkerInstance.current.setPosition([endPoint.lng, endPoint.lat])
+          }
+      }
+  }
+
+  // Update markers when props change
+  useEffect(() => {
+      if ((window as any).AMap) {
+          updateMarkers((window as any).AMap)
+      }
+  }, [startPoint, endPoint])
+
 
   // Update Polyline and Marker when points change
   useEffect(() => {

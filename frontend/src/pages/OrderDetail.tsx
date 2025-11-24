@@ -1,32 +1,62 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { Button, Tag, Steps, message, Spin } from 'antd'
 import { ArrowLeft, Package, MapPin, User, Truck, CheckCircle, Clock, CreditCard, ShieldCheck } from 'lucide-react'
-import { useGetOrderByIdQuery, useShipOrderMutation } from '../services/api'
+import { mockOrders } from '../mocks/data'
 import dayjs from 'dayjs'
 import { motion } from 'framer-motion'
+
+interface Order {
+  id: string;
+  recipient: {
+    name: string;
+    phone: string;
+  };
+  amount: number;
+  status: string;
+  createdAt: string;
+  address: {
+    text: string;
+    lat: number;
+    lng: number;
+  };
+}
 
 export default function OrderDetail() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
-  const { data, isLoading } = useGetOrderByIdQuery(id!)
-  const [shipOrder, { isLoading: isShipping }] = useShipOrderMutation()
+  const [order, setOrder] = useState<Order | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [isShipping, setIsShipping] = useState(false)
 
-  const order = data?.data
+  useEffect(() => {
+    setIsLoading(true)
+    // Direct mock data fetch without delay
+    const found = mockOrders.find(o => o.id === id) || mockOrders[0]
+    setOrder(found)
+    setIsLoading(false)
+  }, [id])
 
   const handleShip = async () => {
+    setIsShipping(true)
     try {
-      await shipOrder(id!).unwrap()
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 500))
+      if (order) {
+        setOrder({ ...order, status: 'in_transit' })
+      }
       message.success('发货成功')
     } catch (err) {
       message.error('发货失败')
+    } finally {
+      setIsShipping(false)
     }
   }
 
   if (isLoading) return <div className="flex justify-center py-20"><Spin size="large" /></div>
   if (!order) return <div>订单不存在</div>
 
-  const stepStatus = {
+  const stepStatus: Record<string, number> = {
     pending: 0,
     in_transit: 1,
     signed: 2,

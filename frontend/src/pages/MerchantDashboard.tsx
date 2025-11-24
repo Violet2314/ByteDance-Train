@@ -1,15 +1,49 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Table, Button, Input, Select, ConfigProvider } from 'antd'
 import { Search, Truck, Package, RefreshCw } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { useGetOrdersQuery } from '../services/api'
+import { generateMockOrders } from '../mocks/data'
 import type { Order } from '@logistics/shared'
 import dayjs from 'dayjs'
 
 export default function MerchantDashboard() {
   const [status, setStatus] = useState<string | undefined>(undefined)
   const [sort, setSort] = useState('createdAt')
-  const { data, isLoading } = useGetOrdersQuery({ status, sort, order: 'desc' })
+  const [searchText, setSearchText] = useState('')
+  const [data, setData] = useState<{ data: Order[] }>({ data: [] })
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    setIsLoading(true)
+    // Simulate API delay
+    setTimeout(() => {
+      // Cast to any first to bypass the strict type check on the mock data
+      const orders = generateMockOrders(20) as any[]
+      // Simple client-side filtering/sorting for mock
+      let filtered = [...orders]
+      
+      if (searchText) {
+        const lowerSearch = searchText.toLowerCase()
+        filtered = filtered.filter((o: any) => 
+          o.id.toLowerCase().includes(lowerSearch) || 
+          o.recipient.name.toLowerCase().includes(lowerSearch) ||
+          o.recipient.phone.includes(searchText)
+        )
+      }
+
+      if (status) {
+        filtered = filtered.filter((o: any) => o.status === status)
+      }
+      if (sort === 'amount') {
+        filtered.sort((a: any, b: any) => b.amount - a.amount)
+      } else {
+        filtered.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      }
+      // Cast to Order[] for the state
+      setData({ data: filtered as Order[] })
+      setIsLoading(false)
+    }, 10)
+  }, [status, sort, searchText])
 
   const columns = [
     {
@@ -96,6 +130,8 @@ export default function MerchantDashboard() {
             prefix={<Search size={16} className="text-gray-400" />} 
             placeholder="搜索订单号 / 姓名" 
             className="w-64 h-10 rounded-xl bg-gray-50 border-transparent hover:bg-white hover:border-[#74B868] focus:bg-white focus:border-[#74B868] transition-all" 
+            value={searchText}
+            onChange={e => setSearchText(e.target.value)}
           />
           <Select 
             placeholder="状态" 

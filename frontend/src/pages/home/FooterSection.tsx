@@ -112,7 +112,7 @@ export default function FooterSection() {
           />
 
           <h2 className="text-[13vw] leading-none font-black text-white tracking-tighter select-none drop-shadow-2xl">
-            {"READY?".split('').map((char, i) => (
+            {"准备好了吗?".split('').map((char, i) => (
               <span key={i} className="footer-title-char inline-block origin-bottom">
                 {char}
               </span>
@@ -120,10 +120,10 @@ export default function FooterSection() {
           </h2>
           
           <div className="relative inline-block">
-             <Link to="/register">
+             <Link to="/login">
                 <button className="group relative px-16 py-8 bg-white border-4 border-white hover:border-black transition-colors duration-300 overflow-hidden shadow-[10px_10px_0px_0px_rgba(0,0,0,0.2)] hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,0.2)] hover:translate-x-[5px] hover:translate-y-[5px]">
                   <span className="relative flex items-center gap-4 text-2xl md:text-4xl font-black text-[#74B868] group-hover:text-black transition-colors duration-300 uppercase tracking-tighter">
-                    Initialize <ArrowRight size={32} strokeWidth={3} />
+                    立即启动 <ArrowRight size={32} strokeWidth={3} />
                   </span>
                 </button>
              </Link>
@@ -157,9 +157,9 @@ export default function FooterSection() {
                © 2025 LOGISTICS_PRO_CORP // EST. 2024
              </div>
              <div className="flex gap-8 text-white/80 text-xs font-mono font-bold tracking-widest uppercase">
-               <a href="#" className="hover:text-white hover:underline decoration-2 underline-offset-4 transition-all">Privacy_Protocol</a>
-               <a href="#" className="hover:text-white hover:underline decoration-2 underline-offset-4 transition-all">Terms_Of_Use</a>
-               <a href="#" className="hover:text-white hover:underline decoration-2 underline-offset-4 transition-all">Comm_Channel</a>
+               <a href="#" className="hover:text-white hover:underline decoration-2 underline-offset-4 transition-all">隐私协议</a>
+               <a href="#" className="hover:text-white hover:underline decoration-2 underline-offset-4 transition-all">使用条款</a>
+               <a href="#" className="hover:text-white hover:underline decoration-2 underline-offset-4 transition-all">沟通渠道</a>
              </div>
           </div>
       </footer>

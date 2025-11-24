@@ -175,41 +175,41 @@ export default function AdvantagesSection() {
   const features = [
     { 
       id: "01",
-      title: "GLOBAL NETWORK", 
+      title: "全球网络", 
       subtitle: "COVERAGE_MAP_V2.0",
-      desc: "Seamless connection across 200+ territories. Optimized for cross-border latency.", 
+      desc: "连接全球 200+ 个地区。针对跨境延迟进行了优化。", 
       icon: <Globe size={24} />, 
       tech_spec: "LATENCY < 200ms"
     },
     { 
       id: "02",
-      title: "AI DISPATCH", 
+      title: "智能调度", 
       subtitle: "NEURAL_CORE_ACTIVE",
-      desc: "Predictive algorithms reduce cost by 30%. Real-time route reconfiguration.", 
+      desc: "预测算法降低 30% 成本。实时路径重规划。", 
       icon: <Cpu size={24} />, 
       tech_spec: "OPS/SEC: 1.2T"
     },
     { 
       id: "03",
-      title: "LIVE TRACKING", 
+      title: "实时追踪", 
       subtitle: "TELEMETRY_STREAM",
-      desc: "Millisecond-level package telemetry. Full visibility from warehouse to doorstep.", 
+      desc: "毫秒级包裹遥测。从仓库到家门口的全程可视化。", 
       icon: <Signal size={24} />, 
       tech_spec: "REFRESH: 60Hz"
     },
     { 
       id: "04",
-      title: "SECURE VAULT", 
+      title: "安全金库", 
       subtitle: "ENCRYPTION_L5",
-      desc: "Bank-grade data protection protocols. Multi-factor authentication for all handoffs.", 
+      desc: "银行级数据保护协议。所有交接环节的多重身份验证。", 
       icon: <Lock size={24} />, 
       tech_spec: "AES-256-GCM"
     },
     { 
       id: "05",
-      title: "DATA MATRIX", 
+      title: "数据矩阵", 
       subtitle: "ANALYTICS_ENGINE",
-      desc: "Multi-dimensional reporting tools. Actionable insights for strategic decision making.", 
+      desc: "多维报告工具。为战略决策提供可操作的洞察。", 
       icon: <BarChart3 size={24} />, 
       tech_spec: "DEPTH: L3"
     }
@@ -260,11 +260,11 @@ export default function AdvantagesSection() {
              <span className="text-[#74B868] text-xs tracking-[0.2em]">SYSTEM_CAPABILITIES</span>
           </div>
           <h2 className="text-5xl font-bold text-white mb-6 tracking-tighter leading-tight">
-            ENGINEERED<br/>FOR <span className="text-[#74B868]">SCALE</span>
+            专为<br/> <span className="text-[#74B868]">规模化</span> 设计
           </h2>
           <p className="text-gray-400 text-sm leading-relaxed border-l border-white/20 pl-4">
-            LogisticsPro architecture is built on industrial-grade standards. 
-            Precision, reliability, and speed are hardcoded into our DNA.
+            LogisticsPro 架构建立在工业级标准之上。
+            精确、可靠和速度已写入我们的基因。
           </p>
         </div>
 

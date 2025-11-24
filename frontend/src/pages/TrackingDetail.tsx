@@ -2,63 +2,62 @@ import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { Card, Steps, Button, Tag, Spin } from 'antd'
 import { ArrowLeft, Package, Truck, CheckCircle, MapPin } from 'lucide-react'
-import { useGetOrderByIdQuery, useGetOrderTrackingQuery } from '../services/api'
-import { socket } from '../services/socket'
 import TrackingMap from '../components/business/TrackingMap'
-import type { TrackPoint, ShipmentState } from '@logistics/shared'
+import type { TrackPoint } from '@logistics/shared'
 import dayjs from 'dayjs'
 import { motion } from 'framer-motion'
+import { mockOrders } from '../mocks/data'
 
 export default function TrackingDetail() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
-  const { data: orderData, isLoading: isOrderLoading } = useGetOrderByIdQuery(id!)
-  const { data: historyData, isLoading: isHistoryLoading } = useGetOrderTrackingQuery(id!)
   
+  const [order, setOrder] = useState<any>(null)
+  const [isLoading, setIsLoading] = useState(true)
   const [realtimePoints, setRealtimePoints] = useState<TrackPoint[]>([])
   const [currentStatus, setCurrentStatus] = useState<string>('')
 
   useEffect(() => {
-    if (historyData?.data) {
-      setRealtimePoints(historyData.data)
-    }
-  }, [historyData])
-
-  useEffect(() => {
-    if (orderData?.data) {
-      setCurrentStatus(orderData.data.status)
-    }
-  }, [orderData])
-
-  useEffect(() => {
-    if (!id) return
-
-    socket.connect()
-    socket.emit('subscribe', { orderId: id })
-
-    const handleTrackUpdate = (point: TrackPoint) => {
-      setRealtimePoints(prev => [...prev, point])
-    }
-
-    const handleStatusUpdate = (state: ShipmentState) => {
-      setCurrentStatus(state.status)
-    }
-
-    socket.on('track:update', handleTrackUpdate)
-    socket.on('status:update', handleStatusUpdate)
-    
-    return () => {
-      socket.off('track:update', handleTrackUpdate)
-      socket.off('status:update', handleStatusUpdate)
-      socket.emit('unsubscribe', { orderId: id })
-      socket.disconnect()
-    }
+    setIsLoading(true)
+    // Simulate API fetch
+    setTimeout(() => {
+      const foundOrder = mockOrders.find(o => o.id === id)
+      if (foundOrder) {
+        setOrder(foundOrder)
+        setCurrentStatus(foundOrder.status)
+        
+        // Generate mock tracking points based on order address
+        // Start from Origin to Destination
+        const startLat = foundOrder.origin?.lat || 39.9042
+        const startLng = foundOrder.origin?.lng || 116.4074
+        const endLat = foundOrder.address.lat
+        const endLng = foundOrder.address.lng
+        
+        const points: TrackPoint[] = []
+        const steps = 5
+        for (let i = 0; i <= steps; i++) {
+          points.push({
+            lat: startLat + (endLat - startLat) * (i / steps),
+            lng: startLng + (endLng - startLng) * (i / steps),
+            orderId: foundOrder.id,
+            ts: Date.now() - (steps - i) * 3600000
+          })
+        }
+        setRealtimePoints(points)
+      }
+      setIsLoading(false)
+    }, 500)
   }, [id])
 
-  if (isOrderLoading || isHistoryLoading) return <div className="flex justify-center py-20"><Spin size="large" /></div>
-  if (!orderData?.data) return <div>订单不存在</div>
+  if (isLoading) return <div className="flex justify-center py-20"><Spin size="large" /></div>
+  if (!order) return (
+    <div className="flex flex-col items-center justify-center h-[60vh]">
+      <h2 className="text-2xl font-bold text-gray-800 mb-4">订单不存在</h2>
+      <p className="text-gray-500 mb-8">未找到编号为 {id} 的订单信息</p>
+      <Button type="primary" onClick={() => navigate('/tracking')}>返回查询</Button>
+    </div>
+  )
 
-  const order = orderData.data
   const currentPoint = realtimePoints.length > 0 ? realtimePoints[realtimePoints.length - 1] : undefined
 
   // Map status to step index
@@ -100,9 +99,8 @@ export default function TrackingDetail() {
           <TrackingMap 
             points={realtimePoints} 
             currentPoint={currentPoint}
-            // Mock start/end for demo if not in order data (order data has address but not lat/lng for start)
-            // Assuming start is Beijing (from simulator) and end is order address
-            startPoint={{ lat: 39.9042, lng: 116.4074 }} 
+            // Use origin from order data if available
+            startPoint={order.origin ? { lat: order.origin.lat, lng: order.origin.lng } : { lat: 39.9042, lng: 116.4074 }} 
             endPoint={{ lat: order.address.lat, lng: order.address.lng }}
           />
           
