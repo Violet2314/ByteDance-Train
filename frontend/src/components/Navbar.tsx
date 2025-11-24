@@ -1,7 +1,16 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Truck, Package, BarChart3, User, LogOut, Menu, X, ChevronRight, LayoutDashboard } from 'lucide-react'
+import {
+  Truck,
+  Package,
+  BarChart3,
+  User,
+  Menu,
+  X,
+  ChevronRight,
+  LayoutDashboard,
+} from 'lucide-react'
 import { clsx } from 'clsx'
 
 type NavbarProps = {
@@ -38,7 +47,7 @@ export default function Navbar({ role = 'guest', enableEntranceAnimation = true 
       { name: '订单管理', path: '/merchant', icon: <LayoutDashboard size={18} /> },
       { name: '配送管理', path: '/merchant/delivery', icon: <Package size={18} /> },
       { name: '数据看板', path: '/merchant/dashboard', icon: <BarChart3 size={18} /> },
-    ]
+    ],
   }
 
   const currentLinks = navLinks[role] || navLinks.guest
@@ -66,19 +75,26 @@ export default function Navbar({ role = 'guest', enableEntranceAnimation = true 
         animate={{ y: 0 }}
         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         className={clsx(
-          "fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b",
-          scrolled 
-            ? "bg-white/80 backdrop-blur-md py-4 border-gray-200/50 shadow-sm" 
-            : "bg-transparent py-6 border-transparent"
+          'fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b',
+          scrolled
+            ? 'bg-white/80 backdrop-blur-md py-4 border-gray-200/50 shadow-sm'
+            : 'bg-transparent py-6 border-transparent'
         )}
       >
         <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
           {/* Logo Area */}
-          <Link to="/" className="flex items-center gap-3 group" onClick={() => handleLinkClick('/')}>
+          <Link
+            to="/"
+            className="flex items-center gap-3 group"
+            onClick={() => handleLinkClick('/')}
+          >
             <div className="relative w-10 h-10 bg-[#0B0F19] rounded-xl flex items-center justify-center overflow-hidden border border-white/10 shadow-xl">
               <div className="absolute inset-0 bg-gradient-to-br from-[#74B868]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              <Truck size={20} className="text-white relative z-10 group-hover:scale-110 transition-transform duration-300" />
-              
+              <Truck
+                size={20}
+                className="text-white relative z-10 group-hover:scale-110 transition-transform duration-300"
+              />
+
               {/* Tech decoration */}
               <div className="absolute bottom-1 right-1 w-1 h-1 bg-[#74B868] rounded-full animate-pulse" />
             </div>
@@ -103,17 +119,15 @@ export default function Navbar({ role = 'guest', enableEntranceAnimation = true 
                     to={link.path}
                     onClick={() => handleLinkClick(link.path)}
                     className={clsx(
-                      "relative px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 flex items-center gap-2",
-                      isActive 
-                        ? "text-[#0B0F19]" 
-                        : "text-gray-500 hover:text-[#0B0F19]"
+                      'relative px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 flex items-center gap-2',
+                      isActive ? 'text-[#0B0F19]' : 'text-gray-500 hover:text-[#0B0F19]'
                     )}
                   >
                     {isActive && (
                       <motion.div
                         layoutId="nav-pill"
                         className="absolute inset-0 bg-white rounded-full shadow-sm border border-gray-100"
-                        transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                        transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
                       />
                     )}
                     <span className="relative z-10 flex items-center gap-2">
@@ -130,7 +144,10 @@ export default function Navbar({ role = 'guest', enableEntranceAnimation = true 
           <div className="hidden md:flex items-center gap-4">
             {role === 'guest' ? (
               <>
-                <Link to="/login" className="text-sm font-medium text-gray-600 hover:text-[#0B0F19] transition-colors">
+                <Link
+                  to="/login"
+                  className="text-sm font-medium text-gray-600 hover:text-[#0B0F19] transition-colors"
+                >
                   登录
                 </Link>
                 <Link to="/register">
@@ -160,7 +177,7 @@ export default function Navbar({ role = 'guest', enableEntranceAnimation = true 
           </div>
 
           {/* Mobile Menu Button */}
-          <button 
+          <button
             className="md:hidden p-2 text-gray-600"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >

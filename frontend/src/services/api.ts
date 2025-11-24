@@ -6,13 +6,15 @@ export const api = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:3001/api' }),
   tagTypes: ['Order'],
   endpoints: (builder) => ({
-    getOrders: builder.query<{ data: Order[] }, { status?: string; sort?: string; order?: string }>({
-      query: (params) => ({
-        url: 'orders',
-        params,
-      }),
-      providesTags: ['Order'],
-    }),
+    getOrders: builder.query<{ data: Order[] }, { status?: string; sort?: string; order?: string }>(
+      {
+        query: (params) => ({
+          url: 'orders',
+          params,
+        }),
+        providesTags: ['Order'],
+      }
+    ),
     getOrderById: builder.query<{ data: Order }, string>({
       query: (id) => `orders/${id}`,
       providesTags: (result, error, id) => [{ type: 'Order', id }],
@@ -30,9 +32,9 @@ export const api = createApi({
   }),
 })
 
-export const { 
-  useGetOrdersQuery, 
-  useGetOrderByIdQuery, 
+export const {
+  useGetOrdersQuery,
+  useGetOrderByIdQuery,
   useShipOrderMutation,
-  useGetOrderTrackingQuery
+  useGetOrderTrackingQuery,
 } = api

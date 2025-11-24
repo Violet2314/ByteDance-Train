@@ -12,7 +12,8 @@ export const antTheme: ThemeConfig = {
     colorBgBase: '#FDFCF9',
     colorBgContainer: 'rgba(255, 255, 255, 0.85)',
     borderRadius: 12,
-    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+    fontFamily:
+      '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
   },
   components: {
     Button: {
@@ -33,6 +34,6 @@ export const antTheme: ThemeConfig = {
     },
     Tag: {
       borderRadiusSM: 9999,
-    }
-  }
+    },
+  },
 }

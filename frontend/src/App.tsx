@@ -18,7 +18,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
-        
+
         {/* Merchant Routes */}
         <Route path="/merchant" element={<MerchantLayout />}>
           <Route index element={<MerchantDashboard />} />
