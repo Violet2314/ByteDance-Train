@@ -1,5 +1,11 @@
 import { ThemeConfig } from 'antd'
 
+/**
+ * Ant Design 主题配置
+ *
+ * 定义了全局的颜色、圆角、字体等设计系统变量。
+ * 用于统一整个应用的视觉风格。
+ */
 export const antTheme: ThemeConfig = {
   token: {
     colorPrimary: '#7CAA6D',

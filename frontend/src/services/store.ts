@@ -2,6 +2,7 @@ import { configureStore } from '@reduxjs/toolkit'
 import { setupListeners } from '@reduxjs/toolkit/query'
 import { api } from './api'
 
+// 配置 Redux Store
 export const store = configureStore({
   reducer: {
     [api.reducerPath]: api.reducer,

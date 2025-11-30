@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { Button, Tag, Steps, message, Spin } from 'antd'
+import { Button, Tag, Steps, Spin, Modal, Radio, Space } from 'antd'
 import {
   ArrowLeft,
   Package,
@@ -12,56 +12,27 @@ import {
   CreditCard,
   ShieldCheck,
 } from 'lucide-react'
-import { mockOrders } from '../mocks/data'
 import dayjs from 'dayjs'
 import { motion } from 'framer-motion'
-
-interface Order {
-  id: string
-  recipient: {
-    name: string
-    phone: string
-  }
-  amount: number
-  status: string
-  createdAt: string
-  address: {
-    text: string
-    lat: number
-    lng: number
-  }
-}
+import { useOrderDetail } from '../hooks/useOrderDetail'
 
 export default function OrderDetail() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
-  const [order, setOrder] = useState<Order | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
-  const [isShipping, setIsShipping] = useState(false)
 
-  useEffect(() => {
-    setIsLoading(true)
-    // Direct mock data fetch without delay
-    const found = mockOrders.find((o) => o.id === id) || mockOrders[0]
-    setOrder(found)
-    setIsLoading(false)
-  }, [id])
-
-  const handleShip = async () => {
-    setIsShipping(true)
-    try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 500))
-      if (order) {
-        setOrder({ ...order, status: 'in_transit' })
-      }
-      message.success('发货成功')
-    } catch (err) {
-      message.error('发货失败')
-    } finally {
-      setIsShipping(false)
-    }
-  }
+  const {
+    order,
+    isLoading,
+    error,
+    rules,
+    isShipping,
+    isShipModalOpen,
+    setIsShipModalOpen,
+    selectedRuleId,
+    setSelectedRuleId,
+    handleShipClick,
+    handleConfirmShip,
+  } = useOrderDetail(id)
 
   if (isLoading)
     return (
@@ -69,12 +40,30 @@ export default function OrderDetail() {
         <Spin size="large" />
       </div>
     )
-  if (!order) return <div>订单不存在</div>
+  if (error || !order) return <div>订单不存在</div>
 
   const stepStatus: Record<string, number> = {
     pending: 0,
-    in_transit: 1,
-    signed: 2,
+    picked: 1,
+    in_transit: 2,
+    out_for_delivery: 3,
+    signed: 4,
+  }
+
+  const statusTextMap: Record<string, string> = {
+    pending: '待处理',
+    picked: '已揽收',
+    in_transit: '运输中',
+    out_for_delivery: '派送中',
+    signed: '已送达',
+  }
+
+  const statusColorMap: Record<string, string> = {
+    pending: 'warning',
+    signed: 'success',
+    picked: 'processing',
+    in_transit: 'processing',
+    out_for_delivery: 'processing',
   }
 
   return (
@@ -108,28 +97,17 @@ export default function OrderDetail() {
           </div>
           <div className="flex items-center gap-4">
             <Tag
-              color={
-                order.status === 'pending'
-                  ? 'warning'
-                  : order.status === 'in_transit'
-                    ? 'processing'
-                    : 'success'
-              }
+              color={statusColorMap[order.status] || 'default'}
               className="text-sm px-4 py-1.5 rounded-full border-0 font-medium text-base m-0"
             >
-              {order.status === 'pending'
-                ? '待处理'
-                : order.status === 'in_transit'
-                  ? '运输中'
-                  : '已送达'}
+              {statusTextMap[order.status] || '未知状态'}
             </Tag>
             {order.status === 'pending' && (
               <Button
                 type="primary"
                 size="large"
                 icon={<Truck size={18} />}
-                loading={isShipping}
-                onClick={handleShip}
+                onClick={handleShipClick}
                 className="bg-[#0B0F19] hover:bg-gray-800 border-none shadow-lg shadow-gray-900/20 rounded-xl h-12 px-6"
               >
                 发货
@@ -146,21 +124,37 @@ export default function OrderDetail() {
               <Truck size={20} className="text-blue-500" />
               订单状态
             </h3>
+            <style>{`
+              .custom-steps .ant-steps-item-container {
+                display: flex !important;
+                flex-direction: column !important;
+              }
+            `}</style>
             <Steps
               current={stepStatus[order.status]}
               items={[
                 {
-                  title: '已下单',
+                  title: '待发货',
                   description: dayjs(order.createdAt).format('MM-DD HH:mm'),
                   icon: <Package size={20} />,
                 },
                 {
+                  title: '已揽收',
+                  description: '包裹已由物流公司揽收',
+                  icon: <Package size={20} />,
+                },
+                {
                   title: '运输中',
-                  description: order.status !== 'pending' ? '运输途中' : '等待发货',
+                  description: '包裹正在发往目的地',
                   icon: <Truck size={20} />,
                 },
                 {
-                  title: '已送达',
+                  title: '派送中',
+                  description: '快递员正在为您派送',
+                  icon: <MapPin size={20} />,
+                },
+                {
+                  title: '已签收',
                   description: order.status === 'signed' ? '客户已签收' : '预计即将送达',
                   icon: <CheckCircle size={20} />,
                 },
@@ -255,6 +249,40 @@ export default function OrderDetail() {
           </div>
         </div>
       </div>
+
+      <Modal
+        title="选择配送规则"
+        open={isShipModalOpen}
+        onOk={handleConfirmShip}
+        onCancel={() => setIsShipModalOpen(false)}
+        confirmLoading={isShipping}
+      >
+        <div className="py-4">
+          <p className="mb-4 text-gray-500">请选择用于此订单的配送服务：</p>
+          <Radio.Group
+            onChange={(e) => setSelectedRuleId(e.target.value)}
+            value={selectedRuleId}
+            className="w-full"
+          >
+            <Space direction="vertical" className="w-full">
+              {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+              {rules.map((rule: any) => (
+                <Radio
+                  key={rule.id}
+                  value={rule.id}
+                  className="w-full border border-gray-200 p-3 rounded-xl hover:border-blue-500 transition-colors"
+                >
+                  <div className="flex justify-between w-full items-center">
+                    <span className="font-bold">{rule.company}</span>
+                    <Tag>{rule.area}</Tag>
+                  </div>
+                  <div className="text-xs text-gray-400 mt-1 pl-6">时效: {rule.days}</div>
+                </Radio>
+              ))}
+            </Space>
+          </Radio.Group>
+        </div>
+      </Modal>
     </motion.div>
   )
 }

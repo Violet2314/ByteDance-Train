@@ -5,6 +5,12 @@ import Navbar from '../Navbar'
 
 const { Content } = Layout
 
+/**
+ * 商家端布局组件
+ *
+ * 包含顶部导航栏和主要内容区域。
+ * 适用于商家后台的所有页面。
+ */
 export default function MerchantLayout() {
   return (
     <Layout className="min-h-screen bg-[#F8F9FB]">

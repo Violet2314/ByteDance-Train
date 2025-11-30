@@ -1,5 +1,6 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, memo } from 'react'
 import AMapLoader from '@amap/amap-jsapi-loader'
+import gsap from 'gsap'
 import type { TrackPoint } from '@logistics/shared'
 
 interface TrackingMapProps {
@@ -7,13 +8,15 @@ interface TrackingMapProps {
   currentPoint?: TrackPoint
   startPoint?: { lat: number; lng: number }
   endPoint?: { lat: number; lng: number }
+  routePath?: { lat: number; lng: number }[]
 }
 
-export default function TrackingMap({
+const TrackingMap = memo(function TrackingMap({
   points,
   currentPoint,
   startPoint,
   endPoint,
+  routePath,
 }: TrackingMapProps) {
   const mapContainer = useRef<HTMLDivElement>(null)
   const mapInstance = useRef<any>(null)
@@ -21,52 +24,16 @@ export default function TrackingMap({
   const markerInstance = useRef<any>(null)
   const startMarkerInstance = useRef<any>(null)
   const endMarkerInstance = useRef<any>(null)
+  const tweenRef = useRef<gsap.core.Tween | null>(null)
+  const isFirstUpdate = useRef(true)
+  const [isMapReady, setIsMapReady] = React.useState(false)
 
-  // Helper to update markers
-  const updateMarkers = React.useCallback(
-    (AMap: any) => {
-      if (!mapInstance.current || !AMap) return
-
-      // Start Marker
-      if (startPoint) {
-        if (!startMarkerInstance.current) {
-          startMarkerInstance.current = new AMap.Marker({
-            position: [startPoint.lng, startPoint.lat],
-            content:
-              '<div style="background:#3B82F6;width:12px;height:12px;border-radius:50%;border:2px solid white;box-shadow:0 2px 4px rgba(0,0,0,0.2);"></div>',
-            offset: new AMap.Pixel(-6, -6),
-            zIndex: 100,
-          })
-          mapInstance.current.add(startMarkerInstance.current)
-        } else {
-          startMarkerInstance.current.setPosition([startPoint.lng, startPoint.lat])
-        }
-      }
-
-      // End Marker
-      if (endPoint) {
-        if (!endMarkerInstance.current) {
-          endMarkerInstance.current = new AMap.Marker({
-            position: [endPoint.lng, endPoint.lat],
-            content:
-              '<div style="background:#3B82F6;width:12px;height:12px;border-radius:50%;border:2px solid white;box-shadow:0 2px 4px rgba(0,0,0,0.2);"></div>',
-            offset: new AMap.Pixel(-6, -6),
-            zIndex: 100,
-          })
-          mapInstance.current.add(endMarkerInstance.current)
-        } else {
-          endMarkerInstance.current.setPosition([endPoint.lng, endPoint.lat])
-        }
-      }
-    },
-    [startPoint, endPoint]
-  )
-
+  // 仅初始化一次地图
   useEffect(() => {
     let AMap: any = null
 
     AMapLoader.load({
-      key: '6d736976336dac732baf2fe3d00c4254', // 替换为你的高德地图 Key
+      key: import.meta.env.VITE_AMAP_KEY, // 替换为你的高德地图 Key
       version: '2.0',
       plugins: ['AMap.MoveAnimation', 'AMap.Polyline'],
     })
@@ -74,15 +41,18 @@ export default function TrackingMap({
         AMap = AMapLoaded
         if (!mapContainer.current) return
 
+        // 默认中心点（北京）
+        const center = [116.397428, 39.90923]
+
         if (!mapInstance.current) {
           mapInstance.current = new AMap.Map(mapContainer.current, {
             zoom: 11,
-            center: [116.397428, 39.90923], // Default Beijing
+            center: center,
             viewMode: '3D',
           })
         }
 
-        // Initialize Polyline
+        // 初始化折线
         if (!polylineInstance.current) {
           polylineInstance.current = new AMap.Polyline({
             path: [],
@@ -91,26 +61,30 @@ export default function TrackingMap({
             strokeOpacity: 0.9,
             zIndex: 50,
             bubble: true,
+            lineJoin: 'round',
+            lineCap: 'round',
           })
           mapInstance.current.add(polylineInstance.current)
         }
 
-        // Initialize Marker
+        // 初始化标记（默认图标）
         if (!markerInstance.current) {
+          // 确定初始位置
+          let initialPos = center
+          if (currentPoint) {
+            initialPos = [currentPoint.lng, currentPoint.lat]
+          } else if (startPoint) {
+            initialPos = [startPoint.lng, startPoint.lat]
+          }
+
           markerInstance.current = new AMap.Marker({
-            position: [116.397428, 39.90923],
-            icon: new AMap.Icon({
-              size: new AMap.Size(40, 40),
-              image: '//a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-default.png', // Replace with truck icon
-              imageSize: new AMap.Size(40, 40),
-            }),
-            offset: new AMap.Pixel(-20, -40),
+            position: initialPos,
+            zIndex: 200,
           })
           mapInstance.current.add(markerInstance.current)
         }
 
-        // Start/End Markers
-        updateMarkers(AMap)
+        setIsMapReady(true)
       })
       .catch((e) => {
         console.error(e)
@@ -126,46 +100,120 @@ export default function TrackingMap({
         endMarkerInstance.current = null
       }
     }
-  }, [updateMarkers])
+  }, []) // Empty dependency array to prevent re-initialization
 
-  // Update markers when props change
+  // Update Start/End Markers
   useEffect(() => {
-    if ((window as any).AMap) {
-      updateMarkers((window as any).AMap)
+    if (!isMapReady || !mapInstance.current || !(window as any).AMap) return
+    const AMap = (window as any).AMap
+
+    // Start Marker
+    if (startPoint) {
+      if (!startMarkerInstance.current) {
+        startMarkerInstance.current = new AMap.Marker({
+          position: [startPoint.lng, startPoint.lat],
+          content:
+            '<div style="background:#3B82F6;width:16px;height:16px;border-radius:50%;border:3px solid white;box-shadow:0 2px 4px rgba(0,0,0,0.2);"></div>',
+          offset: new AMap.Pixel(-8, -8),
+          zIndex: 100,
+        })
+        mapInstance.current.add(startMarkerInstance.current)
+      } else {
+        startMarkerInstance.current.setPosition([startPoint.lng, startPoint.lat])
+      }
     }
-  }, [updateMarkers])
 
-  // Update Polyline and Marker when points change
+    // End Marker
+    if (endPoint) {
+      if (!endMarkerInstance.current) {
+        endMarkerInstance.current = new AMap.Marker({
+          position: [endPoint.lng, endPoint.lat],
+          content:
+            '<div style="background:#EF4444;width:16px;height:16px;border-radius:50%;border:3px solid white;box-shadow:0 2px 4px rgba(0,0,0,0.2);"></div>',
+          offset: new AMap.Pixel(-8, -8),
+          zIndex: 100,
+        })
+        mapInstance.current.add(endMarkerInstance.current)
+      } else {
+        endMarkerInstance.current.setPosition([endPoint.lng, endPoint.lat])
+      }
+    }
+  }, [isMapReady, startPoint, endPoint])
+
+  // Update Polyline
   useEffect(() => {
-    if (mapInstance.current && polylineInstance.current && points.length > 0) {
-      const path = points.map((p) => [p.lng, p.lat])
+    if (!isMapReady || !mapInstance.current || !polylineInstance.current) return
+
+    let path: [number, number][] = []
+    if (routePath && routePath.length > 0) {
+      path = routePath.map((p) => [p.lng, p.lat])
+    } else if (points.length > 0) {
+      path = points.map((p) => [p.lng, p.lat])
+    }
+
+    // Only update if path has points
+    if (path.length > 0) {
       polylineInstance.current.setPath(path)
 
-      // Fit view to show the whole path
-      // mapInstance.current.setFitView([polylineInstance.current, startMarkerInstance.current, endMarkerInstance.current])
-    }
-  }, [points])
+      // Only fit view if we haven't done it yet or if it's the initial load of the path
+      // We can check if the map center is still the default or if we want to force it
+      // For now, let's fit view when path length changes significantly or on first load
+      const overlays = [
+        polylineInstance.current,
+        startMarkerInstance.current,
+        endMarkerInstance.current,
+      ].filter(Boolean)
 
-  // Update Marker position
-  useEffect(() => {
-    if (mapInstance.current && markerInstance.current && currentPoint) {
-      const newPos = [currentPoint.lng, currentPoint.lat]
-      // Use moveTo for smooth animation if available, else setPosition
-      if (markerInstance.current.moveTo) {
-        markerInstance.current.moveTo(newPos, {
-          duration: 1000,
-          autoRotation: true,
-        })
-      } else {
-        markerInstance.current.setPosition(newPos)
+      if (overlays.length > 0) {
+        mapInstance.current.setFitView(overlays, false, [50, 50, 50, 50])
       }
-
-      // Center map on vehicle if needed, or keep fit view
-      // mapInstance.current.setCenter(newPos)
     }
-  }, [currentPoint])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isMapReady, routePath, points.length]) // Depend on points.length to avoid excessive updates
+
+  // Update Truck Position
+  useEffect(() => {
+    if (!isMapReady || !mapInstance.current || !markerInstance.current || !currentPoint) return
+
+    const currentPos = markerInstance.current.getPosition()
+    const start = { lng: currentPos.getLng(), lat: currentPos.getLat() }
+    const end = { lng: currentPoint.lng, lat: currentPoint.lat }
+
+    // Kill previous tween if exists
+    if (tweenRef.current) {
+      tweenRef.current.kill()
+    }
+
+    // If it's the first update (or first valid point after init), snap to position
+    if (isFirstUpdate.current) {
+      markerInstance.current.setPosition([end.lng, end.lat])
+      isFirstUpdate.current = false
+      return
+    }
+
+    // Animate using GSAP
+    tweenRef.current = gsap.to(start, {
+      lng: end.lng,
+      lat: end.lat,
+      duration: 4, // 4 seconds (slightly less than 5s update interval)
+      ease: 'linear',
+      onUpdate: () => {
+        if (markerInstance.current) {
+          markerInstance.current.setPosition([start.lng, start.lat])
+        }
+      },
+    })
+
+    return () => {
+      if (tweenRef.current) {
+        tweenRef.current.kill()
+      }
+    }
+  }, [isMapReady, currentPoint])
 
   return (
     <div ref={mapContainer} className="w-full h-full rounded-2xl overflow-hidden shadow-inner" />
   )
-}
+})
+
+export default TrackingMap

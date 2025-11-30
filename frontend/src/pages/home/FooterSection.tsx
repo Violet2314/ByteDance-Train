@@ -30,7 +30,7 @@ const CircularText = ({ text }: { text: string }) => {
       ref={containerRef}
       className="relative w-[300px] h-[300px] opacity-80 pointer-events-none select-none"
     >
-      {/* Gear Teeth Decoration */}
+      {/* 齿轮装饰 */}
       <div className="absolute inset-[-20px] border-2 border-dashed border-white/20 rounded-full animate-spin-slow" />
 
       {characters.map((char, i) => {
@@ -79,12 +79,12 @@ export default function FooterSection() {
       ref={sectionRef}
       className="min-h-screen bg-[#74B868] relative flex flex-col justify-between overflow-hidden font-mono"
     >
-      {/* Industrial Blueprint Overlay */}
+      {/* 工业蓝图叠加层 */}
       <div className="absolute inset-0 pointer-events-none opacity-20">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#fff_1px,transparent_1px),linear-gradient(to_bottom,#fff_1px,transparent_1px)] bg-[size:100px_100px]" />
         <div className="absolute top-0 left-0 w-full h-full border-[20px] border-white/10" />
 
-        {/* Technical Markings */}
+        {/* 技术标记 */}
         <div className="absolute top-8 left-8 text-white text-xs font-bold tracking-widest">
           SECTOR: FOOTER_CTRL
           <br />
@@ -97,7 +97,7 @@ export default function FooterSection() {
         </div>
       </div>
 
-      {/* Main Content */}
+      {/* 主要内容 */}
       <div className="flex-1 flex flex-col items-center justify-center relative z-10">
         {/* Rotating Text Ring */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 scale-[2] md:scale-[3] pointer-events-none">

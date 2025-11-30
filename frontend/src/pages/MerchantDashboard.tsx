@@ -1,129 +1,38 @@
-import React, { useState, useEffect } from 'react'
-import { Table, Button, Input, Select, ConfigProvider } from 'antd'
-import { Search, Truck, Package, RefreshCw } from 'lucide-react'
-import { Link } from 'react-router-dom'
-import { generateMockOrders } from '../mocks/data'
-import type { Order } from '@logistics/shared'
-import dayjs from 'dayjs'
+import React from 'react'
+import { Button, Input, Select } from 'antd'
+import { Search, Truck, Package, RefreshCw, Plus } from 'lucide-react'
+import CreateOrderModal from '../components/business/CreateOrderModal'
+import OrdersTable from '../components/business/OrdersTable'
+import { useMerchantOrders } from '../hooks/useMerchantOrders'
+
+const STATUS_OPTIONS = [
+  { value: 'pending', label: '待处理' },
+  { value: 'in_transit', label: '运输中' },
+  { value: 'signed', label: '已送达' },
+]
+
+const SORT_OPTIONS = [
+  { value: 'createdAt', label: '最新优先' },
+  { value: 'amount', label: '金额最高' },
+]
 
 export default function MerchantDashboard() {
-  const [status, setStatus] = useState<string | undefined>(undefined)
-  const [sort, setSort] = useState('createdAt')
-  const [searchText, setSearchText] = useState('')
-  const [data, setData] = useState<{ data: Order[] }>({ data: [] })
-  const [isLoading, setIsLoading] = useState(true)
-
-  useEffect(() => {
-    setIsLoading(true)
-    // Simulate API delay
-    setTimeout(() => {
-      // Cast to any first to bypass the strict type check on the mock data
-      const orders = generateMockOrders(20) as any[]
-      // Simple client-side filtering/sorting for mock
-      let filtered = [...orders]
-
-      if (searchText) {
-        const lowerSearch = searchText.toLowerCase()
-        filtered = filtered.filter(
-          (o: any) =>
-            o.id.toLowerCase().includes(lowerSearch) ||
-            o.recipient.name.toLowerCase().includes(lowerSearch) ||
-            o.recipient.phone.includes(searchText)
-        )
-      }
-
-      if (status) {
-        filtered = filtered.filter((o: any) => o.status === status)
-      }
-      if (sort === 'amount') {
-        filtered.sort((a: any, b: any) => b.amount - a.amount)
-      } else {
-        filtered.sort(
-          (a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        )
-      }
-      // Cast to Order[] for the state
-      setData({ data: filtered as Order[] })
-      setIsLoading(false)
-    }, 10)
-  }, [status, sort, searchText])
-
-  const columns = [
-    {
-      title: '订单号',
-      dataIndex: 'id',
-      key: 'id',
-      render: (text: string) => <span className="font-mono font-bold text-[#0B0F19]">{text}</span>,
-    },
-    {
-      title: '收件人',
-      key: 'recipient',
-      render: (_: unknown, record: Order) => (
-        <div className="flex flex-col">
-          <span className="font-bold text-gray-800">{record.recipient.name}</span>
-          <span className="text-gray-400 text-xs font-mono">{record.recipient.phone}</span>
-        </div>
-      ),
-    },
-    {
-      title: '金额',
-      dataIndex: 'amount',
-      key: 'amount',
-      render: (amount: number) => (
-        <span className="font-mono font-medium">¥{amount.toFixed(2)}</span>
-      ),
-    },
-    {
-      title: '状态',
-      dataIndex: 'status',
-      key: 'status',
-      render: (status: string) => {
-        const config: Record<string, { color: string; label: string; bg: string }> = {
-          pending: { color: '#F59E0B', label: '待处理', bg: '#FEF3C7' },
-          in_transit: { color: '#3B82F6', label: '运输中', bg: '#DBEAFE' },
-          signed: { color: '#10B981', label: '已送达', bg: '#D1FAE5' },
-        }
-        const conf = config[status]
-        return (
-          <span
-            className="px-3 py-1 rounded-full text-xs font-bold tracking-wider"
-            style={{ color: conf.color, backgroundColor: conf.bg }}
-          >
-            {conf.label}
-          </span>
-        )
-      },
-    },
-    {
-      title: '日期',
-      dataIndex: 'createdAt',
-      key: 'createdAt',
-      render: (date: string) => (
-        <span className="text-gray-400 font-mono text-xs">
-          {dayjs(date).format('YYYY-MM-DD HH:mm')}
-        </span>
-      ),
-    },
-    {
-      title: '操作',
-      key: 'action',
-      render: (_: unknown, record: Order) => (
-        <Link to={`/merchant/orders/${record.id}`}>
-          <Button
-            type="text"
-            size="small"
-            className="text-[#74B868] hover:text-[#5da052] hover:bg-[#74B868]/10 font-medium"
-          >
-            查看
-          </Button>
-        </Link>
-      ),
-    },
-  ]
+  const {
+    setStatus,
+    setSort,
+    searchText,
+    setSearchText,
+    isCreateModalVisible,
+    setIsCreateModalVisible,
+    orders,
+    isLoading,
+    refetch,
+    handleCreateOrder,
+  } = useMerchantOrders()
 
   return (
     <div className="space-y-8">
-      {/* Header Section */}
+      {/* 头部区域 */}
       <div className="flex items-end justify-between">
         <div>
           <div className="flex items-center gap-2 text-[#74B868] mb-2">
@@ -136,7 +45,16 @@ export default function MerchantDashboard() {
           <Button
             icon={<RefreshCw size={16} />}
             className="rounded-xl border-gray-300 hover:border-[#74B868] hover:text-[#74B868]"
+            onClick={() => refetch()}
           />
+          <Button
+            type="primary"
+            icon={<Plus size={16} />}
+            className="bg-[#74B868] hover:!bg-[#5da052] border-none h-10 px-6 rounded-xl font-bold shadow-lg shadow-[#74B868]/20"
+            onClick={() => setIsCreateModalVisible(true)}
+          >
+            创建订单
+          </Button>
           <Button
             type="primary"
             icon={<Truck size={16} />}
@@ -147,7 +65,7 @@ export default function MerchantDashboard() {
         </div>
       </div>
 
-      {/* Filter Bar */}
+      {/* 筛选栏 */}
       <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-200 flex flex-wrap gap-4 items-center">
         <Input
           prefix={<Search size={16} className="text-gray-400" />}
@@ -161,47 +79,24 @@ export default function MerchantDashboard() {
           allowClear
           className="w-40 h-10"
           onChange={setStatus}
-          options={[
-            { value: 'pending', label: '待处理' },
-            { value: 'in_transit', label: '运输中' },
-            { value: 'signed', label: '已送达' },
-          ]}
+          options={STATUS_OPTIONS}
         />
         <Select
           defaultValue="createdAt"
           className="w-40 h-10"
           onChange={setSort}
-          options={[
-            { value: 'createdAt', label: '最新优先' },
-            { value: 'amount', label: '金额最高' },
-          ]}
+          options={SORT_OPTIONS}
         />
       </div>
 
-      {/* Data Table */}
-      <div className="bg-white rounded-3xl shadow-xl shadow-gray-100/50 border border-gray-200 overflow-hidden">
-        <ConfigProvider
-          theme={{
-            components: {
-              Table: {
-                headerBg: '#F8F9FB',
-                headerColor: '#6B7280',
-                headerSplitColor: 'transparent',
-                rowHoverBg: '#F0FDF4',
-              },
-            },
-          }}
-        >
-          <Table
-            columns={columns}
-            dataSource={data?.data}
-            rowKey="id"
-            loading={isLoading}
-            pagination={{ pageSize: 8 }}
-            className="[&_.ant-table-thead_th]:!font-bold [&_.ant-table-thead_th]:!text-xs [&_.ant-table-thead_th]:!tracking-wider"
-          />
-        </ConfigProvider>
-      </div>
+      {/* 数据表格 */}
+      <OrdersTable orders={orders} loading={isLoading} actionPathPrefix="/merchant/orders" />
+
+      <CreateOrderModal
+        visible={isCreateModalVisible}
+        onCancel={() => setIsCreateModalVisible(false)}
+        onCreate={handleCreateOrder}
+      />
     </div>
   )
 }

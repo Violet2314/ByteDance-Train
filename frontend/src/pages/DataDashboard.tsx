@@ -1,81 +1,155 @@
-import React, { useState } from 'react'
-import {
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  BarChart,
-  Bar,
-  Cell,
-} from 'recharts'
-import { Package, Users, DollarSign, Activity, Truck, ArrowUpRight, Calendar } from 'lucide-react'
-import { motion } from 'framer-motion'
+import React from 'react'
+import ReactECharts from 'echarts-for-react'
+import { Package, Users, DollarSign, Activity, Truck, AlertTriangle } from 'lucide-react'
+import { StatCard } from '../components/business/StatCard'
+import { useDataDashboard } from '../hooks/useDataDashboard'
+import { Table, Tag, DatePicker } from 'antd'
 
-const data = [
-  { name: '周一', orders: 4000, amount: 2400 },
-  { name: '周二', orders: 3000, amount: 1398 },
-  { name: '周三', orders: 2000, amount: 9800 },
-  { name: '周四', orders: 2780, amount: 3908 },
-  { name: '周五', orders: 1890, amount: 4800 },
-  { name: '周六', orders: 2390, amount: 3800 },
-  { name: '周日', orders: 3490, amount: 4300 },
-]
-
-interface StatCardProps {
-  title: string
-  value: string
-  icon: any
-  color: string
-  trend?: string
-}
-
-const StatCard = ({ title, value, icon: Icon, color, trend }: StatCardProps) => (
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.5 }}
-    className="relative overflow-hidden bg-white p-6 rounded-3xl border border-gray-200 shadow-sm group hover:shadow-md transition-shadow"
-  >
-    <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity duration-300 transform group-hover:scale-110">
-      <Icon size={80} color={color} />
-    </div>
-
-    <div className="relative z-10 flex flex-col h-full justify-between">
-      <div className="flex items-center gap-3 mb-4">
-        <div
-          className="p-3 rounded-2xl bg-gray-50 group-hover:bg-gray-100 transition-colors"
-          style={{ color }}
-        >
-          <Icon size={24} />
-        </div>
-        <span className="text-gray-500 text-sm font-bold tracking-wider uppercase">{title}</span>
-      </div>
-
-      <div>
-        <div className="flex items-baseline gap-2">
-          <h3 className="text-3xl font-black text-gray-900 tracking-tight">{value}</h3>
-        </div>
-        {trend && (
-          <div className="flex items-center gap-1 mt-2">
-            <span className="flex items-center text-xs font-bold px-2 py-1 rounded-full bg-green-50 text-green-600">
-              +{trend}% <ArrowUpRight size={12} className="ml-1" />
-            </span>
-            <span className="text-xs text-gray-400 font-medium">较上周</span>
-          </div>
-        )}
-      </div>
-    </div>
-
-    <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-gray-200 to-transparent opacity-30"></div>
-    <div className="absolute bottom-0 left-0 h-1 w-full" style={{ backgroundColor: color }}></div>
-  </motion.div>
-)
+const { RangePicker } = DatePicker
 
 export default function DataDashboard() {
-  const [timeRange, setTimeRange] = useState('周')
+  const {
+    stats,
+    orderTrendData,
+    deliveryEfficiencyData,
+    abnormalStats,
+    abnormalOrders,
+    cityDistribution,
+    timeHeatmapData,
+    timeRange,
+    setTimeRange,
+    customRange,
+    setCustomRange,
+  } = useDataDashboard()
+
+  // ECharts 配置项
+  const lineOption = React.useMemo(
+    () => ({
+      tooltip: { trigger: 'axis' },
+      grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
+      xAxis: { type: 'category', boundaryGap: false, data: orderTrendData.dates },
+      yAxis: { type: 'value' },
+      series: [
+        {
+          name: '订单量',
+          type: 'line',
+          smooth: true,
+          data: orderTrendData.counts,
+          itemStyle: { color: '#74B868' },
+          areaStyle: {
+            color: {
+              type: 'linear',
+              x: 0,
+              y: 0,
+              x2: 0,
+              y2: 1,
+              colorStops: [
+                { offset: 0, color: 'rgba(116, 184, 104, 0.5)' },
+                { offset: 1, color: 'rgba(116, 184, 104, 0.0)' },
+              ],
+            },
+          },
+        },
+      ],
+    }),
+    [orderTrendData]
+  )
+
+  const barOption = React.useMemo(
+    () => ({
+      tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+      grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
+      xAxis: { type: 'category', data: deliveryEfficiencyData.categories },
+      yAxis: { type: 'value' },
+      series: [
+        {
+          name: '订单数',
+          type: 'bar',
+          data: deliveryEfficiencyData.values,
+          itemStyle: { color: '#3B82F6', borderRadius: [4, 4, 0, 0] },
+          barWidth: '40%',
+        },
+      ],
+    }),
+    [deliveryEfficiencyData]
+  )
+
+  const pieOption = React.useMemo(
+    () => ({
+      tooltip: { trigger: 'item' },
+      legend: { bottom: '0%', left: 'center' },
+      series: [
+        {
+          name: '异常原因',
+          type: 'pie',
+          radius: ['40%', '70%'],
+          avoidLabelOverlap: false,
+          itemStyle: {
+            borderRadius: 10,
+            borderColor: '#fff',
+            borderWidth: 2,
+          },
+          label: { show: false, position: 'center' },
+          emphasis: {
+            label: { show: true, fontSize: 14, fontWeight: 'bold' },
+          },
+          labelLine: { show: false },
+          data: abnormalStats,
+        },
+      ],
+    }),
+    [abnormalStats]
+  )
+
+  const cityOption = React.useMemo(
+    () => ({
+      tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+      grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
+      xAxis: { type: 'value' },
+      yAxis: { type: 'category', data: cityDistribution.cities, inverse: true },
+      series: [
+        {
+          name: '订单量',
+          type: 'bar',
+          data: cityDistribution.values,
+          itemStyle: { color: '#F59E0B', borderRadius: [0, 4, 4, 0] },
+          label: { show: true, position: 'right' },
+        },
+      ],
+    }),
+    [cityDistribution]
+  )
+
+  const heatmapOption = React.useMemo(() => {
+    const hours = Array.from({ length: 24 }, (_, i) => `${i}点`)
+    const days = ['周日', '周一', '周二', '周三', '周四', '周五', '周六']
+    return {
+      tooltip: { position: 'top' },
+      grid: { height: '70%', top: '10%' },
+      xAxis: { type: 'category', data: hours, splitArea: { show: true } },
+      yAxis: { type: 'category', data: days, splitArea: { show: true } },
+      visualMap: {
+        min: 0,
+        max: Math.max(...timeHeatmapData.map((d) => d[2]), 5),
+        calculable: true,
+        orient: 'horizontal',
+        left: 'center',
+        bottom: '0%',
+        inRange: { color: ['#f0f9ff', '#0ea5e9'] },
+      },
+      series: [
+        {
+          name: '下单热度',
+          type: 'heatmap',
+          data: timeHeatmapData,
+          label: { show: false },
+          itemStyle: {
+            emphasis: { shadowBlur: 10, shadowColor: 'rgba(0, 0, 0, 0.5)' },
+          },
+        },
+      ],
+    }
+  }, [timeHeatmapData])
 
   return (
     <div className="space-y-8 p-2">
@@ -93,144 +167,139 @@ export default function DataDashboard() {
           </h1>
         </div>
 
-        <div className="flex bg-white p-1 rounded-2xl border border-gray-200 shadow-sm">
-          {['日', '周', '月'].map((t) => (
-            <button
-              key={t}
-              onClick={() => setTimeRange(t)}
-              className={`relative px-6 py-2 rounded-xl text-sm font-bold transition-all duration-300 ${
-                timeRange === t
-                  ? 'bg-[#0B0F19] text-white shadow-lg shadow-[#0B0F19]/20'
-                  : 'text-gray-400 hover:text-gray-600'
-              }`}
-            >
-              <span className="relative z-10">{t}</span>
-            </button>
-          ))}
+        {/* 时间选择器 */}
+        <div className="flex flex-col sm:flex-row gap-4 items-center">
+          <RangePicker
+            value={customRange}
+            onChange={(dates) => {
+              if (dates) {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                setCustomRange(dates as any)
+                setTimeRange('custom')
+              } else {
+                setCustomRange(null)
+                setTimeRange('week')
+              }
+            }}
+            className="h-10 rounded-xl border-gray-200 shadow-sm hover:border-[#74B868] focus:border-[#74B868]"
+          />
+
+          <div className="flex bg-gray-100 p-1 rounded-xl">
+            {(['day', 'week', 'month'] as const).map((range) => (
+              <button
+                key={range}
+                onClick={() => {
+                  setTimeRange(range)
+                  setCustomRange(null)
+                }}
+                className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${
+                  timeRange === range
+                    ? 'bg-white text-[#0B0F19] shadow-sm'
+                    : 'text-gray-500 hover:text-gray-700'
+                }`}
+              >
+                {range === 'day' ? '今日' : range === 'week' ? '本周' : '本月'}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatCard title="总收入" value="¥128,930" icon={DollarSign} color="#74B868" trend="12.5" />
-        <StatCard title="总订单" value="8,432" icon={Package} color="#3B82F6" trend="8.2" />
-        <StatCard title="活跃用户" value="2,341" icon={Users} color="#F59E0B" trend="5.3" />
-        <StatCard title="平均配送时间" value="1.2 天" icon={Truck} color="#EC4899" trend="2.1" />
+        <StatCard
+          title="总收入"
+          value={`¥${stats.totalRevenue.toLocaleString()}`}
+          icon={DollarSign}
+          color="#74B868"
+          trend={stats.revenueTrend.toFixed(1)}
+        />
+        <StatCard
+          title="总订单"
+          value={stats.totalOrders.toLocaleString()}
+          icon={Package}
+          color="#3B82F6"
+          trend={stats.ordersTrend.toFixed(1)}
+        />
+        <StatCard
+          title="活跃用户"
+          value={stats.activeUsers.toLocaleString()}
+          icon={Users}
+          color="#F59E0B"
+          trend={stats.usersTrend.toFixed(1)}
+        />
+        <StatCard
+          title="平均配送时间"
+          value={stats.avgDeliveryTime}
+          icon={Truck}
+          color="#EC4899"
+          trend={stats.deliveryTrend.toFixed(1)}
+        />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="lg:col-span-2 bg-white p-8 rounded-3xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-300"
-        >
-          <div className="flex justify-between items-center mb-8">
-            <div>
-              <h3 className="text-xl font-bold text-[#0B0F19]">收入趋势</h3>
-              <p className="text-sm text-gray-400 mt-1">每日收入表现</p>
-            </div>
-            <div className="flex items-center gap-2 px-3 py-1 bg-green-50 rounded-full border border-green-100">
-              <span className="w-2 h-2 rounded-full bg-[#74B868] animate-pulse"></span>
-              <span className="text-xs text-[#74B868] font-bold">实时</span>
-            </div>
-          </div>
-          <div className="h-[350px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={data}>
-                <defs>
-                  <linearGradient id="colorAmount" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#74B868" stopOpacity={0.2} />
-                    <stop offset="95%" stopColor="#74B868" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f3f4f6" />
-                <XAxis
-                  dataKey="name"
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{ fill: '#9CA3AF', fontSize: 12, fontWeight: 500 }}
-                  dy={10}
-                />
-                <YAxis
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{ fill: '#9CA3AF', fontSize: 12, fontWeight: 500 }}
-                  tickFormatter={(value) => `¥${value}`}
-                />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: '#0B0F19',
-                    border: 'none',
-                    borderRadius: '12px',
-                    color: '#fff',
-                    boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
-                  }}
-                  itemStyle={{ color: '#fff' }}
-                  cursor={{ stroke: '#74B868', strokeWidth: 2, strokeDasharray: '5 5' }}
-                  formatter={(value: number) => [`¥${value}`, '收入']}
-                />
-                <Area
-                  type="monotone"
-                  dataKey="amount"
-                  stroke="#74B868"
-                  strokeWidth={4}
-                  fillOpacity={1}
-                  fill="url(#colorAmount)"
-                  animationDuration={2000}
-                />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
-        </motion.div>
+      {/* 图表区域 1：趋势与效率 */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="bg-white p-6 rounded-3xl border border-gray-200 shadow-sm">
+          <h3 className="text-lg font-bold text-gray-800 mb-6">订单趋势分析</h3>
+          <ReactECharts option={lineOption} style={{ height: '300px' }} />
+        </div>
+        <div className="bg-white p-6 rounded-3xl border border-gray-200 shadow-sm">
+          <h3 className="text-lg font-bold text-gray-800 mb-6">配送时效分布</h3>
+          <ReactECharts option={barOption} style={{ height: '300px' }} />
+        </div>
+      </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="bg-white p-8 rounded-3xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-300"
-        >
-          <div className="flex justify-between items-center mb-8">
-            <div>
-              <h3 className="text-xl font-bold text-[#0B0F19]">订单量</h3>
-              <p className="text-sm text-gray-400 mt-1">每周订单统计</p>
-            </div>
-            <div className="p-2 bg-gray-50 rounded-xl">
-              <Calendar size={20} className="text-gray-400" />
-            </div>
+      {/* 图表区域 2：地理分布与热力图 */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="bg-white p-6 rounded-3xl border border-gray-200 shadow-sm">
+          <h3 className="text-lg font-bold text-gray-800 mb-6">热门配送区域 (Top 10)</h3>
+          <ReactECharts option={cityOption} style={{ height: '350px' }} />
+        </div>
+        <div className="bg-white p-6 rounded-3xl border border-gray-200 shadow-sm">
+          <h3 className="text-lg font-bold text-gray-800 mb-6">下单时间热力图</h3>
+          <ReactECharts option={heatmapOption} style={{ height: '350px' }} />
+        </div>
+      </div>
+
+      {/* 异常订单区域 */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* 饼图 */}
+        <div className="bg-white p-6 rounded-3xl border border-gray-200 shadow-sm lg:col-span-1">
+          <h3 className="text-lg font-bold text-gray-800 mb-6">异常原因分布</h3>
+          <ReactECharts option={pieOption} style={{ height: '300px' }} />
+        </div>
+
+        {/* 异常订单表格 */}
+        <div className="bg-white p-6 rounded-3xl border border-gray-200 shadow-sm lg:col-span-2">
+          <div className="flex items-center gap-2 mb-6">
+            <AlertTriangle className="text-red-500" size={24} />
+            <h3 className="text-lg font-bold text-gray-800">异常订单监控</h3>
           </div>
-          <div className="h-[350px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={data}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f3f4f6" />
-                <XAxis
-                  dataKey="name"
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{ fill: '#9CA3AF', fontSize: 12, fontWeight: 500 }}
-                  dy={10}
-                />
-                <Tooltip
-                  cursor={{ fill: '#F3F4F6', radius: 8 }}
-                  contentStyle={{
-                    backgroundColor: '#0B0F19',
-                    border: 'none',
-                    borderRadius: '12px',
-                    color: '#fff',
-                  }}
-                />
-                <Bar dataKey="orders" radius={[8, 8, 8, 8]} animationDuration={1500}>
-                  {data.map((entry, index) => (
-                    <Cell
-                      key={`cell-${index}`}
-                      fill={index % 2 === 0 ? '#0B0F19' : '#E5E7EB'}
-                      className="transition-all duration-300 hover:opacity-80"
-                    />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </motion.div>
+          <Table
+            dataSource={abnormalOrders}
+            rowKey="id"
+            pagination={false}
+            columns={[
+              {
+                title: '订单号',
+                dataIndex: 'id',
+                render: (t: string) => <span className="font-mono font-bold">{t}</span>,
+              },
+              { title: '收件人', dataIndex: ['recipient', 'name'] },
+              {
+                title: '异常原因',
+                dataIndex: 'exceptionReason',
+                render: (t: string) => <Tag color="red">{t}</Tag>,
+              },
+              {
+                title: '创建时间',
+                dataIndex: 'createdAt',
+                render: (t: string) => (
+                  <span className="font-mono text-gray-400">{t.split('T')[0]}</span>
+                ),
+              },
+            ]}
+          />
+        </div>
       </div>
     </div>
   )

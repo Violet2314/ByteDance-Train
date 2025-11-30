@@ -1,53 +1,29 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { Steps, Button, Tag, Spin } from 'antd'
-import { ArrowLeft, Package, Truck, CheckCircle, MapPin } from 'lucide-react'
+import { Button, Tag, Spin } from 'antd'
+import { ArrowLeft, Truck } from 'lucide-react'
 import TrackingMap from '../components/business/TrackingMap'
-import type { TrackPoint } from '@logistics/shared'
+import TrackingTimeline from '../components/business/TrackingTimeline'
+import OrderInfo from '../components/business/OrderInfo'
 import dayjs from 'dayjs'
 import { motion } from 'framer-motion'
-import { mockOrders } from '../mocks/data'
+import { useTracking } from '../hooks/useTracking'
 
 export default function TrackingDetail() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
 
-  const [order, setOrder] = useState<any>(null)
-  const [isLoading, setIsLoading] = useState(true)
-  const [realtimePoints, setRealtimePoints] = useState<TrackPoint[]>([])
-  const [currentStatus, setCurrentStatus] = useState<string>('')
-
-  useEffect(() => {
-    setIsLoading(true)
-    // Simulate API fetch
-    setTimeout(() => {
-      const foundOrder = mockOrders.find((o) => o.id === id)
-      if (foundOrder) {
-        setOrder(foundOrder)
-        setCurrentStatus(foundOrder.status)
-
-        // Generate mock tracking points based on order address
-        // Start from Origin to Destination
-        const startLat = foundOrder.origin?.lat || 39.9042
-        const startLng = foundOrder.origin?.lng || 116.4074
-        const endLat = foundOrder.address.lat
-        const endLng = foundOrder.address.lng
-
-        const points: TrackPoint[] = []
-        const steps = 5
-        for (let i = 0; i <= steps; i++) {
-          points.push({
-            lat: startLat + (endLat - startLat) * (i / steps),
-            lng: startLng + (endLng - startLng) * (i / steps),
-            orderId: foundOrder.id,
-            ts: Date.now() - (steps - i) * 3600000,
-          })
-        }
-        setRealtimePoints(points)
-      }
-      setIsLoading(false)
-    }, 500)
-  }, [id])
+  const {
+    order,
+    isLoading,
+    error,
+    realtimePoints,
+    currentStatus,
+    currentPoint,
+    routePath,
+    remainingDistance,
+    lastUpdateTime,
+  } = useTracking(id)
 
   if (isLoading)
     return (
@@ -55,7 +31,8 @@ export default function TrackingDetail() {
         <Spin size="large" />
       </div>
     )
-  if (!order)
+
+  if (error || !order)
     return (
       <div className="flex flex-col items-center justify-center h-[60vh]">
         <h2 className="text-2xl font-bold text-gray-800 mb-4">订单不存在</h2>
@@ -65,17 +42,6 @@ export default function TrackingDetail() {
         </Button>
       </div>
     )
-
-  const currentPoint =
-    realtimePoints.length > 0 ? realtimePoints[realtimePoints.length - 1] : undefined
-
-  // Map status to step index
-  const getStepIndex = (status: string) => {
-    if (status === 'signed') return 3
-    if (status === 'out_for_delivery') return 2
-    if (status === 'in_transit') return 1
-    return 0
-  }
 
   return (
     <div className="h-[calc(100vh-64px)] flex flex-col">
@@ -95,7 +61,7 @@ export default function TrackingDetail() {
               订单追踪 <span className="font-mono text-text-secondary">#{id}</span>
             </h1>
             <p className="text-text-tertiary mt-1">
-              预计送达: {dayjs().add(2, 'day').format('MM月DD日')}
+              预计送达: {dayjs(order.createdAt).add(2, 'day').format('MM月DD日')}
             </p>
           </div>
           <Tag color="processing" className="text-lg px-4 py-1 rounded-full">
@@ -105,13 +71,15 @@ export default function TrackingDetail() {
                 ? '派送中'
                 : currentStatus === 'signed'
                   ? '已签收'
-                  : '待发货'}
+                  : currentStatus === 'picked'
+                    ? '已揽收'
+                    : '待发货'}
           </Tag>
         </div>
       </div>
 
       <div className="flex-1 flex flex-col lg:flex-row gap-6 px-6 pb-6 min-h-0">
-        {/* Map Section - Takes more space */}
+        {/* 地图区域 - 占据更多空间 */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -121,10 +89,11 @@ export default function TrackingDetail() {
           <TrackingMap
             points={realtimePoints}
             currentPoint={currentPoint}
-            // Use origin from order data if available
+            routePath={routePath}
+            // 如果订单数据中有起点则使用，否则默认为北京
             startPoint={
-              order.origin
-                ? { lat: order.origin.lat, lng: order.origin.lng }
+              order.sender && order.sender.lat && order.sender.lng
+                ? { lat: order.sender.lat, lng: order.sender.lng }
                 : { lat: 39.9042, lng: 116.4074 }
             }
             endPoint={{ lat: order.address.lat, lng: order.address.lng }}
@@ -142,11 +111,19 @@ export default function TrackingDetail() {
                 <Truck size={20} />
               </div>
               <div>
-                <p className="font-bold text-text-primary">正在配送中</p>
-                <p className="text-xs text-text-secondary">距离目的地 12km</p>
+                <p className="font-bold text-text-primary">
+                  {currentStatus === 'signed' ? '已送达' : '正在配送中'}
+                </p>
+                <p className="text-xs text-text-secondary">
+                  {currentStatus === 'signed'
+                    ? '订单已完成'
+                    : remainingDistance
+                      ? `距离目的地约 ${remainingDistance} km`
+                      : '等待位置更新...'}
+                </p>
               </div>
             </div>
-            <div className="text-xs text-text-tertiary">更新于: {dayjs().format('HH:mm:ss')}</div>
+            <div className="text-xs text-text-tertiary">更新于: {lastUpdateTime}</div>
           </motion.div>
         </motion.div>
 
@@ -158,54 +135,8 @@ export default function TrackingDetail() {
           className="flex-1 bg-white/80 backdrop-blur-sm rounded-2xl shadow-subtle p-6 overflow-y-auto"
         >
           <h3 className="font-bold text-lg mb-6">物流详情</h3>
-          <Steps
-            direction="vertical"
-            current={getStepIndex(currentStatus)}
-            items={[
-              {
-                title: '已揽收',
-                description: '包裹已由物流公司揽收',
-                icon: <Package size={18} />,
-                status: getStepIndex(currentStatus) >= 0 ? 'finish' : 'wait',
-              },
-              {
-                title: '运输中',
-                description: '包裹正在发往目的地',
-                icon: <Truck size={18} />,
-                status: getStepIndex(currentStatus) >= 1 ? 'finish' : 'wait',
-              },
-              {
-                title: '派送中',
-                description: '快递员正在为您派送',
-                icon: <MapPin size={18} />,
-                status: getStepIndex(currentStatus) >= 2 ? 'finish' : 'wait',
-              },
-              {
-                title: '已签收',
-                description: '客户已签收，感谢使用',
-                icon: <CheckCircle size={18} />,
-                status: getStepIndex(currentStatus) >= 3 ? 'finish' : 'wait',
-              },
-            ]}
-          />
-
-          <div className="mt-8 pt-6 border-t border-gray-100">
-            <h4 className="font-semibold mb-3">收货信息</h4>
-            <div className="space-y-2 text-sm text-text-secondary">
-              <p>
-                <span className="text-text-tertiary w-16 inline-block">收货人:</span>{' '}
-                {order.recipient.name}
-              </p>
-              <p>
-                <span className="text-text-tertiary w-16 inline-block">电话:</span>{' '}
-                {order.recipient.phone}
-              </p>
-              <p>
-                <span className="text-text-tertiary w-16 inline-block">地址:</span>{' '}
-                {order.address.text}
-              </p>
-            </div>
-          </div>
+          <TrackingTimeline currentStatus={currentStatus} />
+          <OrderInfo recipient={order.recipient} address={order.address} />
         </motion.div>
       </div>
     </div>

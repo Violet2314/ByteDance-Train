@@ -9,7 +9,7 @@ body {
     radial-gradient(circle at 85% 75%, rgba(210, 190, 165, 0.08) 0%, transparent 55%), #fdfcf9;
 }
 
-/* Custom Scrollbar */
+/* 自定义滚动条 */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -22,4 +22,9 @@ body {
 }
 ::-webkit-scrollbar-thumb:hover {
   @apply bg-primary-base/40;
+}
+
+/* 修复 Ant Design 分页间距 */
+.ant-pagination-options {
+  padding-right: 10px !important;
 }

@@ -1,17 +1,19 @@
-import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import React from 'react'
 import { Input, Button, Card } from 'antd'
-import { Search, Package } from 'lucide-react'
+import { Package } from 'lucide-react'
+import { useTrackingSearchPage } from '../hooks/useTrackingSearchPage'
+import { SearchHistoryList } from '../components/business/SearchHistoryList'
 
 export default function TrackingSearch() {
-  const [orderId, setOrderId] = useState('')
-  const navigate = useNavigate()
-
-  const handleSearch = () => {
-    if (orderId.trim()) {
-      navigate(`/tracking/${orderId}`)
-    }
-  }
+  const {
+    orderId,
+    setOrderId,
+    history,
+    clearHistory,
+    handleSearch,
+    handleHistoryClick,
+    removeHistory,
+  } = useTrackingSearchPage()
 
   return (
     <div className="flex-1 flex flex-col items-center justify-center p-6 max-w-2xl mx-auto w-full">
@@ -42,34 +44,12 @@ export default function TrackingSearch() {
         </div>
       </Card>
 
-      <div className="mt-12 w-full">
-        <h3 className="text-sm font-semibold text-text-tertiary uppercase tracking-wider mb-4">
-          最近查询
-        </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {['O1001', 'O1002'].map((id) => (
-            <div
-              key={id}
-              onClick={() => navigate(`/tracking/${id}`)}
-              className="bg-white/60 p-4 rounded-xl border border-gray-100 cursor-pointer hover:bg-white hover:shadow-md transition-all flex items-center justify-between group"
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-primary-lighter/20 flex items-center justify-center text-primary-base">
-                  <Package size={20} />
-                </div>
-                <div>
-                  <p className="font-medium text-text-primary">{id}</p>
-                  <p className="text-xs text-text-tertiary">刚刚查询</p>
-                </div>
-              </div>
-              <Search
-                size={18}
-                className="text-gray-300 group-hover:text-primary-base transition-colors"
-              />
-            </div>
-          ))}
-        </div>
-      </div>
+      <SearchHistoryList
+        history={history}
+        onHistoryClick={handleHistoryClick}
+        onRemoveHistory={removeHistory}
+        onClearHistory={clearHistory}
+      />
     </div>
   )
 }

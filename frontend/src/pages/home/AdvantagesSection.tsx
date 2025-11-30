@@ -6,7 +6,7 @@ import { Globe, Lock, BarChart3, Crosshair, Cpu, Signal } from 'lucide-react'
 
 gsap.registerPlugin(ScrollTrigger)
 
-// Interactive Grid Background
+// 交互式网格背景
 const GridBackground = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const activeCells = useRef<Array<{ x: number; y: number; life: number }>>([])
@@ -34,7 +34,7 @@ const GridBackground = () => {
     const draw = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height)
 
-      // Draw base grid
+      // 绘制基础网格
       ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)'
       ctx.lineWidth = 1
       ctx.beginPath()
@@ -48,18 +48,18 @@ const GridBackground = () => {
       }
       ctx.stroke()
 
-      // Update and draw active cells
+      // 更新并绘制活跃单元格
       activeCells.current = activeCells.current.filter((cell) => cell.life > 0)
 
       activeCells.current.forEach((cell) => {
-        cell.life -= 0.02 // Decay rate
+        cell.life -= 0.02 // 衰减率
         const alpha = Math.max(0, cell.life)
 
         ctx.strokeStyle = `rgba(255, 255, 255, ${alpha * 0.8})`
         ctx.lineWidth = 1.5
         ctx.strokeRect(cell.x * cellSize, cell.y * cellSize, cellSize, cellSize)
 
-        // Optional: Fill
+        // 可选：填充
         ctx.fillStyle = `rgba(255, 255, 255, ${alpha * 0.05})`
         ctx.fillRect(cell.x * cellSize, cell.y * cellSize, cellSize, cellSize)
       })
@@ -77,19 +77,19 @@ const GridBackground = () => {
       const gridX = Math.floor(x / cellSize)
       const gridY = Math.floor(y / cellSize)
 
-      // Only trigger if moved to a NEW cell
+      // 仅当移动到新单元格时触发
       if (gridX !== lastGridPos.current.x || gridY !== lastGridPos.current.y) {
         lastGridPos.current = { x: gridX, y: gridY }
 
-        // Trigger 3x3 area effect
+        // 触发 3x3 区域效果
         for (let i = -1; i <= 1; i++) {
           for (let j = -1; j <= 1; j++) {
-            // Randomly light up cells in 3x3 area
+            // 随机点亮 3x3 区域内的单元格
             if (Math.random() > 0.4) {
               activeCells.current.push({
                 x: gridX + i,
                 y: gridY + j,
-                life: 1.0, // Start with full life
+                life: 1.0, // 初始生命值
               })
             }
           }
@@ -141,7 +141,7 @@ export default function AdvantagesSection() {
           invalidateOnRefresh: true,
           onUpdate: (self) => {
             if (rightFadeRef.current) {
-              // Fade out the right edge indicator when reaching the end
+              // 当滚动到末尾时淡出右侧边缘指示器
               gsap.to(rightFadeRef.current, {
                 opacity: self.progress > 0.95 ? 0 : 1,
                 duration: 0.3,
@@ -150,7 +150,7 @@ export default function AdvantagesSection() {
           },
         })
 
-        // Background Text Animation
+        // 背景文字动画
         gsap.from('.bg-text-char', {
           scrollTrigger: {
             trigger: section,

@@ -1,10 +1,36 @@
 export interface Order {
   id: string
-  status: 'pending' | 'in_transit' | 'signed'
+  status: 'pending' | 'picked' | 'in_transit' | 'out_for_delivery' | 'signed'
   amount: number
   createdAt: string // ISO
-  recipient: { name: string; phone: string }
-  address: { text: string; lat: number; lng: number }
+  deliveryDays: number // Promised delivery days (e.g. 1, 3)
+  
+  // Sender Info
+  sender: {
+    name: string
+    phone: string
+    address: string
+    lat?: number
+    lng?: number
+  }
+
+  // Recipient Info
+  recipient: { 
+    name: string
+    phone: string 
+  }
+  address: { 
+    text: string
+    lat: number
+    lng: number 
+  }
+
+  // Cargo Info
+  cargo?: {
+    name: string
+    weight: number
+    quantity: number
+  }
 }
 
 export interface TrackPoint {
@@ -12,6 +38,9 @@ export interface TrackPoint {
   lat: number
   lng: number
   ts: number
+  shippedAt?: string
+  deliveryDays?: string
+  routePath?: { lat: number; lng: number }[]
 }
 
 export type ShipmentStatus = 'picked' | 'in_transit' | 'out_for_delivery' | 'signed'
@@ -51,6 +80,8 @@ export interface Merchant {
 export interface ServerToClientEvents {
   'track:update': (payload: TrackPoint) => void;
   'status:update': (payload: ShipmentState) => void;
+  'status:broadcast': (payload: ShipmentState) => void;
+  'track:batch-update': (payload: TrackPoint[]) => void;
 }
 
 export interface ClientToServerEvents {

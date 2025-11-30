@@ -3,6 +3,7 @@ import type { ServerToClientEvents, ClientToServerEvents } from '@logistics/shar
 
 const URL = 'http://localhost:3001'
 
+// 初始化 Socket.IO 客户端
 export const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(URL, {
   path: '/ws',
   autoConnect: false,

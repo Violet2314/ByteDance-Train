@@ -5,7 +5,7 @@ import { ArrowRight, Globe, Truck, Box, BarChart3 } from 'lucide-react'
 import { motion, useMotionValue, useSpring, useTransform, useScroll } from 'framer-motion'
 import gsap from 'gsap'
 
-// --- 3D Floating Element Component ---
+// --- 3D 悬浮元素组件 ---
 const FloatingElement = ({
   children,
   depth = 1,
@@ -18,11 +18,11 @@ const FloatingElement = ({
   const x = useMotionValue(0)
   const y = useMotionValue(0)
 
-  // Smooth spring animation for mouse movement
+  // 鼠标移动的平滑弹簧动画
   const mouseXSpring = useSpring(x, { stiffness: 100, damping: 20 })
   const mouseYSpring = useSpring(y, { stiffness: 100, damping: 20 })
 
-  // Transform based on depth (parallax effect)
+  // 基于深度的变换（视差效果）
   const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], [10 * depth, -10 * depth])
   const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], [-10 * depth, 10 * depth])
   const translateX = useTransform(mouseXSpring, [-0.5, 0.5], [-20 * depth, 20 * depth])
@@ -63,14 +63,14 @@ const FloatingElement = ({
   )
 }
 
-// --- Background Grid Animation (Light Mode) ---
+// --- 背景网格动画（浅色模式） ---
 const AnimatedGrid = () => {
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {/* Base Grid */}
+      {/* 基础网格 */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#00000008_1px,transparent_1px),linear-gradient(to_bottom,#00000008_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]" />
 
-      {/* Moving Grid Overlay */}
+      {/* 移动网格叠加层 */}
       <motion.div
         animate={{
           backgroundPosition: ['0px 0px', '40px 40px'],
@@ -96,7 +96,7 @@ export default function HeroSection() {
     const ctx = gsap.context(() => {
       const tl = gsap.timeline()
 
-      // 1. Background Text Reveal
+      // 1. 背景文字揭示
       tl.from('.bg-text-char', {
         y: 200,
         opacity: 0,

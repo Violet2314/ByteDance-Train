@@ -1,17 +1,9 @@
-import React, { useState, useEffect } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import React from 'react'
+import { Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import {
-  Truck,
-  Package,
-  BarChart3,
-  User,
-  Menu,
-  X,
-  ChevronRight,
-  LayoutDashboard,
-} from 'lucide-react'
+import { Truck, User, Menu, X, ChevronRight, LogOut } from 'lucide-react'
 import { clsx } from 'clsx'
+import { useNavbar } from '../hooks/useNavbar'
 
 type NavbarProps = {
   role?: 'guest' | 'user' | 'merchant'
@@ -19,54 +11,14 @@ type NavbarProps = {
 }
 
 export default function Navbar({ role = 'guest', enableEntranceAnimation = true }: NavbarProps) {
-  const location = useLocation()
-  const [scrolled, setScrolled] = useState(false)
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20)
-    }
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
-
-  const navLinks: Record<string, Array<{ name: string; path: string; icon?: React.ReactNode }>> = {
-    guest: [
-      { name: '首页', path: '/' },
-      { name: '解决方案', path: '/#solutions' },
-      { name: '关于我们', path: '/#about' },
-    ],
-    user: [
-      { name: '首页', path: '/' },
-      { name: '包裹查询', path: '/tracking', icon: <Package size={18} /> },
-      // { name: '我的订单', path: '/tracking/orders', icon: <LayoutDashboard size={18} /> },
-    ],
-    merchant: [
-      { name: '首页', path: '/' },
-      { name: '订单管理', path: '/merchant', icon: <LayoutDashboard size={18} /> },
-      { name: '配送管理', path: '/merchant/delivery', icon: <Package size={18} /> },
-      { name: '数据看板', path: '/merchant/dashboard', icon: <BarChart3 size={18} /> },
-    ],
-  }
-
-  const currentLinks = navLinks[role] || navLinks.guest
-
-  // 处理同页面标签滚动
-  const handleLinkClick = (path: string) => {
-    setMobileMenuOpen(false)
-    if (path.startsWith('/#')) {
-      const hash = path.substring(1)
-      if (location.pathname === '/') {
-        const element = document.querySelector(hash)
-        if (element) {
-          element.scrollIntoView({ behavior: 'smooth' })
-        }
-      }
-    } else if (path === '/' && location.pathname === '/') {
-      window.scrollTo({ top: 0, behavior: 'smooth' })
-    }
-  }
+  const {
+    scrolled,
+    mobileMenuOpen,
+    setMobileMenuOpen,
+    handleLogout,
+    currentLinks,
+    handleLinkClick,
+  } = useNavbar(role)
 
   return (
     <>
@@ -82,7 +34,7 @@ export default function Navbar({ role = 'guest', enableEntranceAnimation = true 
         )}
       >
         <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
-          {/* Logo Area */}
+          {/* Logo 区域 */}
           <Link
             to="/"
             className="flex items-center gap-3 group"
@@ -95,7 +47,7 @@ export default function Navbar({ role = 'guest', enableEntranceAnimation = true 
                 className="text-white relative z-10 group-hover:scale-110 transition-transform duration-300"
               />
 
-              {/* Tech decoration */}
+              {/* 科技感装饰 */}
               <div className="absolute bottom-1 right-1 w-1 h-1 bg-[#74B868] rounded-full animate-pulse" />
             </div>
             <div className="flex flex-col">
@@ -108,7 +60,7 @@ export default function Navbar({ role = 'guest', enableEntranceAnimation = true 
             </div>
           </Link>
 
-          {/* Desktop Navigation */}
+          {/* 桌面端导航 */}
           <div className="hidden md:flex items-center gap-8">
             <div className="flex items-center gap-1 bg-gray-100/50 p-1 rounded-full border border-gray-200/50 backdrop-blur-sm">
               {currentLinks.map((link) => {
@@ -171,6 +123,13 @@ export default function Navbar({ role = 'guest', enableEntranceAnimation = true 
                   <div className="w-10 h-10 rounded-xl bg-gray-100 border border-gray-200 flex items-center justify-center text-gray-600 hover:bg-[#74B868] hover:text-white hover:border-[#74B868] transition-all cursor-pointer group">
                     <User size={20} />
                   </div>
+                  <button
+                    onClick={handleLogout}
+                    className="w-10 h-10 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center text-red-500 hover:bg-red-500 hover:text-white transition-all cursor-pointer"
+                    title="退出登录"
+                  >
+                    <LogOut size={18} />
+                  </button>
                 </div>
               </div>
             )}
