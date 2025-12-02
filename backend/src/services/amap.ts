@@ -9,7 +9,7 @@ interface Point {
 
 export async function getDrivingPath(origin: Point, destination: Point): Promise<Point[]> {
   try {
-    // Amap uses lng,lat format
+    // 高德地图使用 lng,lat 格式
     const originStr = `${origin.lng.toFixed(6)},${origin.lat.toFixed(6)}`;
     const destStr = `${destination.lng.toFixed(6)},${destination.lat.toFixed(6)}`;
     
@@ -26,7 +26,7 @@ export async function getDrivingPath(origin: Point, destination: Point): Promise
       
       console.log(`[AMap] Found path with distance: ${path.distance}m`);
 
-      // Parse steps to get all polyline points
+      // 解析 steps 以获取所有 polyline 点
       steps.forEach((step: any) => {
         const polyline = step.polyline; // "lng,lat;lng,lat;..."
         if (polyline) {

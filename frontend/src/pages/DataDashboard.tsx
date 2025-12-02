@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { memo } from 'react'
 import ReactECharts from 'echarts-for-react'
 import { Package, Users, DollarSign, Activity, Truck, AlertTriangle } from 'lucide-react'
 import { StatCard } from '../components/business/StatCard'
@@ -7,11 +7,12 @@ import { Table, Tag, DatePicker } from 'antd'
 
 const { RangePicker } = DatePicker
 
-export default function DataDashboard() {
+const DataDashboard = memo(function DataDashboard() {
+  // 从自定义 Hook 获取数据和状态
   const {
     stats,
     orderTrendData,
-    deliveryEfficiencyData,
+    revenueChartData,
     abnormalStats,
     abnormalOrders,
     cityDistribution,
@@ -22,20 +23,24 @@ export default function DataDashboard() {
     setCustomRange,
   } = useDataDashboard()
 
-  // ECharts 配置项
+  // --- ECharts 配置项 ---
+  // 使用 useMemo 缓存配置对象，避免每次渲染都重新创建导致图表闪烁
+
+  // 1. 订单量趋势图 (折线图)
   const lineOption = React.useMemo(
     () => ({
-      tooltip: { trigger: 'axis' },
-      grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
+      tooltip: { trigger: 'axis' }, // 鼠标悬停显示数据
+      grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true }, // 图表边距
       xAxis: { type: 'category', boundaryGap: false, data: orderTrendData.dates },
       yAxis: { type: 'value' },
       series: [
         {
           name: '订单量',
           type: 'line',
-          smooth: true,
+          smooth: true, // 平滑曲线
           data: orderTrendData.counts,
           itemStyle: { color: '#74B868' },
+          // 区域填充渐变色
           areaStyle: {
             color: {
               type: 'linear',
@@ -55,25 +60,27 @@ export default function DataDashboard() {
     [orderTrendData]
   )
 
+  // 2. 收入趋势图 (柱状图)
   const barOption = React.useMemo(
     () => ({
       tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
       grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
-      xAxis: { type: 'category', data: deliveryEfficiencyData.categories },
+      xAxis: { type: 'category', data: revenueChartData.categories },
       yAxis: { type: 'value' },
       series: [
         {
-          name: '订单数',
+          name: '收入',
           type: 'bar',
-          data: deliveryEfficiencyData.values,
-          itemStyle: { color: '#3B82F6', borderRadius: [4, 4, 0, 0] },
+          data: revenueChartData.values,
+          itemStyle: { color: '#74B868', borderRadius: [4, 4, 0, 0] }, // 顶部圆角
           barWidth: '40%',
         },
       ],
     }),
-    [deliveryEfficiencyData]
+    [revenueChartData]
   )
 
+  // 3. 异常原因分布 (饼图)
   const pieOption = React.useMemo(
     () => ({
       tooltip: { trigger: 'item' },
@@ -82,7 +89,7 @@ export default function DataDashboard() {
         {
           name: '异常原因',
           type: 'pie',
-          radius: ['40%', '70%'],
+          radius: ['40%', '70%'], // 环形图
           avoidLabelOverlap: false,
           itemStyle: {
             borderRadius: 10,
@@ -173,7 +180,6 @@ export default function DataDashboard() {
             value={customRange}
             onChange={(dates) => {
               if (dates) {
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 setCustomRange(dates as any)
                 setTimeRange('custom')
               } else {
@@ -243,7 +249,7 @@ export default function DataDashboard() {
           <ReactECharts option={lineOption} style={{ height: '300px' }} />
         </div>
         <div className="bg-white p-6 rounded-3xl border border-gray-200 shadow-sm">
-          <h3 className="text-lg font-bold text-gray-800 mb-6">配送时效分布</h3>
+          <h3 className="text-lg font-bold text-gray-800 mb-6">收入趋势分析</h3>
           <ReactECharts option={barOption} style={{ height: '300px' }} />
         </div>
       </div>
@@ -303,4 +309,6 @@ export default function DataDashboard() {
       </div>
     </div>
   )
-}
+})
+
+export default DataDashboard

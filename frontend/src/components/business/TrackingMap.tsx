@@ -25,17 +25,28 @@ const TrackingMap = memo(function TrackingMap({
   const startMarkerInstance = useRef<any>(null)
   const endMarkerInstance = useRef<any>(null)
   const tweenRef = useRef<gsap.core.Tween | null>(null)
-  const isFirstUpdate = useRef(true)
+  const lastOrderIdRef = useRef<string | null>(null)
   const [isMapReady, setIsMapReady] = React.useState(false)
+  const hasInitialFitViewRef = useRef(false) // 标记是否已经执行过首次视图适配
 
-  // 仅初始化一次地图
+  // 检测订单是否变化，如果是新订单则需要重置标志
+  const currentOrderId = currentPoint?.orderId
+  const isFirstPointOfNewOrder = currentOrderId !== lastOrderIdRef.current
+
+  // 如果订单变化了，重置视图适配标志
+  if (isFirstPointOfNewOrder && currentOrderId) {
+    hasInitialFitViewRef.current = false
+  }
+
+  // 初始化地图 (仅执行一次)
   useEffect(() => {
     let AMap: any = null
 
+    // 异步加载高德地图 JS API
     AMapLoader.load({
-      key: import.meta.env.VITE_AMAP_KEY, // 替换为你的高德地图 Key
+      key: import.meta.env.VITE_AMAP_KEY, // 从环境变量获取 Key
       version: '2.0',
-      plugins: ['AMap.MoveAnimation', 'AMap.Polyline'],
+      plugins: ['AMap.MoveAnimation', 'AMap.Polyline'], // 加载所需插件
     })
       .then((AMapLoaded) => {
         AMap = AMapLoaded
@@ -44,6 +55,7 @@ const TrackingMap = memo(function TrackingMap({
         // 默认中心点（北京）
         const center = [116.397428, 39.90923]
 
+        // 创建地图实例
         if (!mapInstance.current) {
           mapInstance.current = new AMap.Map(mapContainer.current, {
             zoom: 11,
@@ -52,11 +64,11 @@ const TrackingMap = memo(function TrackingMap({
           })
         }
 
-        // 初始化折线
+        // 初始化折线（轨迹）
         if (!polylineInstance.current) {
           polylineInstance.current = new AMap.Polyline({
             path: [],
-            strokeColor: '#7CAA6D',
+            strokeColor: '#7CAA6D', // 绿色轨迹
             strokeWeight: 6,
             strokeOpacity: 0.9,
             zIndex: 50,
@@ -67,14 +79,14 @@ const TrackingMap = memo(function TrackingMap({
           mapInstance.current.add(polylineInstance.current)
         }
 
-        // 初始化标记（默认图标）
+        // 初始化车辆标记
         if (!markerInstance.current) {
-          // 确定初始位置
-          let initialPos = center
+          // 确定初始位置（确保使用数字并保持 [lng, lat] 顺序）
+          let initialPos: [number, number] = [Number(center[0]), Number(center[1])]
           if (currentPoint) {
-            initialPos = [currentPoint.lng, currentPoint.lat]
+            initialPos = [Number(currentPoint.lng), Number(currentPoint.lat)]
           } else if (startPoint) {
-            initialPos = [startPoint.lng, startPoint.lat]
+            initialPos = [Number(startPoint.lng), Number(startPoint.lat)]
           }
 
           markerInstance.current = new AMap.Marker({
@@ -90,6 +102,7 @@ const TrackingMap = memo(function TrackingMap({
         console.error(e)
       })
 
+    // 清理函数：组件卸载时销毁地图实例
     return () => {
       if (mapInstance.current) {
         mapInstance.current.destroy()
@@ -100,7 +113,7 @@ const TrackingMap = memo(function TrackingMap({
         endMarkerInstance.current = null
       }
     }
-  }, []) // Empty dependency array to prevent re-initialization
+  }, []) // 空依赖数组，确保只执行一次 // Empty dependency array to prevent re-initialization
 
   // Update Start/End Markers
   useEffect(() => {
@@ -111,7 +124,7 @@ const TrackingMap = memo(function TrackingMap({
     if (startPoint) {
       if (!startMarkerInstance.current) {
         startMarkerInstance.current = new AMap.Marker({
-          position: [startPoint.lng, startPoint.lat],
+          position: [Number(startPoint.lng), Number(startPoint.lat)],
           content:
             '<div style="background:#3B82F6;width:16px;height:16px;border-radius:50%;border:3px solid white;box-shadow:0 2px 4px rgba(0,0,0,0.2);"></div>',
           offset: new AMap.Pixel(-8, -8),
@@ -119,7 +132,7 @@ const TrackingMap = memo(function TrackingMap({
         })
         mapInstance.current.add(startMarkerInstance.current)
       } else {
-        startMarkerInstance.current.setPosition([startPoint.lng, startPoint.lat])
+        startMarkerInstance.current.setPosition([Number(startPoint.lng), Number(startPoint.lat)])
       }
     }
 
@@ -127,7 +140,7 @@ const TrackingMap = memo(function TrackingMap({
     if (endPoint) {
       if (!endMarkerInstance.current) {
         endMarkerInstance.current = new AMap.Marker({
-          position: [endPoint.lng, endPoint.lat],
+          position: [Number(endPoint.lng), Number(endPoint.lat)],
           content:
             '<div style="background:#EF4444;width:16px;height:16px;border-radius:50%;border:3px solid white;box-shadow:0 2px 4px rgba(0,0,0,0.2);"></div>',
           offset: new AMap.Pixel(-8, -8),
@@ -135,7 +148,7 @@ const TrackingMap = memo(function TrackingMap({
         })
         mapInstance.current.add(endMarkerInstance.current)
       } else {
-        endMarkerInstance.current.setPosition([endPoint.lng, endPoint.lat])
+        endMarkerInstance.current.setPosition([Number(endPoint.lng), Number(endPoint.lat)])
       }
     }
   }, [isMapReady, startPoint, endPoint])
@@ -155,17 +168,18 @@ const TrackingMap = memo(function TrackingMap({
     if (path.length > 0) {
       polylineInstance.current.setPath(path)
 
-      // Only fit view if we haven't done it yet or if it's the initial load of the path
-      // We can check if the map center is still the default or if we want to force it
-      // For now, let's fit view when path length changes significantly or on first load
-      const overlays = [
-        polylineInstance.current,
-        startMarkerInstance.current,
-        endMarkerInstance.current,
-      ].filter(Boolean)
+      // 只在首次加载或订单切换时自动调整视图，避免用户操作后地图自动回弹
+      if (!hasInitialFitViewRef.current) {
+        const overlays = [
+          polylineInstance.current,
+          startMarkerInstance.current,
+          endMarkerInstance.current,
+        ].filter(Boolean)
 
-      if (overlays.length > 0) {
-        mapInstance.current.setFitView(overlays, false, [50, 50, 50, 50])
+        if (overlays.length > 0) {
+          mapInstance.current.setFitView(overlays, false, [50, 50, 50, 50])
+          hasInitialFitViewRef.current = true
+        }
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -184,18 +198,22 @@ const TrackingMap = memo(function TrackingMap({
       tweenRef.current.kill()
     }
 
-    // If it's the first update (or first valid point after init), snap to position
-    if (isFirstUpdate.current) {
+    // 如果是新订单的第一个点，直接设置位置不做动画
+    if (isFirstPointOfNewOrder) {
       markerInstance.current.setPosition([end.lng, end.lat])
-      isFirstUpdate.current = false
+      lastOrderIdRef.current = currentPoint.orderId
+      console.log(`[TrackingMap] New order ${currentPoint.orderId}, snap to position`)
       return
     }
 
-    // Animate using GSAP
+    // 后续的点使用GSAP动画平滑移动（对应5秒的更新间隔）
+    console.log(
+      `[TrackingMap] Animating from [${start.lng}, ${start.lat}] to [${end.lng}, ${end.lat}]`
+    )
     tweenRef.current = gsap.to(start, {
       lng: end.lng,
       lat: end.lat,
-      duration: 4, // 4 seconds (slightly less than 5s update interval)
+      duration: 4, // 4秒动画（略小于5秒更新间隔，留1秒缓冲）
       ease: 'linear',
       onUpdate: () => {
         if (markerInstance.current) {
@@ -209,7 +227,7 @@ const TrackingMap = memo(function TrackingMap({
         tweenRef.current.kill()
       }
     }
-  }, [isMapReady, currentPoint])
+  }, [isMapReady, currentPoint, isFirstPointOfNewOrder])
 
   return (
     <div ref={mapContainer} className="w-full h-full rounded-2xl overflow-hidden shadow-inner" />

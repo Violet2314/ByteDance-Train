@@ -4,17 +4,22 @@ import dayjs from 'dayjs'
 import isBetween from 'dayjs/plugin/isBetween'
 import 'dayjs/locale/zh-cn'
 
+// 扩展 dayjs 插件，用于判断日期是否在范围内
 dayjs.extend(isBetween)
 dayjs.locale('zh-cn')
 
 export const useDataDashboard = () => {
+  // 状态管理：时间范围筛选
   const [timeRange, setTimeRange] = useState<'day' | 'week' | 'month' | 'custom'>('week')
   const [customRange, setCustomRange] = useState<[dayjs.Dayjs, dayjs.Dayjs] | null>(null)
-  const { data: ordersData, isLoading } = api.useGetOrdersQuery({})
+  // 从 API 获取当前商家的订单数据（需要权限控制）
+  const { data: ordersData, isLoading } = api.useGetMyOrdersQuery({})
 
+  // 使用 useMemo 缓存订单列表，避免每次渲染都重新计算
   const orders = useMemo(() => ordersData?.data || [], [ordersData])
 
-  // 辅助函数：获取日期范围
+  // 辅助函数：根据选择的时间范围（日/周/月）计算具体的开始和结束日期
+  // offset 参数用于计算“上一周期”，比如 offset=1 表示上周/上月
   const getDateRange = useCallback(
     (range: 'day' | 'week' | 'month' | 'custom', offset = 0) => {
       const now = dayjs()
@@ -57,22 +62,28 @@ export const useDataDashboard = () => {
     [customRange]
   )
 
+  // 核心逻辑：计算统计数据（收入、订单量、活跃用户等）
   const stats = useMemo(() => {
+    // 1. 获取当前周期和上一周期的日期范围
     const currentRange = getDateRange(timeRange, 0)
     const prevRange = getDateRange(timeRange, 1)
 
+    // 2. 筛选出当前周期的订单
     const currentOrders = orders.filter((o) =>
       dayjs(o.createdAt).isBetween(currentRange.start, currentRange.end, null, '[]')
     )
+    // 3. 筛选出上一周期的订单（用于计算环比增长）
     const prevOrders = orders.filter((o) =>
       dayjs(o.createdAt).isBetween(prevRange.start, prevRange.end, null, '[]')
     )
 
+    // 辅助函数：计算增长率
     const calculateGrowth = (current: number, previous: number) => {
       if (previous === 0) return current > 0 ? 100 : 0
       return ((current - previous) / previous) * 100
     }
 
+    // 4. 计算各项指标
     const totalRevenue = currentOrders.reduce((acc, order) => acc + order.amount, 0)
     const prevRevenue = prevOrders.reduce((acc, order) => acc + order.amount, 0)
 
@@ -167,44 +178,101 @@ export const useDataDashboard = () => {
     }
   }, [orders, timeRange, customRange])
 
-  // 图表 2：配送效率（柱状图）
-  const deliveryEfficiencyData = useMemo(() => {
-    // 过滤与当前视图相关的订单或所有时间的订单？通常效率是所有时间或当前周期。
-    // 让我们使用当前周期以保持一致。
-    const currentRange = getDateRange(timeRange, 0)
-    const relevantOrders = orders.filter((o) =>
-      dayjs(o.createdAt).isBetween(currentRange.start, currentRange.end, null, '[]')
-    )
+  // 图表 2：收入趋势（柱状图）
+  const revenueChartData = useMemo(() => {
+    let dates: string[] = []
+    let format = 'MM-DD'
 
-    // 基于真实数量的模拟分布
-    const total = relevantOrders.length
+    // 复用日期生成逻辑 (为了保持一致性，这里重复一遍逻辑)
+    if (timeRange === 'day') {
+      format = 'HH:00'
+      dates = Array.from({ length: 24 }, (_, i) =>
+        dayjs().startOf('day').add(i, 'hour').format(format)
+      )
+    } else if (timeRange === 'week') {
+      const startOfWeek = dayjs().startOf('week')
+      dates = Array.from({ length: 7 }, (_, i) => startOfWeek.add(i, 'day').format(format))
+    } else if (timeRange === 'month') {
+      dates = Array.from({ length: 30 }, (_, i) =>
+        dayjs()
+          .subtract(29 - i, 'day')
+          .format(format)
+      )
+    } else if (timeRange === 'custom' && customRange) {
+      const start = customRange[0]
+      const end = customRange[1]
+      const diffDays = end.diff(start, 'day') + 1
 
-    // 将总数大致分配到5个桶中：15%, 35%, 30%, 15%, 5%
-    // 使用 Math.floor 获取基础整数
-    const distribution = [0.15, 0.35, 0.3, 0.15, 0.05]
-    const values = distribution.map((p) => Math.floor(total * p))
-
-    // 将余数添加到最常见的桶（索引 1：12-24h）以确保总和等于总数
-    const currentSum = values.reduce((a, b) => a + b, 0)
-    const remainder = total - currentSum
-    if (remainder > 0) {
-      values[1] += remainder
+      if (diffDays <= 1) {
+        format = 'HH:00'
+        dates = Array.from({ length: 24 }, (_, i) =>
+          start.startOf('day').add(i, 'hour').format(format)
+        )
+      } else {
+        dates = Array.from({ length: diffDays }, (_, i) => start.add(i, 'day').format(format))
+      }
+    } else {
+      dates = Array.from({ length: 7 }, (_, i) =>
+        dayjs()
+          .subtract(6 - i, 'day')
+          .format(format)
+      )
     }
+
+    const values = dates.map((date) => {
+      const dayOrders = orders.filter((o) => {
+        if (
+          timeRange === 'day' ||
+          (timeRange === 'custom' && customRange && customRange[1].diff(customRange[0], 'day') < 1)
+        ) {
+          const orderDate = dayjs(o.createdAt)
+          const isSameDay =
+            timeRange === 'day'
+              ? orderDate.isSame(dayjs(), 'day')
+              : orderDate.isSame(customRange![0], 'day')
+          return orderDate.format('HH:00') === date && isSameDay
+        }
+        return dayjs(o.createdAt).format('MM-DD') === date
+      })
+      return dayOrders.reduce((sum, order) => sum + order.amount, 0)
+    })
 
     return {
-      categories: ['< 12h', '12-24h', '24-48h', '2-3天', '> 3天'],
+      categories: dates,
       values,
     }
-  }, [orders, timeRange, getDateRange])
+  }, [orders, timeRange, customRange])
 
   // 图表 3：异常原因分布（饼图）
   const abnormalStats = useMemo(() => {
     // 逻辑：配送时间 > 承诺时间（deliveryDays）
-    const abnormalList = orders.filter((o) => {
-      // 暂时硬编码为 3 天，因为 Order 类型中没有 deliveryDays，且后端可能未返回
-      const promiseDays = 3
-      const elapsedDays = dayjs().diff(dayjs(o.createdAt), 'day', true)
-      const isTimeout = elapsedDays > promiseDays && o.status !== 'signed'
+    const abnormalList = orders.filter((o: any) => {
+      // 解析承诺时效，例如 "1-2天" -> 2, "次日达" -> 1
+      let promiseDays = 3
+      if (o.deliveryDays) {
+        if (typeof o.deliveryDays === 'number') {
+          promiseDays = o.deliveryDays
+        } else if (typeof o.deliveryDays === 'string') {
+          if (o.deliveryDays.includes('次日')) promiseDays = 1
+          else {
+            const nums = o.deliveryDays.match(/\d+/g)
+            if (nums && nums.length > 0) {
+              promiseDays = Math.max(...nums.map(Number))
+            }
+          }
+        }
+      }
+
+      // 确定计算起点：优先使用发货时间，如果没有则使用创建时间
+      const startTime = o.shippedAt ? dayjs(o.shippedAt) : dayjs(o.createdAt)
+      // 确定计算终点：优先使用最后轨迹时间（签收或最新状态），如果没有则使用当前时间
+      const endTime = o.lastTrackTime ? dayjs(o.lastTrackTime) : dayjs()
+
+      const elapsedDays = endTime.diff(startTime, 'day', true)
+      // 这里我们主要监控未完成的超时订单，或者已完成但超时的订单
+      // 用户要求：根据 order_tracking 中的信息判断
+      // 修改：只要超时了，无论是否签收，都算作异常记录（历史异常+当前异常）
+      const isTimeout = elapsedDays > promiseDays
       return isTimeout
     })
 
@@ -232,15 +300,50 @@ export const useDataDashboard = () => {
   // 异常订单列表
   const abnormalOrders = useMemo(() => {
     return orders
-      .filter((order) => {
-        const promiseDays = 3
-        const elapsedDays = dayjs().diff(dayjs(order.createdAt), 'day', true)
-        const isTimeout = elapsedDays > promiseDays && order.status !== 'signed'
+      .filter((order: any) => {
+        let promiseDays = 3
+        if (order.deliveryDays) {
+          if (typeof order.deliveryDays === 'number') {
+            promiseDays = order.deliveryDays
+          } else if (typeof order.deliveryDays === 'string') {
+            if (order.deliveryDays.includes('次日')) promiseDays = 1
+            else {
+              const nums = order.deliveryDays.match(/\d+/g)
+              if (nums && nums.length > 0) {
+                promiseDays = Math.max(...nums.map(Number))
+              }
+            }
+          }
+        }
+
+        const startTime = order.shippedAt ? dayjs(order.shippedAt) : dayjs(order.createdAt)
+        const endTime = order.lastTrackTime ? dayjs(order.lastTrackTime) : dayjs()
+        const elapsedDays = endTime.diff(startTime, 'day', true)
+
+        // 修改：只要超时了，无论是否签收，都算作异常记录
+        const isTimeout = elapsedDays > promiseDays
         return isTimeout
       })
-      .map((o) => {
-        const promiseDays = 3
-        const elapsedDays = dayjs().diff(dayjs(o.createdAt), 'day', true)
+      .map((o: any) => {
+        let promiseDays = 3
+        if (o.deliveryDays) {
+          if (typeof o.deliveryDays === 'number') {
+            promiseDays = o.deliveryDays
+          } else if (typeof o.deliveryDays === 'string') {
+            if (o.deliveryDays.includes('次日')) promiseDays = 1
+            else {
+              const nums = o.deliveryDays.match(/\d+/g)
+              if (nums && nums.length > 0) {
+                promiseDays = Math.max(...nums.map(Number))
+              }
+            }
+          }
+        }
+
+        const startTime = o.shippedAt ? dayjs(o.shippedAt) : dayjs(o.createdAt)
+        const endTime = o.lastTrackTime ? dayjs(o.lastTrackTime) : dayjs()
+        const elapsedDays = endTime.diff(startTime, 'day', true)
+
         return {
           ...o,
           exceptionReason: `超时 (已用${elapsedDays.toFixed(1)}天 / 限${promiseDays}天)`,
@@ -315,7 +418,7 @@ export const useDataDashboard = () => {
   return {
     stats,
     orderTrendData,
-    deliveryEfficiencyData,
+    revenueChartData,
     abnormalStats,
     abnormalOrders,
     cityDistribution,

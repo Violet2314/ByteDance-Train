@@ -77,7 +77,7 @@ export default function FooterSection() {
     <section
       id="about"
       ref={sectionRef}
-      className="min-h-screen bg-[#74B868] relative flex flex-col justify-between overflow-hidden font-mono"
+      className="min-h-screen bg-[#74B868] relative flex flex-col justify-between overflow-visible font-mono"
     >
       {/* 工业蓝图叠加层 */}
       <div className="absolute inset-0 pointer-events-none opacity-20">
@@ -100,8 +100,12 @@ export default function FooterSection() {
       {/* 主要内容 */}
       <div className="flex-1 flex flex-col items-center justify-center relative z-10">
         {/* Rotating Text Ring */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 scale-[2] md:scale-[3] pointer-events-none">
-          <CircularText text="SYSTEM READY • INITIATE LAUNCH • SEQUENCE START • " />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none">
+          <div className="w-[600px] h-[600px] md:w-[900px] md:h-[900px] flex items-center justify-center pointer-events-none">
+            <div className="transform scale-[1.5] md:scale-[2]">
+              <CircularText text="SYSTEM READY • INITIATE LAUNCH • SEQUENCE START • " />
+            </div>
+          </div>
         </div>
 
         <motion.div

@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { Package, LayoutDashboard, BarChart3 } from 'lucide-react'
+import { useAuth } from '../contexts/AuthContext'
 
 export const useNavbar = (role: 'guest' | 'user' | 'merchant' = 'guest') => {
   const location = useLocation()
+  const navigate = useNavigate()
+  const { logout } = useAuth()
   const [scrolled, setScrolled] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
@@ -16,10 +19,10 @@ export const useNavbar = (role: 'guest' | 'user' | 'merchant' = 'guest') => {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  // 退出登录处理
+  // 退出登录处理：清除 token 和用户信息，跳转到登录页
   const handleLogout = () => {
-    localStorage.removeItem('user')
-    window.location.href = '/login'
+    logout() // 调用 AuthContext 的 logout
+    navigate('/login', { replace: true })
   }
 
   // 导航链接配置
@@ -28,6 +31,7 @@ export const useNavbar = (role: 'guest' | 'user' | 'merchant' = 'guest') => {
       { name: '首页', path: '/' },
       { name: '解决方案', path: '/#solutions' },
       { name: '关于我们', path: '/#about' },
+      { name: '区域热力图', path: '/heatmap' },
     ],
     user: [
       { name: '首页', path: '/' },

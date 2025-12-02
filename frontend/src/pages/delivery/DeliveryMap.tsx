@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from 'react'
 import AMapLoader from '@amap/amap-jsapi-loader'
 
 interface DeliveryMapProps {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   activeRule: any
   isEditingArea: boolean
   onPolygonChange: (path: [number, number][]) => void
@@ -22,11 +21,8 @@ export default function DeliveryMap({
   stats,
 }: DeliveryMapProps) {
   const mapContainer = useRef<HTMLDivElement>(null)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const mapInstance = useRef<any>(null)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const polygonInstance = useRef<any>(null)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const polyEditorInstance = useRef<any>(null)
   const [isMapLoaded, setIsMapLoaded] = useState(false)
   const lastRuleIdRef = useRef<number | null>(null)
@@ -82,8 +78,7 @@ export default function DeliveryMap({
       polygonInstance.current = null
     }
 
-    // Create new polygon
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // 创建新多边形
     const AMap = (window as any).AMap
     if (!AMap) return
 
@@ -110,7 +105,6 @@ export default function DeliveryMap({
     polyEditorInstance.current = new AMap.PolyEditor(mapInstance.current, polygonInstance.current)
 
     // Listen for adjustments
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     polyEditorInstance.current.on('end', (_e: any) => {
       // This event might not be enough if we want real-time updates or save on button click
       // But for now we rely on the parent calling a save action which reads the polygon path
@@ -135,7 +129,6 @@ export default function DeliveryMap({
       // When closing edit mode (saving), we update the parent
       // Only save if we were previously editing
       if (prevIsEditingArea.current === true && polygonInstance.current) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const newPath = polygonInstance.current.getPath().map((p: any) => [p.lng, p.lat])
         onPolygonChange(newPath)
       }

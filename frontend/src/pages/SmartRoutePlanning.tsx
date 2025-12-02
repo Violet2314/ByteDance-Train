@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useMemo } from 'react'
+import React, { useEffect, useRef, useState, useMemo, memo } from 'react'
 import AMapLoader from '@amap/amap-jsapi-loader'
 import { api } from '../services/api'
 import { Card, Table, Button, Space, Tag, Alert, Switch, Select, App } from 'antd'
@@ -10,17 +10,16 @@ import {
 } from '@ant-design/icons'
 import type { Order } from '@logistics/shared'
 
-export default function SmartRoutePlanning() {
+const SmartRoutePlanning = memo(function SmartRoutePlanning() {
   const { message } = App.useApp()
+  // Refs 用于持有地图实例和 DOM 元素，避免重渲染时丢失
   const mapContainer = useRef<HTMLDivElement>(null)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const mapInstance = useRef<any>(null)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const drivingInstance = useRef<any>(null)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const startMarker = useRef<any>(null)
 
-  const { data: ordersData, isLoading, refetch } = api.useGetOrdersQuery({ status: 'pending' })
+  // 获取待处理订单和配送规则
+  const { data: ordersData, isLoading, refetch } = api.useGetMyOrdersQuery({ status: 'pending' })
   const { data: rulesData } = api.useGetDeliveryRulesQuery()
   const [batchShipOrdersOptimized, { isLoading: isShipping }] =
     api.useBatchShipOrdersOptimizedMutation()
@@ -28,6 +27,7 @@ export default function SmartRoutePlanning() {
   const allOrders = useMemo(() => ordersData?.data || [], [ordersData])
   const rules = rulesData?.data || []
 
+  // 状态管理
   const [selectedSender, setSelectedSender] = useState<string | null>(null)
   const [selectedRule, setSelectedRule] = useState<number | null>(null)
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([])
@@ -35,10 +35,10 @@ export default function SmartRoutePlanning() {
   const [routeInfo, setRouteInfo] = useState<{ distance: number; time: number } | null>(null)
   const [showTraffic, setShowTraffic] = useState(false)
   const [routePath, setRoutePath] = useState<{ lat: number; lng: number }[]>([])
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const trafficLayer = useRef<any>(null)
 
-  // 按发货人分组订单
+  // 逻辑：按发货人分组订单
+  // 因为通常一次配送任务是从同一个发货点出发的
   const senders = useMemo(() => {
     const map = new Map<
       string,
@@ -75,7 +75,7 @@ export default function SmartRoutePlanning() {
     }
   }, [senders, selectedSender])
 
-  // 发货人变更时重置选择
+  // 发货人变更时重置选择和地图状态
   useEffect(() => {
     setSelectedRowKeys([])
     setRouteInfo(null)
@@ -84,11 +84,12 @@ export default function SmartRoutePlanning() {
     }
   }, [selectedSender])
 
+  // 初始化高德地图
   useEffect(() => {
     AMapLoader.load({
       key: import.meta.env.VITE_AMAP_KEY,
       version: '2.0',
-      plugins: ['AMap.Driving', 'AMap.TileLayer.Traffic'],
+      plugins: ['AMap.Driving', 'AMap.TileLayer.Traffic'], // 加载驾车规划和实时路况插件
     })
       .then((AMap) => {
         if (!mapContainer.current) return
@@ -124,7 +125,6 @@ export default function SmartRoutePlanning() {
   useEffect(() => {
     if (!mapInstance.current || !selectedSender) return
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const AMap = (window as any).AMap
     const sender = senders.find((s) => s.name === selectedSender)
 
@@ -144,6 +144,7 @@ export default function SmartRoutePlanning() {
             imageSize: new AMap.Size(135, 40),
             imageOffset: new AMap.Pixel(-9, -3),
           }),
+          offset: new AMap.Pixel(-13, -34), // 图标宽度一半和图标高度，让底部尖端对准坐标
           map: mapInstance.current,
         })
       }
@@ -218,7 +219,6 @@ export default function SmartRoutePlanning() {
     const endPoint = [Number(endOrder.address.lng), Number(endOrder.address.lat)]
     const startPoint = [sender.lng, sender.lat]
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const AMap = (window as any).AMap
 
     // 清除之前的路线
@@ -239,12 +239,12 @@ export default function SmartRoutePlanning() {
       {
         waypoints: waypoints,
       },
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
       (status: string, result: any) => {
         setIsPlanning(false)
         if (status === 'complete') {
           message.success('路线规划成功')
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
           const routes = result.routes[0]
           setRouteInfo({
             distance: routes.distance,
@@ -253,9 +253,8 @@ export default function SmartRoutePlanning() {
 
           // 提取完整路径用于后端模拟
           const fullPath: { lat: number; lng: number }[] = []
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
           routes.steps.forEach((step: any) => {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             step.path.forEach((p: any) => {
               fullPath.push({ lat: p.lat, lng: p.lng })
             })
@@ -326,8 +325,8 @@ export default function SmartRoutePlanning() {
             showIcon
           />
 
-          <div className="flex justify-between items-center">
-            <Space size="large">
+          <div className="flex flex-wrap gap-4 items-center justify-between">
+            <Space size="large" wrap>
               <Space>
                 <span>发货人:</span>
                 <Select
@@ -348,7 +347,6 @@ export default function SmartRoutePlanning() {
                   style={{ width: 200 }}
                   value={selectedRule}
                   onChange={setSelectedRule}
-                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
                   options={rules.map((r: any) => ({
                     label: `${r.company} (${r.inter_province || r.days})`,
                     value: r.id,
@@ -366,14 +364,11 @@ export default function SmartRoutePlanning() {
               />
             </Space>
 
-            <Space>
+            <Space wrap>
               {routeInfo && (
-                <div className="flex gap-4 mr-4">
+                <div className="flex flex-wrap gap-2">
                   <Tag icon={<EnvironmentOutlined />} color="blue">
                     总里程: {(routeInfo.distance / 1000).toFixed(1)} km
-                  </Tag>
-                  <Tag icon={<ThunderboltOutlined />} color="orange">
-                    预计耗时: {Math.ceil(routeInfo.time / 60)} 分钟
                   </Tag>
                 </div>
               )}
@@ -403,7 +398,7 @@ export default function SmartRoutePlanning() {
         {/* Order List */}
         <Card
           className="w-1/3 flex flex-col overflow-hidden"
-          bodyStyle={{ padding: 0, flex: 1, overflow: 'auto' }}
+          styles={{ body: { padding: 0, flex: 1, overflow: 'auto' } }}
         >
           <Table
             rowSelection={{
@@ -421,11 +416,16 @@ export default function SmartRoutePlanning() {
         </Card>
 
         {/* Map */}
-        <Card className="flex-1 flex flex-col relative" bodyStyle={{ padding: 0, height: '100%' }}>
+        <Card
+          className="flex-1 flex flex-col relative"
+          styles={{ body: { padding: 0, height: '100%' } }}
+        >
           <div ref={mapContainer} className="w-full h-full" />
           <div id="panel" className="hidden" />
         </Card>
       </div>
     </div>
   )
-}
+})
+
+export default SmartRoutePlanning

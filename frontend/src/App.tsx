@@ -5,6 +5,8 @@ import { antTheme } from './design-system/tokens'
 import MerchantLayout from './components/layout/MerchantLayout'
 import UserLayout from './components/layout/UserLayout'
 import { AuthProvider } from './contexts/AuthContext'
+import { SocketProvider } from './contexts/SocketContext'
+import { ProtectedRoute } from './components/ProtectedRoute'
 
 // 懒加载页面
 const Home = lazy(() => import('./pages/Home'))
@@ -30,32 +32,49 @@ export default function App() {
     <ConfigProvider theme={antTheme}>
       <AntdApp>
         <AuthProvider>
-          <Suspense fallback={<PageLoader />}>
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/heatmap" element={<HeatmapAnalysis />} />
+          <SocketProvider>
+            <Suspense fallback={<PageLoader />}>
+              <Routes>
+                {/* 公开路由 */}
+                <Route path="/" element={<Home />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/heatmap" element={<HeatmapAnalysis />} />
 
-              {/* 商家路由 */}
-              <Route path="/merchant" element={<MerchantLayout />}>
-                <Route index element={<MerchantDashboard />} />
-                <Route path="dashboard" element={<DataDashboard />} />
-                <Route path="orders/:id" element={<OrderDetail />} />
-                <Route path="delivery" element={<DeliveryManagement />} />
-                <Route path="route-planning" element={<SmartRoutePlanning />} />
-              </Route>
+                {/* 商家路由 - 需要 merchant 角色 */}
+                <Route
+                  path="/merchant/*"
+                  element={
+                    <ProtectedRoute requiredRole="merchant">
+                      <MerchantLayout />
+                    </ProtectedRoute>
+                  }
+                >
+                  <Route index element={<MerchantDashboard />} />
+                  <Route path="dashboard" element={<DataDashboard />} />
+                  <Route path="orders/:id" element={<OrderDetail />} />
+                  <Route path="delivery" element={<DeliveryManagement />} />
+                  <Route path="route-planning" element={<SmartRoutePlanning />} />
+                </Route>
 
-              {/* 用户路由 */}
-              <Route path="/tracking" element={<UserLayout />}>
-                <Route index element={<TrackingSearch />} />
-                <Route path="orders" element={<UserOrders />} />
-                <Route path=":id" element={<TrackingDetail />} />
-              </Route>
+                {/* 用户路由 - 需要 user 角色 */}
+                <Route
+                  path="/tracking/*"
+                  element={
+                    <ProtectedRoute requiredRole="user">
+                      <UserLayout />
+                    </ProtectedRoute>
+                  }
+                >
+                  <Route index element={<TrackingSearch />} />
+                  <Route path="orders" element={<UserOrders />} />
+                  <Route path=":id" element={<TrackingDetail />} />
+                </Route>
 
-              {/* 兜底路由 */}
-              <Route path="*" element={<Home />} />
-            </Routes>
-          </Suspense>
+                {/* 兜底路由 */}
+                <Route path="*" element={<Home />} />
+              </Routes>
+            </Suspense>
+          </SocketProvider>
         </AuthProvider>
       </AntdApp>
     </ConfigProvider>

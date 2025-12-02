@@ -3,7 +3,9 @@ export interface Order {
   status: 'pending' | 'picked' | 'in_transit' | 'out_for_delivery' | 'signed'
   amount: number
   createdAt: string // ISO
-  deliveryDays: number // Promised delivery days (e.g. 1, 3)
+  deliveryDays: number | string // Promised delivery days (e.g. 1, 3, "1-2天")
+  shippedAt?: string // ISO
+  lastTrackTime?: number // Timestamp
   
   // Sender Info
   sender: {

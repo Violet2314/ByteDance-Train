@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { memo } from 'react'
 import { Modal, Form, Input } from 'antd'
 import DeliverySidebar from './delivery/DeliverySidebar'
 import DeliveryMap from './delivery/DeliveryMap'
@@ -7,12 +7,16 @@ import { TimeInput } from '../components/business/TimeInput'
 import { useDeliveryManagement } from '../hooks/useDeliveryManagement'
 
 /**
- * 配送管理页面
+ * 配送管理页面 (Delivery Management Page)
  *
- * 包含配送区域划分、规则管理、订单分配等功能。
- * 主要由侧边栏(DeliverySidebar)、地图(DeliveryMap)和底部订单列表(DeliveryOrdersTable)组成。
+ * 这是一个复杂的业务页面，采用了"左侧列表 + 右侧地图 + 底部面板"的布局。
+ * 核心功能：
+ * 1. 配送区域管理：在地图上绘制多边形，定义配送范围。
+ * 2. 规则配置：为每个区域设置配送时效、运费等规则。
+ * 3. 订单分配：自动计算落在某个区域内的订单。
  */
-export default function DeliveryManagement() {
+const DeliveryManagement = memo(function DeliveryManagement() {
+  // 使用自定义 Hook 提取业务逻辑，保持 UI 组件整洁
   const {
     isSidebarOpen,
     setIsSidebarOpen,
@@ -43,6 +47,7 @@ export default function DeliveryManagement() {
 
   return (
     <div className="h-[calc(100vh-100px)] flex relative overflow-hidden rounded-3xl border border-gray-300 shadow-2xl bg-white">
+      {/* 左侧侧边栏：展示配送规则列表 */}
       <DeliverySidebar
         isOpen={isSidebarOpen}
         onToggle={() => setIsSidebarOpen(!isSidebarOpen)}
@@ -59,6 +64,7 @@ export default function DeliveryManagement() {
       />
 
       <div className="flex-1 bg-gray-50 relative flex flex-col">
+        {/* 核心地图组件：展示区域和订单分布 */}
         <DeliveryMap
           activeRule={activeRule}
           isEditingArea={isEditingArea}
@@ -67,6 +73,7 @@ export default function DeliveryManagement() {
           stats={mapStats}
         />
 
+        {/* 底部面板：展示当前区域内的订单详情 */}
         <DeliveryOrdersTable
           orders={deliverableOrders}
           allOrders={allOrders}
@@ -76,6 +83,7 @@ export default function DeliveryManagement() {
         />
       </div>
 
+      {/* 规则编辑弹窗 */}
       <Modal
         title={modalMode === 'add' ? '添加配送规则' : '编辑规则信息'}
         open={isModalOpen}
@@ -154,4 +162,6 @@ export default function DeliveryManagement() {
       </Modal>
     </div>
   )
-}
+})
+
+export default DeliveryManagement

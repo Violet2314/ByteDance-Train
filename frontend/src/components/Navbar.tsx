@@ -1,16 +1,29 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React, { memo, useCallback } from 'react'
+import { Link, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Truck, User, Menu, X, ChevronRight, LogOut } from 'lucide-react'
 import { clsx } from 'clsx'
 import { useNavbar } from '../hooks/useNavbar'
+import { useAuth } from '../contexts/AuthContext'
 
 type NavbarProps = {
   role?: 'guest' | 'user' | 'merchant'
   enableEntranceAnimation?: boolean
 }
 
-export default function Navbar({ role = 'guest', enableEntranceAnimation = true }: NavbarProps) {
+/**
+ * 导航栏组件
+ *
+ * 已优化：
+ * - 使用 React.memo 避免不必要的重渲染
+ * - 使用 useCallback 缓存回调函数
+ */
+const Navbar = memo(function Navbar({
+  role = 'guest',
+  enableEntranceAnimation = true,
+}: NavbarProps) {
+  const location = useLocation()
+  const { user } = useAuth()
   const {
     scrolled,
     mobileMenuOpen,
@@ -19,6 +32,9 @@ export default function Navbar({ role = 'guest', enableEntranceAnimation = true 
     currentLinks,
     handleLinkClick,
   } = useNavbar(role)
+
+  // 缓存判断激活状态的函数
+  const isActive = useCallback((path: string) => location.pathname === path, [location.pathname])
 
   return (
     <>
@@ -64,7 +80,7 @@ export default function Navbar({ role = 'guest', enableEntranceAnimation = true 
           <div className="hidden md:flex items-center gap-8">
             <div className="flex items-center gap-1 bg-gray-100/50 p-1 rounded-full border border-gray-200/50 backdrop-blur-sm">
               {currentLinks.map((link) => {
-                const isActive = location.pathname === link.path
+                const linkIsActive = isActive(link.path)
                 return (
                   <Link
                     key={link.path}
@@ -72,10 +88,10 @@ export default function Navbar({ role = 'guest', enableEntranceAnimation = true 
                     onClick={() => handleLinkClick(link.path)}
                     className={clsx(
                       'relative px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 flex items-center gap-2',
-                      isActive ? 'text-[#0B0F19]' : 'text-gray-500 hover:text-[#0B0F19]'
+                      linkIsActive ? 'text-[#0B0F19]' : 'text-gray-500 hover:text-[#0B0F19]'
                     )}
                   >
-                    {isActive && (
+                    {linkIsActive && (
                       <motion.div
                         layoutId="nav-pill"
                         className="absolute inset-0 bg-white rounded-full shadow-sm border border-gray-100"
@@ -92,7 +108,7 @@ export default function Navbar({ role = 'guest', enableEntranceAnimation = true 
             </div>
           </div>
 
-          {/* Right Actions */}
+          {/* 右侧操作区域 */}
           <div className="hidden md:flex items-center gap-4">
             {role === 'guest' ? (
               <>
@@ -116,7 +132,8 @@ export default function Navbar({ role = 'guest', enableEntranceAnimation = true 
                 <div className="flex items-center gap-3 pl-4 border-l border-gray-200">
                   <div className="text-right hidden lg:block">
                     <div className="text-xs font-bold text-[#0B0F19]">
-                      {role === 'merchant' ? 'MERCHANT_ID: 8821' : 'USER_ID: 9921'}
+                      {role === 'merchant' ? '商家' : '用户'}：
+                      {user?.name || user?.username || 'Guest'}
                     </div>
                     <div className="text-[10px] text-[#74B868] tracking-wider">ONLINE</div>
                   </div>
@@ -135,7 +152,7 @@ export default function Navbar({ role = 'guest', enableEntranceAnimation = true 
             )}
           </div>
 
-          {/* Mobile Menu Button */}
+          {/* 移动端菜单按钮 */}
           <button
             className="md:hidden p-2 text-gray-600"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -145,7 +162,7 @@ export default function Navbar({ role = 'guest', enableEntranceAnimation = true 
         </div>
       </motion.nav>
 
-      {/* Mobile Menu Overlay */}
+      {/* 移动端菜单遮罩 */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
@@ -186,4 +203,6 @@ export default function Navbar({ role = 'guest', enableEntranceAnimation = true 
       </AnimatePresence>
     </>
   )
-}
+})
+
+export default Navbar

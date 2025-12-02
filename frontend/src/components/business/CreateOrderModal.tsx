@@ -23,7 +23,6 @@ import {
 interface CreateOrderModalProps {
   visible: boolean
   onCancel: () => void
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onCreate: (values: any) => void
 }
 
@@ -37,28 +36,30 @@ interface Address {
   lng?: number
 }
 
+// 使用 React.memo 优化性能，避免父组件重渲染导致 Modal 闪烁
 const CreateOrderModal = React.memo(({ visible, onCancel, onCreate }: CreateOrderModalProps) => {
   const [form] = Form.useForm()
   const [loading, setLoading] = useState(false)
   const [newSenderName, setNewSenderName] = useState('')
   const [isGeocoding, setIsGeocoding] = useState(false)
+  const [senderSelectKey, setSenderSelectKey] = useState(0) // 用于强制重置 Select
 
   // API Hooks
   const { data: addressBookData } = useGetAddressBookQuery({ merchantId: 1 }) // 默认商户 ID
   const [addAddress] = useAddAddressMutation()
   const [deleteAddress] = useDeleteAddressMutation()
-  const [geocode] = useGeocodeMutation()
-  const [searchUsers, { isLoading: isSearchingUsers }] = useSearchUsersMutation()
+  const [geocode] = useGeocodeMutation() // 地理编码服务（地址 -> 坐标）
+  const [searchUsers, { isLoading: isSearchingUsers }] = useSearchUsersMutation() // 用户搜索
 
   const [userOptions, setUserOptions] = useState<{ label: string; value: number }[]>([])
 
   const savedSenders: Address[] = addressBookData?.data || []
 
+  // 搜索用户（防抖逻辑通常在 Input 组件中处理，这里直接调用）
   const handleSearchUsers = async (value: string) => {
     if (!value) return
     try {
       const result = await searchUsers(value).unwrap()
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       setUserOptions(
         result.data.map((u: any) => ({
           label: `${u.username} (${u.real_name || '未实名'} - ${u.phone || '无电话'})`,
@@ -70,6 +71,7 @@ const CreateOrderModal = React.memo(({ visible, onCancel, onCreate }: CreateOrde
     }
   }
 
+  // 保存常用发货地址到地址簿
   const handleSaveSender = async () => {
     const values = form.getFieldsValue([
       'senderName',
@@ -110,6 +112,7 @@ const CreateOrderModal = React.memo(({ visible, onCancel, onCreate }: CreateOrde
   }
 
   const handleSenderChange = (id: string) => {
+    // 允许重复选择同一个地址（重新加载数据）
     // eslint-disable-next-line eqeqeq
     const sender = savedSenders.find((s) => s.id == id)
     if (sender) {
@@ -120,6 +123,8 @@ const CreateOrderModal = React.memo(({ visible, onCancel, onCreate }: CreateOrde
         senderLat: sender.lat,
         senderLng: sender.lng,
       })
+      // 填充完毕后，重置 Select 以允许再次选择同一项
+      setSenderSelectKey((prev) => prev + 1)
     }
   }
 
@@ -200,17 +205,18 @@ const CreateOrderModal = React.memo(({ visible, onCancel, onCreate }: CreateOrde
             </Form.Item>
           </div>
 
-          {/* Sender Section */}
+          {/* 发货人信息区域 */}
           <div className="md:col-span-2 bg-gray-50 p-4 rounded-xl border border-gray-100">
             <div className="flex justify-between items-center mb-4">
               <h3 className="font-bold text-gray-700 flex items-center gap-2">
                 <MapPin size={16} className="text-blue-500" /> 发货信息
               </h3>
               <Select
+                key={senderSelectKey}
                 placeholder="选择常用地址"
                 style={{ width: 200 }}
                 onChange={handleSenderChange}
-                dropdownRender={(menu) => (
+                popupRender={(menu) => (
                   <>
                     {menu}
                     <Divider style={{ margin: '8px 0' }} />
@@ -283,10 +289,18 @@ const CreateOrderModal = React.memo(({ visible, onCancel, onCreate }: CreateOrde
                   </Space.Compact>
                 </Form.Item>
                 <div className="flex gap-4 mt-2">
-                  <Form.Item name="senderLng" noStyle>
+                  <Form.Item
+                    name="senderLng"
+                    noStyle
+                    rules={[{ required: true, message: '请点击定位按钮获取经度' }]}
+                  >
                     <Input placeholder="经度" disabled className="bg-gray-100" />
                   </Form.Item>
-                  <Form.Item name="senderLat" noStyle>
+                  <Form.Item
+                    name="senderLat"
+                    noStyle
+                    rules={[{ required: true, message: '请点击定位按钮获取纬度' }]}
+                  >
                     <Input placeholder="纬度" disabled className="bg-gray-100" />
                   </Form.Item>
                 </div>
@@ -294,7 +308,7 @@ const CreateOrderModal = React.memo(({ visible, onCancel, onCreate }: CreateOrde
             </div>
           </div>
 
-          {/* Recipient Section */}
+          {/* 收货人信息区域 */}
           <div className="md:col-span-2 bg-gray-50 p-4 rounded-xl border border-gray-100">
             <h3 className="font-bold text-gray-700 mb-4 flex items-center gap-2">
               <MapPin size={16} className="text-green-500" /> 收货信息
@@ -344,10 +358,18 @@ const CreateOrderModal = React.memo(({ visible, onCancel, onCreate }: CreateOrde
                   </Space.Compact>
                 </Form.Item>
                 <div className="flex gap-4 mt-2">
-                  <Form.Item name="recipientLng" noStyle>
+                  <Form.Item
+                    name="recipientLng"
+                    noStyle
+                    rules={[{ required: true, message: '请点击定位按钮获取经度' }]}
+                  >
                     <Input placeholder="经度" disabled className="bg-gray-100" />
                   </Form.Item>
-                  <Form.Item name="recipientLat" noStyle>
+                  <Form.Item
+                    name="recipientLat"
+                    noStyle
+                    rules={[{ required: true, message: '请点击定位按钮获取纬度' }]}
+                  >
                     <Input placeholder="纬度" disabled className="bg-gray-100" />
                   </Form.Item>
                 </div>
@@ -355,7 +377,7 @@ const CreateOrderModal = React.memo(({ visible, onCancel, onCreate }: CreateOrde
             </div>
           </div>
 
-          {/* Goods Section */}
+          {/* 货物信息区域 */}
           <div className="md:col-span-2">
             <h3 className="font-bold text-gray-700 mb-4 flex items-center gap-2">
               <Save size={16} className="text-orange-500" /> 货物信息

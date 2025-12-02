@@ -48,7 +48,6 @@ export const useLogin = () => {
     return () => ctx.revert()
   }, [])
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleLogin = async (values: any) => {
     try {
       const result = await loginApi({
@@ -56,18 +55,24 @@ export const useLogin = () => {
         password: values.password,
         role,
       }).unwrap()
-      const user = result.data
 
-      login(user)
+      // 后端返回的数据结构: { data: { id, username, role, name, token } }
+      const userData = result.data
+
+      // 调用 AuthContext 的 login 方法，存储用户信息和 token
+      login(userData)
+
       message.success(`${role === 'merchant' ? '商家' : '用户'}登录成功`)
 
+      // 根据角色跳转到对应页面
       if (role === 'merchant') {
         navigate('/merchant')
       } else {
         navigate('/tracking')
       }
     } catch (error) {
-      message.error('登录失败，请重试')
+      message.error('登录失败，请检查用户名和密码')
+      console.error('Login error:', error)
     }
   }
 

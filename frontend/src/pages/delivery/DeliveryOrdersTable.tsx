@@ -8,7 +8,6 @@ import { useShipOrderMutation, useBatchShipOrdersMutation } from '../../services
 interface DeliveryOrdersTableProps {
   orders: Order[]
   allOrders: Order[]
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   activeRule: any
   isOpen: boolean
   onToggle: () => void

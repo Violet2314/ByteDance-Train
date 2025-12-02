@@ -1,0 +1,19 @@
+/* 只在热力图页面覆盖高德地图默认的白色背景，防止加载时闪白 */
+.heatmap-container .amap-container,
+.heatmap-container .amap-layers,
+.heatmap-container .amap-layer,
+.heatmap-container .amap-maps,
+.heatmap-container canvas {
+  background-color: #0b0f19 !important;
+  background: #0b0f19 !important;
+}
+
+/* 瓦片加载时的背景 */
+.heatmap-container .amap-layer img {
+  background-color: transparent !important;
+}
+
+/* 确保整个地图区域都是深色 */
+.heatmap-container div[class*='amap'] {
+  background-color: #0b0f19 !important;
+}

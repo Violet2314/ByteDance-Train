@@ -265,7 +265,6 @@ export default function OrderDetail() {
             className="w-full"
           >
             <Space direction="vertical" className="w-full">
-              {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
               {rules.map((rule: any) => (
                 <Radio
                   key={rule.id}

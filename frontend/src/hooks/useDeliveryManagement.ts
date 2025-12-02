@@ -2,13 +2,15 @@ import { useState, useEffect, useMemo, useCallback } from 'react'
 import { Form, message, Modal } from 'antd'
 import {
   useGetDeliveryRulesQuery,
-  useGetOrdersQuery,
+  useGetMyOrdersQuery,
   useCreateDeliveryRuleMutation,
   useUpdateDeliveryRuleMutation,
   useDeleteDeliveryRuleMutation,
 } from '../services/api'
 
-// 辅助函数：射线法判断点是否在多边形内 (Point in Polygon)
+// 辅助函数：射线法判断点是否在多边形内 (Point in Polygon Algorithm)
+// 原理：从该点向任意方向发射一条射线，计算射线与多边形各边的交点个数。
+// 如果交点个数为奇数，则点在多边形内；如果为偶数，则在多边形外。
 const isPointInPolygon = (point: [number, number], vs: [number, number][]) => {
   const x = point[0],
     y = point[1]
@@ -25,37 +27,41 @@ const isPointInPolygon = (point: [number, number], vs: [number, number][]) => {
 }
 
 export const useDeliveryManagement = () => {
+  // UI 状态管理
   const [isSidebarOpen, setIsSidebarOpen] = useState(true)
   const [isBottomPanelOpen, setIsBottomPanelOpen] = useState(true)
 
-  const [activeRuleId, setActiveRuleId] = useState<number | null>(null)
-  const [isEditingArea, setIsEditingArea] = useState(false)
+  // 业务状态管理
+  const [activeRuleId, setActiveRuleId] = useState<number | null>(null) // 当前选中的规则 ID
+  const [isEditingArea, setIsEditingArea] = useState(false) // 是否处于地图编辑模式
   const [searchText, setSearchText] = useState('')
   const [isMapReady, setIsMapReady] = useState(false)
 
-  // Modal State
+  // 弹窗状态
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add')
   const [form] = Form.useForm()
 
+  // API 数据获取
   const { data: rulesData } = useGetDeliveryRulesQuery()
-  const { data: ordersData } = useGetOrdersQuery({})
+  const { data: ordersData } = useGetMyOrdersQuery({})
 
+  // API 操作 (Mutations)
   const [createDeliveryRule] = useCreateDeliveryRuleMutation()
   const [updateDeliveryRule] = useUpdateDeliveryRuleMutation()
   const [deleteDeliveryRule] = useDeleteDeliveryRuleMutation()
 
-  // 使用查询数据的派生状态，而不是本地状态
+  // 使用 useMemo 派生数据，确保 rules 始终是数组
   const rules = useMemo(() => rulesData?.data || [], [rulesData])
 
-  // 初始化 activeRuleId
+  // 初始化：默认选中第一个规则
   useEffect(() => {
     if (rules.length > 0 && !activeRuleId) {
       setActiveRuleId(rules[0].id)
     }
   }, [rules, activeRuleId])
 
-  // 根据当前选中的规则区域计算可配送订单
+  // 核心逻辑：计算当前选中区域内的可配送订单
   const deliverableOrders = useMemo(() => {
     const activeRule = rules.find((r) => r.id === activeRuleId)
     if (!activeRule || !activeRule.path || !ordersData?.data) return []
@@ -63,6 +69,7 @@ export const useDeliveryManagement = () => {
     return ordersData.data.filter((order) => {
       // 检查订单地址是否在多边形内
       // 注意：订单坐标是 [lat, lng] 或对象，我们需要 [lng, lat] 进行计算
+      // 这里假设 order.address 包含 lat 和 lng
       const point: [number, number] = [order.address.lng, order.address.lat]
       return isPointInPolygon(point, activeRule.path)
     })

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { memo } from 'react'
 import { Button, Input, Select } from 'antd'
 import { Search, Truck, Package, RefreshCw, Plus } from 'lucide-react'
 import CreateOrderModal from '../components/business/CreateOrderModal'
@@ -16,7 +16,7 @@ const SORT_OPTIONS = [
   { value: 'amount', label: '金额最高' },
 ]
 
-export default function MerchantDashboard() {
+const MerchantDashboard = memo(function MerchantDashboard() {
   const {
     setStatus,
     setSort,
@@ -99,4 +99,6 @@ export default function MerchantDashboard() {
       />
     </div>
   )
-}
+})
+
+export default MerchantDashboard

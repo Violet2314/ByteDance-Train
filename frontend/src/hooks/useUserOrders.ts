@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react'
-import { useGetOrdersQuery } from '../services/api'
+import { useGetMyOrdersQuery } from '../services/api'
 import { useAuth } from '../contexts/AuthContext'
 
 export const useUserOrders = () => {
@@ -8,10 +8,7 @@ export const useUserOrders = () => {
   const [statusFilter, setStatusFilter] = useState<string>('all')
   const [sortBy, setSortBy] = useState<string>('newest')
 
-  const { data: ordersData, isLoading } = useGetOrdersQuery(
-    { userId: user?.id },
-    { skip: !user?.id }
-  )
+  const { data: ordersData, isLoading } = useGetMyOrdersQuery({}, { skip: !user?.id })
 
   const filteredOrders = useMemo(() => {
     if (!ordersData?.data) return []

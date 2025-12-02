@@ -15,7 +15,6 @@ import { motion, AnimatePresence } from 'framer-motion'
 interface DeliverySidebarProps {
   isOpen: boolean
   onToggle: () => void
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   rules: any[]
   activeRuleId: number | null
   onActivateRule: (id: number) => void
