@@ -90,3 +90,66 @@ export interface ClientToServerEvents {
   'subscribe': (payload: { orderId: string }) => void;
   'unsubscribe': (payload: { orderId: string }) => void;
 }
+
+// 配送规则接口
+export interface DeliveryRule {
+  id: number
+  merchantId: string
+  company: string
+  area: string
+  deliveryDays: string
+  days?: string // 兼容字段（某些地方使用 days 而不是 deliveryDays）
+  pricePerKm: number
+  basePrice: number
+  path: [number, number][] // [lng, lat]
+  createdAt?: string
+  updatedAt?: string
+}
+// 地址簿接口
+export interface AddressBook {
+  id: string
+  merchantId: number
+  name: string
+  phone: string
+  address: string
+  contactName?: string // 兼容某些表单使用 contactName
+  contactPhone?: string // 兼容某些表单使用 contactPhone
+  lat?: number
+  lng?: number
+  createdAt?: string
+}
+
+// 登录响应（后端实际返回的是扁平结构，id 是数字类型）
+export interface LoginResponse {
+  id: number
+  username: string
+  role: 'user' | 'merchant'
+  name?: string
+  token: string
+}
+
+// 创建订单表单（与实际表单字段对应）
+export interface CreateOrderForm {
+  senderName: string
+  senderPhone: string
+  senderAddress: string
+  senderLat?: number
+  senderLng?: number
+  recipientName: string
+  recipientPhone: string
+  recipientAddress: string
+  recipientLat?: number
+  recipientLng?: number
+  goodsName?: string
+  goodsWeight?: number
+  goodsCount?: number
+  amount: number
+  userId?: string
+}
+
+// 地理编码结果
+export interface GeocodeResult {
+  lat: number
+  lng: number
+  formattedAddress?: string
+}

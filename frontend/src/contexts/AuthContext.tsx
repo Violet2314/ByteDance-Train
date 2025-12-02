@@ -1,21 +1,18 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react'
+import type { LoginResponse } from '@logistics/shared'
 
-// 定义用户类型
-interface User {
-  id: string
-  username: string
-  role: 'user' | 'merchant'
-  name?: string
-  token: string // JWT Token
+// 定义本地用户类型（扩展 LoginResponse，因为登录后我们需要存储完整信息）
+interface AuthUser extends LoginResponse {
+  // LoginResponse 已包含: id, username, role, name?, token
 }
 
 // 定义 Context 的形状
 interface AuthContextType {
-  user: User | null // 当前登录的用户信息
+  user: AuthUser | null // 当前登录的用户信息
   token: string | null // JWT Token
   isAuthenticated: boolean // 是否已登录
   isLoading: boolean // 是否正在加载认证状态
-  login: (user: User) => void // 登录函数
+  login: (user: AuthUser) => void // 登录函数
   logout: () => void // 登出函数
 }
 
@@ -24,7 +21,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 // AuthProvider 组件：包裹整个应用，提供认证状态
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null)
+  const [user, setUser] = useState<AuthUser | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
   // 初始化时从 localStorage 读取用户信息和 token
@@ -46,7 +43,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   // 登录逻辑：更新状态并写入 localStorage
-  const login = (userData: User) => {
+  const login = (userData: AuthUser) => {
     setUser(userData)
     localStorage.setItem('user', JSON.stringify(userData))
     localStorage.setItem('token', userData.token) // 单独存储 token

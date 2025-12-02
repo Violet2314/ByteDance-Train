@@ -2,13 +2,13 @@ import React, { useState, useMemo } from 'react'
 import { Table, Button, Tag, Input, Select, message, Modal } from 'antd'
 import { ChevronUp, ChevronDown, Package, Search, Filter, Truck } from 'lucide-react'
 import { motion } from 'framer-motion'
-import type { Order } from '@logistics/shared'
+import type { Order, DeliveryRule } from '@logistics/shared'
 import { useShipOrderMutation, useBatchShipOrdersMutation } from '../../services/api'
 
 interface DeliveryOrdersTableProps {
   orders: Order[]
   allOrders: Order[]
-  activeRule: any
+  activeRule: DeliveryRule | null
   isOpen: boolean
   onToggle: () => void
 }
@@ -140,7 +140,7 @@ export default function DeliveryOrdersTable({
 
           {activeRule && (
             <span className="text-xs text-gray-400 ml-2 hidden sm:inline">
-              当前规则: {activeRule.company} ({activeRule.days})
+              当前规则: {activeRule.company} ({activeRule.deliveryDays})
             </span>
           )}
         </div>
@@ -279,7 +279,7 @@ export default function DeliveryOrdersTable({
                   }
                   return (
                     <Tag color="green" className="border-0 bg-green-50 text-green-600 font-medium">
-                      {activeRule?.days || '-'}
+                      {activeRule?.deliveryDays || '-'}
                     </Tag>
                   )
                 },

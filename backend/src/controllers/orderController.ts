@@ -43,6 +43,10 @@ export class OrderController {
     const user = req.user!
     const { status, sort = 'created_at', order = 'asc' } = req.query as any
 
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('[getMyOrders] User:', user)
+    }
+
     try {
       let userId: number | undefined
       
@@ -55,12 +59,18 @@ export class OrderController {
           sort,
           order
         })
+        if (process.env.NODE_ENV !== 'production') {
+          console.log('[getMyOrders] Merchant orders count:', orders.length)
+        }
         return res.json(respond(orders))
       }
       
       // 用户：查询user_id
       if (user.role === 'user') {
         userId = Number(user.id)
+        if (process.env.NODE_ENV !== 'production') {
+          console.log('[getMyOrders] User ID:', userId)
+        }
       }
       
       const orders = await orderService.getOrders({
@@ -69,6 +79,9 @@ export class OrderController {
         sort,
         order
       })
+      if (process.env.NODE_ENV !== 'production') {
+        console.log('[getMyOrders] User orders count:', orders.length)
+      }
       res.json(respond(orders))
     } catch (error) {
       console.error(error)

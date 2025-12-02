@@ -1,11 +1,11 @@
 import React from 'react'
 import { motion } from 'framer-motion'
-import { ArrowUpRight } from 'lucide-react'
+import { ArrowUpRight, LucideIcon } from 'lucide-react'
 
 interface StatCardProps {
   title: string
   value: string
-  icon: any
+  icon: LucideIcon
   color: string
   trend?: string
 }

@@ -11,11 +11,12 @@ import {
   ChevronRight,
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
+import type { DeliveryRule } from '@logistics/shared'
 
 interface DeliverySidebarProps {
   isOpen: boolean
   onToggle: () => void
-  rules: any[]
+  rules: DeliveryRule[]
   activeRuleId: number | null
   onActivateRule: (id: number) => void
   onAddRule: () => void
@@ -176,7 +177,7 @@ export default function DeliverySidebar({
                       </div>
                       <div className="flex flex-wrap gap-2">
                         <Tag className="mr-0 border-0 bg-gray-100 rounded-lg text-gray-600">
-                          {item.days}
+                          {item.deliveryDays}
                         </Tag>
                         <Tag className="mr-0 border-0 bg-blue-50 text-blue-600 rounded-lg truncate max-w-[150px]">
                           {item.area}

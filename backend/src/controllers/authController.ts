@@ -11,7 +11,9 @@ export class AuthController {
    */
   async login(req: Request, res: Response) {
     const { username, password, role } = req.body
-    console.log('Login attempt:', { username, password, role })
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('Login attempt:', { username, password, role });
+    }
 
     try {
       const result = await authService.login(username, password, role)

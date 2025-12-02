@@ -49,7 +49,9 @@ class SimulationManager {
     startTime?: number,
     deliveryDaysStr: string = '3-5天'
   ) {
-    console.log(`开始模拟订单 ${orderId}，配送时效：${deliveryDaysStr}`);
+    if (process.env.NODE_ENV !== 'production') {
+      console.log(`开始模拟订单 ${orderId}，配送时效：${deliveryDaysStr}`);
+    }
     
     // 解析配送时效字符串，确定模拟速度
     // "次日达" -> 1 天
@@ -89,7 +91,9 @@ class SimulationManager {
        return;
     }
 
-    console.log(`模拟订单 ${orderId}：${days} 天配送 -> ${steps} 步。从第 ${step} 步开始。`);
+    if (process.env.NODE_ENV !== 'production') {
+      console.log(`模拟订单 ${orderId}：${days} 天配送 -> ${steps} 步。从第 ${step} 步开始。`);
+    }
 
     // 初始状态：已揽收
     if (step === 0 && this.io) {

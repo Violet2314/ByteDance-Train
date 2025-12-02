@@ -48,7 +48,7 @@ export const useLogin = () => {
     return () => ctx.revert()
   }, [])
 
-  const handleLogin = async (values: any) => {
+  const handleLogin = async (values: { username: string; password: string }) => {
     try {
       const result = await loginApi({
         username: values.username,

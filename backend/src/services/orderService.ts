@@ -125,15 +125,21 @@ export class OrderService {
     // 更新订单状态
     await orderRepository.updateStatus(orderId, 'in_transit')
 
-    console.log(`Shipping order ${orderId} with rule ${ruleId}, promise: ${deliveryPromise}`)
+    if (process.env.NODE_ENV !== 'production') {
+      console.log(`Shipping order ${orderId} with rule ${ruleId}, promise: ${deliveryPromise}`);
+    }
 
     // 规划路线
     const sender = { lat: order.sender.lat, lng: order.sender.lng }
     const recipient = { lat: order.address.lat, lng: order.address.lng }
-    console.log(`[Ship] Planning route for Order ${orderId} from ${sender.lat},${sender.lng} to ${recipient.lat},${recipient.lng}`)
+    if (process.env.NODE_ENV !== 'production') {
+      console.log(`[Ship] Planning route for Order ${orderId} from ${sender.lat},${sender.lng} to ${recipient.lat},${recipient.lng}`);
+    }
 
     const routePath = await getDrivingPath(sender, recipient)
-    console.log(`[Ship] Route planned with ${routePath.length} points`)
+    if (process.env.NODE_ENV !== 'production') {
+      console.log(`[Ship] Route planned with ${routePath.length} points`);
+    }
 
     const routePathJson = JSON.stringify(routePath)
 

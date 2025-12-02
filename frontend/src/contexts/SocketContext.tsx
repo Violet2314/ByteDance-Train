@@ -27,12 +27,16 @@ export function SocketProvider({ children }: SocketProviderProps) {
 
     // 监听连接状态
     socket.on('connect', () => {
-      console.log('[SocketProvider] Connected')
+      if (import.meta.env.DEV) {
+        console.log('[SocketProvider] Connected')
+      }
       setIsConnected(true)
     })
 
     socket.on('disconnect', () => {
-      console.log('[SocketProvider] Disconnected')
+      if (import.meta.env.DEV) {
+        console.log('[SocketProvider] Disconnected')
+      }
       setIsConnected(false)
     })
 

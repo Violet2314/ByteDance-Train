@@ -202,7 +202,9 @@ const TrackingMap = memo(function TrackingMap({
     if (isFirstPointOfNewOrder) {
       markerInstance.current.setPosition([end.lng, end.lat])
       lastOrderIdRef.current = currentPoint.orderId
-      console.log(`[TrackingMap] New order ${currentPoint.orderId}, snap to position`)
+      if (import.meta.env.DEV) {
+        console.log(`[TrackingMap] New order ${currentPoint.orderId}, snap to position`)
+      }
       return
     }
 

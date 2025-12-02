@@ -19,18 +19,19 @@ import {
   useGeocodeMutation,
   useSearchUsersMutation,
 } from '../../services/api'
+import type { CreateOrderForm } from '@logistics/shared'
 
 interface CreateOrderModalProps {
   visible: boolean
   onCancel: () => void
-  onCreate: (values: any) => void
+  onCreate: (values: CreateOrderForm) => void
 }
 
 interface Address {
   id: string
   name: string
-  contactName: string
-  contactPhone: string
+  contactName?: string
+  contactPhone?: string
   address: string
   lat?: number
   lng?: number

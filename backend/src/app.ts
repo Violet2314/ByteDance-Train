@@ -42,7 +42,9 @@ app.use('/api/geocode', geocodeRoutes)
  * 启动时恢复活跃的模拟
  */
 async function resumeSimulations() {
-  console.log('Checking for active simulations to resume...')
+  if (process.env.NODE_ENV !== 'production') {
+    console.log('Checking for active simulations to resume...');
+  }
   try {
     const [orders] = await pool.query<RowDataPacket[]>(
       'SELECT * FROM orders WHERE status IN (?, ?)',
@@ -74,7 +76,9 @@ async function resumeSimulations() {
         const deliveryPromise = track.delivery_days || '3-5天'
         const routePathJson = JSON.stringify(routePath)
 
-        console.log(`Resuming simulation for Order ${order.id}`)
+        if (process.env.NODE_ENV !== 'production') {
+          console.log(`Resuming simulation for Order ${order.id}`);
+        }
 
         startSimulation(
           order.id,
@@ -109,7 +113,9 @@ async function resumeSimulations() {
     }
 
     if (orders.length > 0) {
-      console.log(`Resumed ${orders.length} active simulations`)
+      if (process.env.NODE_ENV !== 'production') {
+        console.log(`Resumed ${orders.length} active simulations`);
+      }
     }
   } catch (e) {
     console.error('Failed to resume simulations:', e)
@@ -121,13 +127,17 @@ resumeSimulations()
 
 // Socket.IO 事件处理
 io.on('connection', (socket) => {
-  console.log(`[Socket] Client connected: ${socket.id}`)
+  if (process.env.NODE_ENV !== 'production') {
+    console.log(`[Socket] Client connected: ${socket.id}`);
+  }
 
   // 订阅特定订单的更新
   socket.on('subscribe', ({ orderId }) => {
     if (orderId) {
       socket.join(`order:${orderId}`)
-      console.log(`[Socket] ${socket.id} subscribed to order:${orderId}`)
+      if (process.env.NODE_ENV !== 'production') {
+        console.log(`[Socket] ${socket.id} subscribed to order:${orderId}`);
+      }
     }
   })
 
@@ -135,12 +145,16 @@ io.on('connection', (socket) => {
   socket.on('unsubscribe', ({ orderId }) => {
     if (orderId) {
       socket.leave(`order:${orderId}`)
-      console.log(`[Socket] ${socket.id} unsubscribed from order:${orderId}`)
+      if (process.env.NODE_ENV !== 'production') {
+        console.log(`[Socket] ${socket.id} unsubscribed from order:${orderId}`);
+      }
     }
   })
 
   socket.on('disconnect', () => {
-    console.log(`[Socket] Client disconnected: ${socket.id}`)
+    if (process.env.NODE_ENV !== 'production') {
+    console.log(`[Socket] Client disconnected: ${socket.id}`);
+  }
   })
 })
 

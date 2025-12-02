@@ -1,6 +1,13 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import type { BaseQueryFn, FetchArgs, FetchBaseQueryError } from '@reduxjs/toolkit/query'
-import type { Order, TrackPoint } from '@logistics/shared'
+import type {
+  Order,
+  TrackPoint,
+  DeliveryRule,
+  AddressBook,
+  LoginResponse,
+  User,
+} from '@logistics/shared'
 
 // 自定义 baseQuery，自动添加 JWT Token
 const baseQueryWithAuth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> = async (
@@ -135,7 +142,10 @@ export const api = createApi({
     }),
 
     // --- 用户认证接口 ---
-    login: builder.mutation<{ data: any }, { username: string; password?: string; role: string }>({
+    login: builder.mutation<
+      { data: LoginResponse },
+      { username: string; password?: string; role: string }
+    >({
       query: (body) => ({
         url: 'login',
         method: 'POST',
@@ -144,11 +154,11 @@ export const api = createApi({
     }),
 
     // --- 配送规则接口 ---
-    getDeliveryRules: builder.query<{ data: any[] }, void>({
+    getDeliveryRules: builder.query<{ data: DeliveryRule[] }, void>({
       query: () => 'delivery-rules',
       providesTags: ['DeliveryRule'],
     }),
-    createDeliveryRule: builder.mutation<{ data: any }, any>({
+    createDeliveryRule: builder.mutation<{ data: DeliveryRule }, Partial<DeliveryRule>>({
       query: (body) => ({
         url: 'delivery-rules',
         method: 'POST',
@@ -156,7 +166,10 @@ export const api = createApi({
       }),
       invalidatesTags: ['DeliveryRule'],
     }),
-    updateDeliveryRule: builder.mutation<{ data: any }, { id: number; data: any }>({
+    updateDeliveryRule: builder.mutation<
+      { data: DeliveryRule },
+      { id: number; data: Partial<DeliveryRule> }
+    >({
       query: ({ id, data }) => ({
         url: `delivery-rules/${id}`,
         method: 'PUT',
@@ -164,7 +177,7 @@ export const api = createApi({
       }),
       invalidatesTags: ['DeliveryRule'],
     }),
-    deleteDeliveryRule: builder.mutation<{ data: any }, number>({
+    deleteDeliveryRule: builder.mutation<{ data: { ok: boolean } }, number>({
       query: (id) => ({
         url: `delivery-rules/${id}`,
         method: 'DELETE',
@@ -173,14 +186,14 @@ export const api = createApi({
     }),
 
     // --- 地址簿接口 ---
-    getAddressBook: builder.query<{ data: any[] }, { merchantId?: number }>({
+    getAddressBook: builder.query<{ data: AddressBook[] }, { merchantId?: number }>({
       query: (params) => ({
         url: 'address-book',
         params,
       }),
       providesTags: ['AddressBook'],
     }),
-    addAddress: builder.mutation<{ data: any }, any>({
+    addAddress: builder.mutation<{ data: AddressBook }, Partial<AddressBook>>({
       query: (body) => ({
         url: 'address-book',
         method: 'POST',
@@ -188,7 +201,7 @@ export const api = createApi({
       }),
       invalidatesTags: ['AddressBook'],
     }),
-    deleteAddress: builder.mutation<{ data: any }, string>({
+    deleteAddress: builder.mutation<{ data: { ok: boolean } }, string>({
       query: (id) => ({
         url: `address-book/${id}`,
         method: 'DELETE',
@@ -203,7 +216,7 @@ export const api = createApi({
         params: { address },
       }),
     }),
-    searchUsers: builder.mutation<{ data: any[] }, string>({
+    searchUsers: builder.mutation<{ data: User[] }, string>({
       query: (q) => ({
         url: 'users/search',
         params: { q },

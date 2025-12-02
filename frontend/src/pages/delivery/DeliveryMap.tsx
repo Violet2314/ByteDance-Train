@@ -1,8 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react'
 import AMapLoader from '@amap/amap-jsapi-loader'
 
+import type { DeliveryRule } from '@logistics/shared'
+
 interface DeliveryMapProps {
-  activeRule: any
+  activeRule: DeliveryRule | null
   isEditingArea: boolean
   onPolygonChange: (path: [number, number][]) => void
   onMapReady: (ready: boolean) => void

@@ -81,7 +81,9 @@ export function useHeatmapAnalysis() {
     // 确保Socket已连接
     if (!socket.connected) {
       socket.connect()
-      console.log('[Heatmap] Connecting socket...')
+      if (import.meta.env.DEV) {
+        console.log('[Heatmap] Connecting socket...')
+      }
     }
 
     // 批量flush函数：将累积的更新一次性应用
@@ -90,7 +92,9 @@ export function useHeatmapAnalysis() {
         const updates = { ...pendingUpdatesRef.current }
         dispatchTracking({ type: 'UPDATE_BATCH', payload: updates })
         pendingUpdatesRef.current = {}
-        console.log(`[Heatmap] Flushed ${Object.keys(updates).length} tracking updates`)
+        if (import.meta.env.DEV) {
+          console.log(`[Heatmap] Flushed ${Object.keys(updates).length} tracking updates`)
+        }
       }
       flushTimerRef.current = null
     }
@@ -128,7 +132,9 @@ export function useHeatmapAnalysis() {
     // 批量tracking更新（后端每5秒推送一次）
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     socket.on('track:batch-update' as any, (points: TrackPoint[]) => {
-      console.log(`[Heatmap] Received ${points.length} tracking updates`)
+      if (import.meta.env.DEV) {
+        console.log(`[Heatmap] Received ${points.length} tracking updates`)
+      }
       points.forEach((p) => {
         pendingUpdatesRef.current[p.orderId] = {
           orderId: p.orderId,

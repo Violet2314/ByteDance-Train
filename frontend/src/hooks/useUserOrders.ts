@@ -8,7 +8,8 @@ export const useUserOrders = () => {
   const [statusFilter, setStatusFilter] = useState<string>('all')
   const [sortBy, setSortBy] = useState<string>('newest')
 
-  const { data: ordersData, isLoading } = useGetMyOrdersQuery({}, { skip: !user?.id })
+  // 只有在用户已登录时才请求订单
+  const { data: ordersData, isLoading } = useGetMyOrdersQuery({}, { skip: !user })
 
   const filteredOrders = useMemo(() => {
     if (!ordersData?.data) return []

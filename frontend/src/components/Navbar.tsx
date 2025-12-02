@@ -19,11 +19,15 @@ type NavbarProps = {
  * - 使用 useCallback 缓存回调函数
  */
 const Navbar = memo(function Navbar({
-  role = 'guest',
+  role: propRole,
   enableEntranceAnimation = true,
 }: NavbarProps) {
   const location = useLocation()
   const { user } = useAuth()
+
+  // 使用实际登录用户的角色，而不是prop传入的角色
+  const role = user ? user.role : propRole || 'guest'
+
   const {
     scrolled,
     mobileMenuOpen,
@@ -132,10 +136,11 @@ const Navbar = memo(function Navbar({
                 <div className="flex items-center gap-3 pl-4 border-l border-gray-200">
                   <div className="text-right hidden lg:block">
                     <div className="text-xs font-bold text-[#0B0F19]">
-                      {role === 'merchant' ? '商家' : '用户'}：
                       {user?.name || user?.username || 'Guest'}
                     </div>
-                    <div className="text-[10px] text-[#74B868] tracking-wider">ONLINE</div>
+                    <div className="text-[10px] text-[#74B868] tracking-wider">
+                      {role === 'merchant' ? '商家账户' : '用户账户'} · ONLINE
+                    </div>
                   </div>
                   <div className="w-10 h-10 rounded-xl bg-gray-100 border border-gray-200 flex items-center justify-center text-gray-600 hover:bg-[#74B868] hover:text-white hover:border-[#74B868] transition-all cursor-pointer group">
                     <User size={20} />

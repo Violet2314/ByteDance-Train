@@ -15,7 +15,9 @@ export async function getDrivingPath(origin: Point, destination: Point): Promise
     
     const url = `https://restapi.amap.com/v3/direction/driving?origin=${originStr}&destination=${destStr}&key=${AMAP_KEY}&strategy=0`;
     
-    console.log(`[AMap] Requesting driving path: ${url}`);
+    if (process.env.NODE_ENV !== 'production') {
+      console.log(`[AMap] Requesting driving path: ${url}`);
+    }
     const response = await axios.get(url);
     const data = response.data;
 
@@ -24,7 +26,9 @@ export async function getDrivingPath(origin: Point, destination: Point): Promise
       const steps = path.steps;
       const points: Point[] = [];
       
-      console.log(`[AMap] Found path with distance: ${path.distance}m`);
+      if (process.env.NODE_ENV !== 'production') {
+        console.log(`[AMap] Found path with distance: ${path.distance}m`);
+      }
 
       // 解析 steps 以获取所有 polyline 点
       steps.forEach((step: any) => {

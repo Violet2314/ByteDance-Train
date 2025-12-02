@@ -1,6 +1,7 @@
 import { useState, useMemo, useCallback } from 'react'
 import { message } from 'antd'
 import { useGetMyOrdersQuery, useCreateOrderMutation } from '../services/api'
+import type { CreateOrderForm } from '@logistics/shared'
 
 export function useMerchantOrders() {
   // 筛选和排序状态
@@ -34,7 +35,7 @@ export function useMerchantOrders() {
 
   // 处理创建订单逻辑（使用 useCallback 优化）
   const handleCreateOrder = useCallback(
-    async (values: any) => {
+    async (values: CreateOrderForm) => {
       const payload = {
         amount: values.amount,
         sender: {
@@ -51,11 +52,13 @@ export function useMerchantOrders() {
           lat: values.recipientLat,
           lng: values.recipientLng,
         },
-        cargo: {
-          name: values.goodsName,
-          weight: values.goodsWeight,
-          quantity: values.goodsCount,
-        },
+        ...(values.goodsName && {
+          cargo: {
+            name: values.goodsName,
+            weight: values.goodsWeight || 0,
+            quantity: values.goodsCount || 1,
+          },
+        }),
         userId: values.userId,
       }
 
