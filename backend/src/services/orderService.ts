@@ -135,8 +135,8 @@ export class OrderService {
       }
     }
 
-    // 更新订单状态为运输中，并记录发货时间
-    await orderRepository.updateStatus(orderId, 'in_transit')
+    // 先更新状态为已揽收
+    await orderRepository.updateStatus(orderId, 'picked')
     
     // 同时更新 shipped_at 字段
     await pool.query(
@@ -144,8 +144,23 @@ export class OrderService {
       [orderId]
     )
 
-    // 立即发送初始状态更新到前端
-    const updatedOrder = await orderRepository.findById(orderId)
+    // 发送已揽收状态
+    let updatedOrder = await orderRepository.findById(orderId)
+    io.to(`order:${orderId}`).emit('status:update', {
+      orderId,
+      status: 'picked',
+      ts: Date.now(),
+      shippedAt: updatedOrder?.shippedAt,
+      inTransitAt: updatedOrder?.inTransitAt,
+      arrivedAtHubAt: updatedOrder?.arrivedAtHubAt,
+      outForDeliveryAt: updatedOrder?.outForDeliveryAt,
+      signedAt: updatedOrder?.signedAt
+    })
+
+    // 短暂延迟后更新为运输中
+    await new Promise(resolve => setTimeout(resolve, 500))
+    await orderRepository.updateStatus(orderId, 'in_transit')
+    updatedOrder = await orderRepository.findById(orderId)
     
     const statusUpdatePayload = {
       orderId,
@@ -515,7 +530,13 @@ export class OrderService {
                   [point.lat, point.lng, point.ts, nextOrder.id]
                 )
                 // 推送实时位置给后续订单的前端 (使用房间推送)
-                io.to(`order:${nextOrder.id}`).emit('track:update', { ...point, orderId: nextOrder.id })
+                // 注意：只推送位置更新，不推送状态更新，保持后续订单处于 out_for_delivery 状态
+                io.to(`order:${nextOrder.id}`).emit('track:update', { 
+                  orderId: nextOrder.id,
+                  lat: point.lat, 
+                  lng: point.lng, 
+                  ts: point.ts 
+                })
             }
             
         } catch (e) {

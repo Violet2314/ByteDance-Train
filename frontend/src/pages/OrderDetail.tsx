@@ -71,6 +71,7 @@ export default function OrderDetail() {
     pending: '待处理',
     picked: '已揽收',
     in_transit: '运输中',
+    arrived_at_hub: '到达中转站',
     out_for_delivery: '派送中',
     signed: '已送达',
   }
@@ -80,6 +81,7 @@ export default function OrderDetail() {
     signed: 'success',
     picked: 'processing',
     in_transit: 'processing',
+    arrived_at_hub: 'processing',
     out_for_delivery: 'processing',
   }
 

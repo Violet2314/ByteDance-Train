@@ -168,8 +168,11 @@ export default function DeliveryOrdersTable({
               suffixIcon={<Filter size={14} className="text-gray-400" />}
               options={[
                 { label: '待处理', value: 'pending' },
+                { label: '已揽收', value: 'picked' },
                 { label: '运输中', value: 'in_transit' },
-                { label: '已签收', value: 'signed' },
+                { label: '到达中转站', value: 'arrived_at_hub' },
+                { label: '派送中', value: 'out_for_delivery' },
+                { label: '已送达', value: 'signed' },
               ]}
             />
           </div>
@@ -267,7 +270,10 @@ export default function DeliveryOrdersTable({
                 render: (s, r) => {
                   const map: Record<string, { text: string; color: string }> = {
                     pending: { text: '待处理', color: 'orange' },
+                    picked: { text: '已揽收', color: 'cyan' },
                     in_transit: { text: '运输中', color: 'blue' },
+                    arrived_at_hub: { text: '到达中转站', color: 'purple' },
+                    out_for_delivery: { text: '派送中', color: 'geekblue' },
                     signed: { text: '已签收', color: 'green' },
                   }
                   const conf = map[s] || { text: s, color: 'default' }

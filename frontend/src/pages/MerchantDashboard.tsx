@@ -7,7 +7,10 @@ import { useMerchantOrders } from '../hooks/useMerchantOrders'
 
 const STATUS_OPTIONS = [
   { value: 'pending', label: '待处理' },
+  { value: 'picked', label: '已揽收' },
   { value: 'in_transit', label: '运输中' },
+  { value: 'arrived_at_hub', label: '到达中转站' },
+  { value: 'out_for_delivery', label: '派送中' },
   { value: 'signed', label: '已送达' },
 ]
 

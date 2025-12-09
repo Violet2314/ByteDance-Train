@@ -114,16 +114,8 @@ class SimulationManager {
       console.log(`模拟订单 ${orderId}：${days} 天配送 -> ${steps} 步。从第 ${step} 步开始。`);
     }
 
-    // 初始状态：已揽收
-    if (step === 0 && this.io) {
-      const initialStatus: ShipmentState = {
-        orderId,
-        status: 'picked',
-        ts: Date.now()
-      };
-      this.io.to(`order:${orderId}`).emit('status:update', initialStatus);
-      if (onStatusChange) onStatusChange(initialStatus);
-    }
+    // 不在这里发送初始状态，由 OrderService 统一控制状态更新
+    // 避免与 shipOrder 的状态更新产生冲突和闪烁
 
     this.simulations.set(orderId, {
       orderId,

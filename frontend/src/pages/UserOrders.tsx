@@ -43,7 +43,10 @@ export default function UserOrders() {
               >
                 <Option value="all">全部状态</Option>
                 <Option value="pending">待处理</Option>
+                <Option value="picked">已揽收</Option>
                 <Option value="in_transit">运输中</Option>
+                <Option value="arrived_at_hub">到达中转站</Option>
+                <Option value="out_for_delivery">派送中</Option>
                 <Option value="signed">已送达</Option>
               </Select>
 

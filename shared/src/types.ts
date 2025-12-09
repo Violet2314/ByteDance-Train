@@ -1,7 +1,7 @@
 export interface Order {
   id: string
   userId?: number
-  status: 'pending' | 'picked' | 'in_transit' | 'out_for_delivery' | 'signed'
+  status: 'pending' | 'picked' | 'in_transit' | 'arrived_at_hub' | 'out_for_delivery' | 'signed'
   amount: number
   createdAt: string // ISO
   deliveryDays: number | string // Promised delivery days (e.g. 1, 3, "1-2天")

@@ -25,7 +25,13 @@ export function useHeatmapAnalysis() {
   const [isMapLoaded, setIsMapLoaded] = useState(false)
 
   // 使用 Web Worker 处理数据
-  const { isReady: isWorkerReady, trackingData, processBatch, processSingle } = useTrackingWorker()
+  const {
+    isReady: isWorkerReady,
+    trackingData,
+    processBatch,
+    processSingle,
+    aggregateToGrid,
+  } = useTrackingWorker()
 
   // 使用统一的 Socket 连接
   const { socket } = useSocket()
@@ -153,9 +159,12 @@ export function useHeatmapAnalysis() {
     }
   }, [orders, isWorkerReady, processBatch])
 
-  // 准备热力图数据：根据订单状态显示当前位置
-  const heatmapData = useMemo(() => {
-    const result = orders
+  // 准备热力图数据：使用网格聚合优化性能
+  const [aggregatedData, setAggregatedData] = useState<HeatMapData[]>([])
+  const [dataHash, setDataHash] = useState<string>('')
+
+  useEffect(() => {
+    const rawData = orders
       .map((o) => {
         let lng: number, lat: number
 
@@ -186,15 +195,45 @@ export function useHeatmapAnalysis() {
           lat = o.address.lat
         }
 
-        return lng && lat ? { lng, lat, count: 1 } : null
+        return lng && lat ? { orderId: o.id, lng, lat, ts: Date.now() } : null
       })
-      .filter((item): item is { lng: number; lat: number; count: number } => item !== null)
+      .filter((item): item is TrackPoint => item !== null)
 
     // 计算数据哈希，用于检测变化
-    const dataHash = JSON.stringify(result.map((r) => `${r.lng},${r.lat}`))
+    const newHash = JSON.stringify(rawData.map((r) => `${r.lng},${r.lat}`))
 
-    return { data: result, hash: dataHash }
-  }, [orders, trackingData])
+    // 只有数据真正变化时才进行聚合（避免无效计算）
+    if (newHash !== dataHash && rawData.length > 0 && isWorkerReady) {
+      setDataHash(newHash)
+
+      // 使用 Worker 进行网格聚合
+      aggregateToGrid(rawData, 0.01)
+        .then((buckets) => {
+          // 将桶转换为热力图数据格式
+          const heatData: HeatMapData[] = buckets.map((bucket) => ({
+            lng: bucket.lng,
+            lat: bucket.lat,
+            count: bucket.count,
+          }))
+          setAggregatedData(heatData)
+          console.log(`[Heatmap] 网格聚合完成：${rawData.length} 个点 → ${heatData.length} 个桶`)
+        })
+        .catch((error) => {
+          console.error('[Heatmap] 网格聚合失败:', error)
+          // 降级：直接使用原始数据
+          const fallbackData: HeatMapData[] = rawData.map((r) => ({
+            lng: r.lng,
+            lat: r.lat,
+            count: 1,
+          }))
+          setAggregatedData(fallbackData)
+        })
+    }
+  }, [orders, trackingData, isWorkerReady, aggregateToGrid, dataHash])
+
+  const heatmapData = useMemo(() => {
+    return { data: aggregatedData, hash: dataHash }
+  }, [aggregatedData, dataHash])
 
   return {
     orders,

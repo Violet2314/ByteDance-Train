@@ -18,20 +18,28 @@ interface NormalizedTrackPoint {
 }
 
 interface WorkerMessage {
-  type: 'INIT' | 'PROCESS_BATCH' | 'PROCESS_SINGLE' | 'CLEAR_OLD_DATA'
+  type: 'INIT' | 'PROCESS_BATCH' | 'PROCESS_SINGLE' | 'CLEAR_OLD_DATA' | 'AGGREGATE_TO_GRID'
   payload?: any
 }
 
 interface WorkerResponse {
-  type: 'PROCESSED_BATCH' | 'PROCESSED_SINGLE' | 'CLEARED' | 'ERROR'
+  type: 'PROCESSED_BATCH' | 'PROCESSED_SINGLE' | 'CLEARED' | 'AGGREGATED_GRID' | 'ERROR'
   data?: any
   error?: string
+}
+
+interface GridBucket {
+  lat: number
+  lng: number
+  count: number
+  weight: number
 }
 
 export function useTrackingWorker() {
   const workerRef = useRef<Worker | null>(null)
   const [isReady, setIsReady] = useState(false)
   const [trackingData, setTrackingData] = useState<Record<string, NormalizedTrackPoint>>({})
+  const [gridBuckets, setGridBuckets] = useState<GridBucket[]>([])
 
   // 初始化 Worker
   useEffect(() => {
@@ -61,6 +69,12 @@ export function useTrackingWorker() {
 
         case 'CLEARED':
           console.log(`[Worker Hook] 清理完成：移除 ${data.removedCount} 个订单`)
+          break
+
+        case 'AGGREGATED_GRID':
+          // 网格聚合完成
+          setGridBuckets(data)
+          console.log(`[Worker Hook] 网格聚合完成：${data.length} 个桶`)
           break
 
         case 'ERROR':
@@ -130,11 +144,41 @@ export function useTrackingWorker() {
     workerRef.current.postMessage(message)
   }
 
+  // 网格聚合（热力图专用）
+  const aggregateToGrid = (points: TrackPoint[], gridSize?: number) => {
+    if (!workerRef.current) {
+      console.warn('[Worker Hook] Worker 未就绪')
+      return Promise.reject(new Error('Worker 未就绪'))
+    }
+
+    return new Promise<GridBucket[]>((resolve, reject) => {
+      const handler = (e: MessageEvent<WorkerResponse>) => {
+        if (e.data.type === 'AGGREGATED_GRID') {
+          workerRef.current?.removeEventListener('message', handler)
+          resolve(e.data.data)
+        } else if (e.data.type === 'ERROR') {
+          workerRef.current?.removeEventListener('message', handler)
+          reject(new Error(e.data.error))
+        }
+      }
+
+      workerRef.current?.addEventListener('message', handler)
+
+      const message: WorkerMessage = {
+        type: 'AGGREGATE_TO_GRID',
+        payload: { points, gridSize },
+      }
+      workerRef.current.postMessage(message)
+    })
+  }
+
   return {
     isReady,
     trackingData,
+    gridBuckets,
     processBatch,
     processSingle,
     clearOldData,
+    aggregateToGrid,
   }
 }
