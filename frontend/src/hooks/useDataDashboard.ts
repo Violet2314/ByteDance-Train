@@ -90,21 +90,48 @@ export const useDataDashboard = () => {
     const totalOrders = currentOrders.length
     const prevTotalOrders = prevOrders.length
 
-    const uniqueSenders = new Set(currentOrders.map((o) => o.sender.name)).size
-    const prevUniqueSenders = new Set(prevOrders.map((o) => o.sender.name)).size
+    // 计算活跃用户数（不同的 userId）
+    const activeUsers = new Set(currentOrders.map((o) => o.userId)).size
+    const prevActiveUsers = new Set(prevOrders.map((o) => o.userId)).size
 
-    // 模拟配送时间计算（因为我们没有所有订单的签收时间）
-    const avgDeliveryTime = '1.8 天'
+    // 计算平均配送时效（基于 deliveryDays）
+    const parseDeliveryDays = (deliveryDays: any): number => {
+      if (typeof deliveryDays === 'number') return deliveryDays
+      if (typeof deliveryDays === 'string') {
+        if (deliveryDays.includes('次日')) return 1
+        const nums = deliveryDays.match(/\d+/g)
+        if (nums && nums.length > 0) {
+          // 取最大值，例如 "2-3天" 取 3
+          return Math.max(...nums.map(Number))
+        }
+      }
+      return 3 // 默认 3 天
+    }
+
+    const totalDeliveryDays = currentOrders.reduce(
+      (sum, o) => sum + parseDeliveryDays(o.deliveryDays),
+      0
+    )
+    const avgDeliveryDays = currentOrders.length > 0 ? totalDeliveryDays / currentOrders.length : 0
+    const avgDeliveryTime = avgDeliveryDays > 0 ? `${avgDeliveryDays.toFixed(1)} 天` : '0 天'
+
+    // 计算上周期的平均配送时效用于趋势
+    const prevTotalDeliveryDays = prevOrders.reduce(
+      (sum, o) => sum + parseDeliveryDays(o.deliveryDays),
+      0
+    )
+    const prevAvgDeliveryDays =
+      prevOrders.length > 0 ? prevTotalDeliveryDays / prevOrders.length : 0
 
     return {
       totalRevenue,
       totalOrders,
-      activeUsers: uniqueSenders,
+      activeUsers,
       avgDeliveryTime,
       revenueTrend: calculateGrowth(totalRevenue, prevRevenue),
       ordersTrend: calculateGrowth(totalOrders, prevTotalOrders),
-      usersTrend: calculateGrowth(uniqueSenders, prevUniqueSenders),
-      deliveryTrend: -2.1, // 暂时硬编码，因为缺乏历史配送时间数据
+      usersTrend: calculateGrowth(activeUsers, prevActiveUsers),
+      deliveryTrend: calculateGrowth(prevAvgDeliveryDays, avgDeliveryDays), // 注意：时效越短越好，所以反向
     }
   }, [orders, timeRange, getDateRange])
 

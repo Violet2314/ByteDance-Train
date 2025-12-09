@@ -10,7 +10,7 @@ import { StatCard } from '../components/business/StatCard'
 
 const { RangePicker } = DatePicker
 
-// --- 组件：科技感边框容器 (Glassmorphism) ---
+// --- 科技感边框容器 (Glassmorphism) ---
 const TechPanel = ({
   title,
   children,
@@ -42,7 +42,7 @@ const TechPanel = ({
   </div>
 )
 
-// --- 组件：核心指标卡片 ---
+// --- 核心指标卡片 ---
 const MetricCard = ({
   label,
   value,
@@ -121,9 +121,9 @@ const CyberpunkDashboard = memo(function CyberpunkDashboard({ onExit }: { onExit
           viewMode: '3D',
           pitch: 50,
           zoom: 4.2,
-          center: [108.0, 34.0], // 中国中心
-          mapStyle: 'amap://styles/darkblue', // 深色地图样式
-          skyColor: '#0f1423', // 天空颜色与背景融合
+          center: [108.0, 34.0],
+          mapStyle: 'amap://styles/darkblue',
+          skyColor: '#0f1423',
           showLabel: true, // 显示标签
           dragEnable: true, // 允许拖拽
           zoomEnable: true, // 允许缩放
@@ -135,7 +135,6 @@ const CyberpunkDashboard = memo(function CyberpunkDashboard({ onExit }: { onExit
 
         // --- 地图内容增强 ---
 
-        // 1. 核心枢纽标记 (真实数据)
         const hubs = [
           { name: '北京顺义分拨中心', position: [116.606786, 40.128508] },
           { name: '广州白云分拨中心', position: [113.384472, 23.292776] },
@@ -170,9 +169,6 @@ const CyberpunkDashboard = memo(function CyberpunkDashboard({ onExit }: { onExit
             map: map,
           })
         })
-
-        // 2. 模拟飞线 (连接各枢纽)
-        // 由于只有两个点，直接连接它们
         if (hubs.length >= 2) {
           new AMap.Polyline({
             path: [hubs[0].position, hubs[1].position],
@@ -196,7 +192,7 @@ const CyberpunkDashboard = memo(function CyberpunkDashboard({ onExit }: { onExit
     }
   }, [])
 
-  // --- ECharts 配置 (深色主题增强版) ---
+  // --- ECharts 配置---
 
   // 1. 订单趋势 (折线图 - 霓虹风格)
   const trendOption = React.useMemo(
@@ -557,11 +553,10 @@ const CyberpunkDashboard = memo(function CyberpunkDashboard({ onExit }: { onExit
           </TechPanel>
           <TechPanel title="供应链健康度" className="h-1/4">
             <div className="flex items-center justify-center h-full relative">
-              {/* 简单的 CSS 动画圆环 */}
               <div className="w-24 h-24 rounded-full border-4 border-[#1e293b] relative flex items-center justify-center">
                 <div className="absolute inset-0 rounded-full border-4 border-t-green-500 border-r-green-500 border-b-transparent border-l-transparent rotate-45 animate-spin-slow"></div>
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-white text-shadow">98</div>
+                  <div className="text-3xl font-bold text-white text-shadow">48</div>
                   <div className="text-[10px] text-gray-400 uppercase">Health</div>
                 </div>
               </div>

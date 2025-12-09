@@ -51,6 +51,7 @@ export class OrderRepository {
     
     return rows.map((r: any) => ({
       id: r.id,
+      userId: r.user_id,
       status: r.status,
       amount: Number(r.amount),
       createdAt: r.created_at,
@@ -121,6 +122,7 @@ export class OrderRepository {
     
     return rows.map((r: any) => ({
       id: r.id,
+      userId: r.user_id,
       status: r.status,
       amount: Number(r.amount),
       createdAt: r.created_at,
@@ -212,6 +214,7 @@ export class OrderRepository {
     const r = rows[0]
     return {
       id: r.id,
+      userId: r.user_id,
       status: r.status,
       amount: Number(r.amount),
       createdAt: r.created_at,
