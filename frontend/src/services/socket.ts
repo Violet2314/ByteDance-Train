@@ -1,7 +1,8 @@
 import { io, Socket } from 'socket.io-client'
 import type { ServerToClientEvents, ClientToServerEvents } from '@logistics/shared'
 
-const URL = 'http://localhost:3001'
+// WebSocket 连接地址 - 使用相对路径，自动适配当前域名
+const URL = window.location.protocol + '//' + window.location.hostname + ':3001'
 
 // 初始化 Socket.IO 客户端
 // Socket 用于实现实时通信（如订单状态更新、位置推送）

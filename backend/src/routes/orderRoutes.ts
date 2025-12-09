@@ -38,14 +38,9 @@ export const createOrderRoutes = (io: Server) => {
     orderController.getOrderTracking(req as any, res)
   )
 
-  // POST /api/orders/batch-ship-optimized - 批量发货（优化版）
-  router.post('/batch-ship-optimized', authenticateToken, requireRole('merchant'), (req, res) =>
-    orderController.batchShipOptimized(req as any, res)
-  )
-
   // POST /api/orders/batch-ship - 批量发货
   router.post('/batch-ship', authenticateToken, requireRole('merchant'), (req, res) =>
-    orderController.batchShip(req as any, res)
+    orderController.batchShipOrders(req as any, res)
   )
 
   return router

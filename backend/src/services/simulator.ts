@@ -2,19 +2,35 @@ import { Server } from 'socket.io';
 import { ServerToClientEvents, ClientToServerEvents, TrackPoint, ShipmentState } from '@logistics/shared';
 
 /**
- * 重采样路线点，调整到目标数量
+ * 重采样路线点，调整到目标数量 (支持线性插值)
  * @param route 原始路线点数组
  * @param targetCount 目标点数量
  * @returns 重采样后的路线点数组
  */
 function resampleRoute(route: {lat: number, lng: number}[], targetCount: number) {
-  if (route.length <= targetCount) return route;
+  if (route.length === 0) return [];
+  if (route.length === 1) return Array(targetCount).fill(route[0]);
+  
   const result = [];
-  const step = (route.length - 1) / (targetCount - 1);
+  const totalSegments = route.length - 1;
+  
   for (let i = 0; i < targetCount; i++) {
-    const index = Math.min(Math.round(i * step), route.length - 1);
-    result.push(route[index]);
+    const t = i / (targetCount - 1); // 0 to 1
+    const virtualIndex = t * totalSegments; // 0 to N-1
+    
+    const index1 = Math.floor(virtualIndex);
+    const index2 = Math.min(index1 + 1, totalSegments);
+    const ratio = virtualIndex - index1;
+    
+    const p1 = route[index1];
+    const p2 = route[index2];
+    
+    const lat = p1.lat + (p2.lat - p1.lat) * ratio;
+    const lng = p1.lng + (p2.lng - p1.lng) * ratio;
+    
+    result.push({ lat, lng });
   }
+  
   return result;
 }
 
@@ -67,12 +83,15 @@ class SimulationManager {
       }
     }
 
-    // 逻辑：现实 5 秒 = 模拟 2 小时
-    // 总小时数 = 天数 * 24
-    // 总步数 = 总小时数 / 2
-    const totalSteps = Math.ceil((days * 24) / 2);
-    // 确保至少 10 步以保证平滑度
-    const steps = Math.max(totalSteps, 10);
+    // 逻辑：现实 10 秒 = 模拟 1 天 (恢复高速模拟)
+    // 目标帧率：60fps (16ms)
+    // 总时长(秒) = 天数 * 10
+    // 总步数 = 总时长 * 1000 / 16
+    const durationSeconds = days * 10;
+    const totalSteps = Math.ceil((durationSeconds * 1000) / 16);
+    
+    // 确保至少 100 步以保证平滑度
+    const steps = Math.max(totalSteps, 100);
 
     // 重采样路线到目标步数
     const resampledRoute = resampleRoute(route, steps);
@@ -80,8 +99,8 @@ class SimulationManager {
     let step = 0;
     if (startTime) {
       const elapsed = Date.now() - startTime;
-      // 每步耗时 5000ms
-      step = Math.floor(elapsed / 5000);
+      // 每步耗时 16ms
+      step = Math.floor(elapsed / 16);
       // 如果是恢复模拟，不应立即超出路线长度
     }
 
@@ -119,7 +138,7 @@ class SimulationManager {
   private startLoop() {
     if (this.intervalId) return;
 
-    // 全局心跳：每 5 秒触发一次
+    // 全局心跳：每 16ms 触发一次 (约 60fps)
     this.intervalId = setInterval(() => {
       if (this.simulations.size === 0) return;
 
@@ -153,25 +172,13 @@ class SimulationManager {
         }
         
         // 数据库回调：保存轨迹点
-        sim.onUpdate(trackUpdate);
-
-        // 状态变更逻辑
-        if (this.io) {
-          // 10% 进度：运输中
-          if (currentStep === Math.floor(sim.route.length * 0.1)) {
-             const status: ShipmentState = { orderId, status: 'in_transit', ts: Date.now() };
-             this.io.to(`order:${orderId}`).emit('status:update', status);
-             this.io.emit('status:broadcast' as any, status); // 广播给商家仪表盘
-             if (sim.onStatusChange) sim.onStatusChange(status);
-          }
-          // 90% 进度：派送中
-          if (currentStep === Math.floor(sim.route.length * 0.9)) {
-             const status: ShipmentState = { orderId, status: 'out_for_delivery', ts: Date.now() };
-             this.io.to(`order:${orderId}`).emit('status:update', status);
-             this.io.emit('status:broadcast' as any, status); // 广播给商家仪表盘
-             if (sim.onStatusChange) sim.onStatusChange(status);
-          }
+        // 注意：高频更新时，数据库写入可能需要节流，这里暂时保持原样，但建议生产环境优化
+        if (currentStep % 60 === 0) { // 每 ~1秒 (60帧) 保存一次数据库，避免IO爆炸
+             sim.onUpdate(trackUpdate);
         }
+
+        // 移除自动状态变更逻辑 (10% 和 90%)，由 OrderService 控制
+        // ...
 
         // 最后才推进step
         sim.step++;
@@ -187,22 +194,13 @@ class SimulationManager {
       finishedIds.forEach(orderId => {
         const sim = this.simulations.get(orderId);
         if (sim) {
-          if (this.io) {
-            const finalStatus: ShipmentState = {
-              orderId,
-              status: 'signed',
-              ts: Date.now()
-            };
-            this.io.to(`order:${orderId}`).emit('status:update', finalStatus);
-            this.io.emit('status:broadcast' as any, finalStatus); // 广播最终状态
-            if (sim.onStatusChange) sim.onStatusChange(finalStatus);
-          }
+          // 移除自动签收逻辑，由 OrderService 的 onComplete 回调控制
           if (sim.onComplete) sim.onComplete(); // 触发完成回调
           this.simulations.delete(orderId); // 从模拟列表中移除
         }
       });
 
-    }, 5000);
+    }, 16);
   }
 }
 

@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react'
-import { Table, Button, Tag, Input, Select, message, Modal } from 'antd'
+import { Table, Button, Tag, Input, Select, Modal, App } from 'antd'
 import { ChevronUp, ChevronDown, Package, Search, Filter, Truck } from 'lucide-react'
 import { motion } from 'framer-motion'
 import type { Order, DeliveryRule } from '@logistics/shared'
@@ -20,6 +20,7 @@ export default function DeliveryOrdersTable({
   isOpen,
   onToggle,
 }: DeliveryOrdersTableProps) {
+  const { message } = App.useApp()
   const [searchText, setSearchText] = useState('')
   const [statusFilter, setStatusFilter] = useState<string | undefined>(undefined)
   const [isSelectionMode, setIsSelectionMode] = useState(false)
@@ -137,12 +138,6 @@ export default function DeliveryOrdersTable({
               区域内 ({orders.length})
             </button>
           </div>
-
-          {activeRule && (
-            <span className="text-xs text-gray-400 ml-2 hidden sm:inline">
-              当前规则: {activeRule.company} ({activeRule.deliveryDays})
-            </span>
-          )}
         </div>
         <Button
           type="text"
@@ -263,26 +258,6 @@ export default function DeliveryOrdersTable({
                 key: 'amount',
                 width: 100,
                 render: (t) => `¥${t}`,
-              },
-              {
-                title: '预计时效',
-                key: 'sla',
-                width: 120,
-                render: (_, r) => {
-                  const isDeliverable = orders.some((o) => o.id === r.id)
-                  if (!isDeliverable) {
-                    return (
-                      <Tag color="default" className="text-gray-400 border-0 bg-gray-100">
-                        不在范围内
-                      </Tag>
-                    )
-                  }
-                  return (
-                    <Tag color="green" className="border-0 bg-green-50 text-green-600 font-medium">
-                      {activeRule?.deliveryDays || '-'}
-                    </Tag>
-                  )
-                },
               },
               {
                 title: '状态',

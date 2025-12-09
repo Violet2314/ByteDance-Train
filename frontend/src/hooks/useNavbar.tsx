@@ -42,7 +42,7 @@ export const useNavbar = (role: 'guest' | 'user' | 'merchant' = 'guest') => {
       { name: '首页', path: '/' },
       { name: '订单管理', path: '/merchant', icon: <LayoutDashboard size={18} /> },
       { name: '配送管理', path: '/merchant/delivery', icon: <Package size={18} /> },
-      { name: '智能规划', path: '/merchant/route-planning', icon: <Package size={18} /> },
+      // { name: '智能规划', path: '/merchant/route-planning', icon: <Package size={18} /> },
       { name: '数据看板', path: '/merchant/dashboard', icon: <BarChart3 size={18} /> },
     ],
   }

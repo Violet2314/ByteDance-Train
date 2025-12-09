@@ -46,6 +46,7 @@ async function resumeSimulations() {
     console.log('Checking for active simulations to resume...');
   }
   try {
+    // 1. 恢复运输中和派送中的订单
     const [orders] = await pool.query<RowDataPacket[]>(
       'SELECT * FROM orders WHERE status IN (?, ?)',
       ['in_transit', 'out_for_delivery']
@@ -73,7 +74,7 @@ async function resumeSimulations() {
         if (!routePath || !Array.isArray(routePath) || routePath.length === 0) continue
 
         const shippedAt = new Date(track.shipped_at).getTime()
-        const deliveryPromise = track.delivery_days || '3-5天'
+        const deliveryDays = track.delivery_days || '3-5天'
         const routePathJson = JSON.stringify(routePath)
 
         if (process.env.NODE_ENV !== 'production') {
@@ -90,7 +91,7 @@ async function resumeSimulations() {
                 `INSERT INTO order_tracking (order_id, lat, lng, ts, shipped_at, delivery_days, route_path) 
                  VALUES (?, ?, ?, ?, NOW(), ?, ?)
                  ON DUPLICATE KEY UPDATE lat = VALUES(lat), lng = VALUES(lng), ts = VALUES(ts), route_path = VALUES(route_path)`,
-                [point.orderId, point.lat, point.lng, point.ts, deliveryPromise, routePathJson]
+                [point.orderId, point.lat, point.lng, point.ts, deliveryDays, routePathJson]
               )
             } catch (e) {
               console.error(e)
@@ -107,7 +108,7 @@ async function resumeSimulations() {
             io.emit('order:status', { ...statusState, orderId: order.id })
           },
           shippedAt,
-          deliveryPromise
+          deliveryDays
         )
       }
     }
@@ -115,6 +116,57 @@ async function resumeSimulations() {
     if (orders.length > 0) {
       if (process.env.NODE_ENV !== 'production') {
         console.log(`Resumed ${orders.length} active simulations`);
+      }
+    }
+
+    // 2. 检查到达中转站的订单，如果达到批量阈值则启动批量派送
+    const [hubOrders] = await pool.query<RowDataPacket[]>(
+      'SELECT * FROM orders WHERE status = ?',
+      ['arrived_at_hub']
+    )
+
+    if (hubOrders.length > 0) {
+      if (process.env.NODE_ENV !== 'production') {
+        console.log(`Found ${hubOrders.length} orders at hub, checking for batch dispatch...`);
+      }
+
+      // 按中转站分组
+      const hubGroups = new Map<number, string[]>()
+      
+      for (const order of hubOrders) {
+        const [hubs] = await pool.query<RowDataPacket[]>(
+          `SELECT * FROM transit_hubs WHERE ? LIKE CONCAT('%', city_keyword, '%') LIMIT 1`,
+          [order.address_text]
+        )
+        
+        if (hubs.length > 0) {
+          const hubId = hubs[0].id
+          if (!hubGroups.has(hubId)) {
+            hubGroups.set(hubId, [])
+          }
+          hubGroups.get(hubId)!.push(order.id)
+        }
+      }
+
+      // 对每个中转站，如果订单数量 >= 3，启动批量派送
+      const orderService = (await import('./services/orderService')).default
+      
+      for (const [hubId, orderIds] of hubGroups.entries()) {
+        if (orderIds.length >= 3) {
+          const [hubs] = await pool.query<RowDataPacket[]>(
+            'SELECT * FROM transit_hubs WHERE id = ?',
+            [hubId]
+          )
+          
+          if (hubs.length > 0) {
+            const hub = hubs[0]
+            if (process.env.NODE_ENV !== 'production') {
+              console.log(`Resuming batch dispatch for hub ${hub.name} with ${orderIds.length} orders`);
+            }
+            // @ts-ignore - 访问私有方法
+            await orderService.dispatchBatch(hub, orderIds, io)
+          }
+        }
       }
     }
   } catch (e) {

@@ -21,8 +21,7 @@ const SmartRoutePlanning = memo(function SmartRoutePlanning() {
   // 获取待处理订单和配送规则
   const { data: ordersData, isLoading, refetch } = api.useGetMyOrdersQuery({ status: 'pending' })
   const { data: rulesData } = api.useGetDeliveryRulesQuery()
-  const [batchShipOrdersOptimized, { isLoading: isShipping }] =
-    api.useBatchShipOrdersOptimizedMutation()
+  const [batchShipOrders, { isLoading: isShipping }] = api.useBatchShipOrdersMutation()
 
   const allOrders = useMemo(() => ordersData?.data || [], [ordersData])
   const rules = rulesData?.data || []
@@ -274,9 +273,8 @@ const SmartRoutePlanning = memo(function SmartRoutePlanning() {
       return
     }
     try {
-      await batchShipOrdersOptimized({
+      await batchShipOrders({
         orderIds: selectedRowKeys as string[],
-        routePath: routePath,
         ruleId: selectedRule,
       }).unwrap()
       message.success('已按规划路线发货，订单已加入追踪系统')

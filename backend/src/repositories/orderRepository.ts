@@ -54,8 +54,12 @@ export class OrderRepository {
       status: r.status,
       amount: Number(r.amount),
       createdAt: r.created_at,
-      deliveryDays: r.delivery_days || '3天',
       shippedAt: r.shipped_at,
+      inTransitAt: r.in_transit_at,
+      arrivedAtHubAt: r.arrived_at_hub_at,
+      outForDeliveryAt: r.out_for_delivery_at,
+      signedAt: r.signed_at,
+      deliveryDays: r.delivery_days || '3天',
       lastTrackTime: r.tracking_ts,
       sender: {
         name: r.sender_name,
@@ -195,7 +199,6 @@ export class OrderRepository {
   async findById(id: string): Promise<any | null> {
     const [rows] = await pool.query<RowDataPacket[]>(
       `SELECT o.*, 
-              ot.shipped_at, 
               ot.delivery_days,
               ot.ts as tracking_ts
        FROM orders o
@@ -203,17 +206,21 @@ export class OrderRepository {
        WHERE o.id = ?`,
       [id]
     )
-    
+
     if (rows.length === 0) return null
-    
+
     const r = rows[0]
     return {
       id: r.id,
       status: r.status,
       amount: Number(r.amount),
       createdAt: r.created_at,
-      deliveryDays: r.delivery_days || '3天',
       shippedAt: r.shipped_at,
+      inTransitAt: r.in_transit_at,
+      arrivedAtHubAt: r.arrived_at_hub_at,
+      outForDeliveryAt: r.out_for_delivery_at,
+      signedAt: r.signed_at,
+      deliveryDays: r.delivery_days || '3天',
       lastTrackTime: r.tracking_ts,
       sender: {
         name: r.sender_name,
@@ -240,13 +247,43 @@ export class OrderRepository {
   }
 
   /**
-   * 更新订单状态
+   * 更新订单状态（同时记录状态变更时间）
    */
   async updateStatus(id: string, status: string): Promise<boolean> {
-    const [result] = await pool.query<ResultSetHeader>(
-      'UPDATE orders SET status = ? WHERE id = ?',
-      [status, id]
-    )
+    // 根据状态确定要更新的时间字段
+    let timeField = ''
+    switch (status) {
+      case 'in_transit':
+        timeField = 'in_transit_at'
+        break
+      case 'arrived_at_hub':
+        timeField = 'arrived_at_hub_at'
+        break
+      case 'out_for_delivery':
+        timeField = 'out_for_delivery_at'
+        break
+      case 'signed':
+        timeField = 'signed_at'
+        break
+      case 'picked':
+        timeField = 'shipped_at' // 已揽收使用 shipped_at
+        break
+      default:
+        // 其他状态（如 pending）不需要额外的时间字段
+        break
+    }
+
+    let query = 'UPDATE orders SET status = ?'
+    const params: any[] = [status]
+    
+    if (timeField) {
+      query += `, ${timeField} = NOW()`
+    }
+    
+    query += ' WHERE id = ?'
+    params.push(id)
+
+    const [result] = await pool.query<ResultSetHeader>(query, params)
     return result.affectedRows > 0
   }
 

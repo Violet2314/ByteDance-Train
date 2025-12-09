@@ -1,42 +1,10 @@
-import { useState, useEffect, useRef, useMemo, useReducer } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import { api } from '../services/api'
 import { useSocket } from '../contexts/SocketContext'
+import { useTrackingWorker } from './useTrackingWorker'
 import type { TrackPoint } from '@logistics/shared'
 
-// 轨迹数据的 reducer
-interface NormalizedTrackPoint {
-  orderId: string
-  lat: number
-  lng: number
-  ts: number
-}
-
-type TrackingAction =
-  | { type: 'SET_INITIAL'; payload: Record<string, NormalizedTrackPoint> }
-  | { type: 'UPDATE_BATCH'; payload: Record<string, NormalizedTrackPoint> }
-
-function trackingReducer(
-  state: Record<string, NormalizedTrackPoint>,
-  action: TrackingAction
-): Record<string, NormalizedTrackPoint> {
-  switch (action.type) {
-    case 'SET_INITIAL':
-      return { ...action.payload }
-    case 'UPDATE_BATCH': {
-      const updated = { ...state }
-      Object.entries(action.payload).forEach(([orderId, point]) => {
-        // 只更新时间戳更新的数据，避免旧数据覆盖新数据导致"倒退"
-        const existingPoint = updated[orderId]
-        if (!existingPoint || point.ts >= existingPoint.ts) {
-          updated[orderId] = { ...point }
-        }
-      })
-      return updated
-    }
-    default:
-      return state
-  }
-}
+// 使用 Web Worker 处理轨迹数据，避免主线程阻塞
 
 export interface HeatMapData {
   lng: number
@@ -55,9 +23,9 @@ export interface HeatMapData {
  */
 export function useHeatmapAnalysis() {
   const [isMapLoaded, setIsMapLoaded] = useState(false)
-  const [trackingData, dispatchTracking] = useReducer(trackingReducer, {})
-  const pendingUpdatesRef = useRef<Record<string, NormalizedTrackPoint>>({})
-  const flushTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  // 使用 Web Worker 处理数据
+  const { isReady: isWorkerReady, trackingData, processBatch, processSingle } = useTrackingWorker()
 
   // 使用统一的 Socket 连接
   const { socket } = useSocket()
@@ -76,45 +44,16 @@ export function useHeatmapAnalysis() {
 
   const orders = useMemo(() => ordersData?.data || [], [ordersData?.data])
 
-  // WebSocket 实时更新轨迹数据（批量累积，到时间一次性更新，避免闪烁）
+  // WebSocket 实时更新轨迹数据（使用 Web Worker 处理）
   useEffect(() => {
+    if (!isWorkerReady) return
+
     // 确保Socket已连接
     if (!socket.connected) {
       socket.connect()
       if (import.meta.env.DEV) {
         console.log('[Heatmap] Connecting socket...')
       }
-    }
-
-    // 批量flush函数：将累积的更新一次性应用
-    const flushPendingUpdates = () => {
-      if (Object.keys(pendingUpdatesRef.current).length > 0) {
-        const updates = { ...pendingUpdatesRef.current }
-        dispatchTracking({ type: 'UPDATE_BATCH', payload: updates })
-        pendingUpdatesRef.current = {}
-        if (import.meta.env.DEV) {
-          console.log(`[Heatmap] Flushed ${Object.keys(updates).length} tracking updates`)
-        }
-      }
-      flushTimerRef.current = null
-    }
-
-    // 调度flush：收到第一个更新后，等待100ms收集更多更新，然后一次性flush
-    const scheduleFlush = () => {
-      if (flushTimerRef.current === null) {
-        flushTimerRef.current = setTimeout(flushPendingUpdates, 100)
-      }
-    }
-
-    const handleTrackUpdate = (point: TrackPoint) => {
-      const normalizedPoint: NormalizedTrackPoint = {
-        orderId: point.orderId,
-        lat: point.lat,
-        lng: point.lng,
-        ts: point.ts,
-      }
-      pendingUpdatesRef.current[point.orderId] = normalizedPoint
-      scheduleFlush()
     }
 
     const handleNewOrder = () => {
@@ -129,24 +68,21 @@ export function useHeatmapAnalysis() {
       }
     }
 
-    // 批量tracking更新（后端每5秒推送一次）
+    // 批量tracking更新（后端推送）- 直接发送给 Worker 处理
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     socket.on('track:batch-update' as any, (points: TrackPoint[]) => {
       if (import.meta.env.DEV) {
-        console.log(`[Heatmap] Received ${points.length} tracking updates`)
+        console.log(`[Heatmap] 收到 ${points.length} 个轨迹更新，发送给 Worker 处理`)
       }
-      points.forEach((p) => {
-        pendingUpdatesRef.current[p.orderId] = {
-          orderId: p.orderId,
-          lat: p.lat,
-          lng: p.lng,
-          ts: p.ts,
-        }
-      })
-      scheduleFlush()
+      // 在 Worker 线程中处理大量数据，主线程不阻塞
+      processBatch(points)
     })
 
-    socket.on('track:update', handleTrackUpdate)
+    // 单个轨迹更新
+    socket.on('track:update', (point: TrackPoint) => {
+      processSingle(point)
+    })
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     socket.on('order:created' as any, handleNewOrder)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -155,15 +91,7 @@ export function useHeatmapAnalysis() {
     socket.on('status:broadcast' as any, handleStatusUpdate)
 
     return () => {
-      // 清理定时器
-      if (flushTimerRef.current !== null) {
-        clearTimeout(flushTimerRef.current)
-        flushTimerRef.current = null
-      }
-      // 清空待处理更新
-      pendingUpdatesRef.current = {}
-
-      socket.off('track:update', handleTrackUpdate)
+      socket.off('track:update')
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       socket.off('track:batch-update' as any)
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -173,55 +101,57 @@ export function useHeatmapAnalysis() {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       socket.off('status:broadcast' as any, handleStatusUpdate)
     }
-  }, [socket, ordersData, refetch])
+  }, [socket, ordersData, refetch, isWorkerReady, processBatch, processSingle])
 
-  // 获取所有订单的轨迹数据（仅首次加载，避免覆盖实时数据）
+  // 初始化订单轨迹数据（首次加载）
   const initializedRef = useRef(false)
   useEffect(() => {
-    // 只在首次有订单数据时初始化，避免后续覆盖Socket实时数据
-    if (orders.length > 0 && !initializedRef.current) {
+    if (orders.length > 0 && !initializedRef.current && isWorkerReady) {
       initializedRef.current = true
 
       const fetchTracking = async () => {
-        const trackingPromises = orders.map(async (order) => {
+        const deliveringOrders = orders.filter(
+          (order) => order.status === 'delivering' || order.status === 'in_transit'
+        )
+
+        if (deliveringOrders.length === 0) {
+          console.log('[Heatmap] 没有配送中的订单')
+          return
+        }
+
+        const trackingPromises = deliveringOrders.map(async (order) => {
           try {
-            const response = await fetch(`http://localhost:3001/api/orders/${order.id}/tracking`)
+            const response = await fetch(`/api/orders/${order.id}/tracking`)
             const data = await response.json()
-            // 修正：后端返回的是单个对象，不是数组
-            const latestTracking = data.data
-            return {
-              orderId: order.id,
-              tracking: latestTracking
-                ? {
-                    orderId: order.id,
-                    lat: latestTracking.lat,
-                    lng: latestTracking.lng,
-                    ts: latestTracking.ts || Date.now(),
-                  }
-                : null,
+
+            if (data.success && data.data) {
+              const trackData = data.data
+              return {
+                orderId: order.id,
+                lat: trackData.lat,
+                lng: trackData.lng,
+                ts: trackData.ts || Date.now(),
+              }
             }
-          } catch {
-            return { orderId: order.id, tracking: null }
+          } catch (error) {
+            console.error(`获取订单 ${order.id} 轨迹失败:`, error)
           }
+          return null
         })
+
         const results = await Promise.all(trackingPromises)
-        const trackingMap: Record<string, NormalizedTrackPoint> = {}
-        results.forEach((r) => {
-          if (r.tracking) {
-            trackingMap[r.orderId] = {
-              orderId: r.tracking.orderId,
-              lat: r.tracking.lat,
-              lng: r.tracking.lng,
-              ts: r.tracking.ts,
-            }
-          }
-        })
-        dispatchTracking({ type: 'SET_INITIAL', payload: trackingMap })
+        const validTracking = results.filter((item): item is TrackPoint => item !== null)
+
+        if (validTracking.length > 0) {
+          // 将初始数据发送给 Worker 处理
+          processBatch(validTracking)
+          console.log('[Heatmap] 初始化轨迹数据:', validTracking.length)
+        }
       }
 
       fetchTracking()
     }
-  }, [orders])
+  }, [orders, isWorkerReady, processBatch])
 
   // 准备热力图数据：根据订单状态显示当前位置
   const heatmapData = useMemo(() => {

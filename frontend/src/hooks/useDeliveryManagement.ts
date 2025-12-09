@@ -67,11 +67,19 @@ export const useDeliveryManagement = () => {
     if (!activeRule || !activeRule.path || !ordersData?.data) return []
 
     return ordersData.data.filter((order) => {
-      // 检查订单地址是否在多边形内
+      // 检查发货地址和收货地址是否都在多边形内
       // 注意：订单坐标是 [lat, lng] 或对象，我们需要 [lng, lat] 进行计算
-      // 这里假设 order.address 包含 lat 和 lng
-      const point: [number, number] = [order.address.lng, order.address.lat]
-      return isPointInPolygon(point, activeRule.path)
+
+      // 收货地址坐标
+      const recipientPoint: [number, number] = [order.address.lng, order.address.lat]
+      const isRecipientIn = isPointInPolygon(recipientPoint, activeRule.path)
+
+      // 发货地址坐标
+      const senderPoint: [number, number] = [order.sender.lng, order.sender.lat]
+      const isSenderIn = isPointInPolygon(senderPoint, activeRule.path)
+
+      // 只有发货地址和收货地址都在区域内才算可配送订单
+      return isSenderIn && isRecipientIn
     })
   }, [activeRuleId, rules, ordersData])
 

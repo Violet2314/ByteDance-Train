@@ -43,9 +43,10 @@ export interface TrackPoint {
   shippedAt?: string
   deliveryDays?: string
   routePath?: { lat: number; lng: number }[]
+  hub?: { lat: number; lng: number; name: string }
 }
 
-export type ShipmentStatus = 'picked' | 'in_transit' | 'out_for_delivery' | 'signed'
+export type ShipmentStatus = 'picked' | 'in_transit' | 'arrived_at_hub' | 'out_for_delivery' | 'signed'
 
 export interface ShipmentState {
   orderId: string
@@ -81,9 +82,16 @@ export interface Merchant {
 // WebSocket Events
 export interface ServerToClientEvents {
   'track:update': (payload: TrackPoint) => void;
-  'status:update': (payload: ShipmentState) => void;
+  'status:update': (payload: ShipmentState & {
+    shippedAt?: string
+    inTransitAt?: string
+    arrivedAtHubAt?: string
+    outForDeliveryAt?: string
+    signedAt?: string
+  }) => void;
   'status:broadcast': (payload: ShipmentState) => void;
   'track:batch-update': (payload: TrackPoint[]) => void;
+  'order:route_update': (payload: { orderId: string; routePath: { lat: number; lng: number }[] }) => void;
 }
 
 export interface ClientToServerEvents {

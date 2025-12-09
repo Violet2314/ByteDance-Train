@@ -5,7 +5,7 @@ import { ArrowRight, Globe, Truck, Box, BarChart3 } from 'lucide-react'
 import { motion, useMotionValue, useSpring, useTransform, useScroll } from 'framer-motion'
 import gsap from 'gsap'
 
-// --- 3D 悬浮元素组件 ---
+// --- 悬浮元素组件 ---
 const FloatingElement = ({
   children,
   depth = 1,
@@ -22,7 +22,7 @@ const FloatingElement = ({
   const mouseXSpring = useSpring(x, { stiffness: 100, damping: 20 })
   const mouseYSpring = useSpring(y, { stiffness: 100, damping: 20 })
 
-  // 基于深度的变换（视差效果）
+  // 基于深度的变换
   const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], [10 * depth, -10 * depth])
   const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], [-10 * depth, 10 * depth])
   const translateX = useTransform(mouseXSpring, [-0.5, 0.5], [-20 * depth, 20 * depth])
@@ -63,7 +63,7 @@ const FloatingElement = ({
   )
 }
 
-// --- 背景网格动画（浅色模式） ---
+// --- 背景网格动画 ---
 const AnimatedGrid = () => {
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -211,7 +211,7 @@ export default function HeroSection() {
             {/* Main Glass Card (Light) */}
             <motion.div
               style={{ y: y1 }}
-              className="floating-card relative w-[420px] bg-white/60 backdrop-blur-xl border border-white/40 rounded-[2rem] p-8 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.1)] z-20"
+              className="floating-card relative w-full max-w-[420px] bg-white/60 backdrop-blur-xl border border-white/40 rounded-[2rem] p-6 md:p-8 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.1)] z-20 mx-auto"
             >
               {/* Card Header */}
               <div className="flex justify-between items-center mb-8">

@@ -62,6 +62,7 @@ const HeatmapAnalysis = memo(function HeatmapAnalysis() {
     // 在地图加载前就设置容器背景色
     if (mapContainer.current) {
       mapContainer.current.style.backgroundColor = '#0B0F19'
+      mapContainer.current.style.background = '#0B0F19'
     }
 
     AMapLoader.load({
@@ -82,12 +83,19 @@ const HeatmapAnalysis = memo(function HeatmapAnalysis() {
             // 设置地图容器背景色
             layers: [],
           })
-
-          // 立即设置为已加载，不等待地图完成事件
-          setIsMapLoaded(true)
         }
 
-        if (!heatmapInstance.current) {
+        // 等待地图真正完成后再标记为已加载
+        if (mapInstance.current) {
+          mapInstance.current.on('complete', () => {
+            // 延迟一点点，确保渲染完成
+            setTimeout(() => {
+              setIsMapLoaded(true)
+            }, 100)
+          })
+        }
+
+        if (!heatmapInstance.current && mapInstance.current) {
           heatmapInstance.current = new AMap.HeatMap(mapInstance.current, {
             radius: 35, // 增大半径，让移动更明显
             opacity: [0.1, 0.9], // 提高对比度
@@ -235,14 +243,25 @@ const HeatmapAnalysis = memo(function HeatmapAnalysis() {
         style={{
           backgroundColor: '#0B0F19',
           background: '#0B0F19',
+          minHeight: '100%',
+          transition: 'opacity 0.3s ease-in-out',
+          opacity: isMapLoaded ? 1 : 0,
         }}
       />
 
       {/* Loading State */}
-      {isLoading && (
-        <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/50 z-50 backdrop-blur-sm gap-4">
+      {(isLoading || !isMapLoaded) && (
+        <div
+          className="absolute inset-0 flex flex-col items-center justify-center z-50 gap-4"
+          style={{
+            background: '#0B0F19',
+            transition: 'opacity 0.3s ease-in-out',
+          }}
+        >
           <Spin size="large" />
-          <span className="text-white font-medium">正在加载海量数据...</span>
+          <span className="text-white font-medium">
+            {isLoading ? '正在加载海量数据...' : '正在初始化地图...'}
+          </span>
         </div>
       )}
     </div>

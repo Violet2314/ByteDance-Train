@@ -262,15 +262,15 @@ export default function AdvantagesSection() {
 
       <div
         ref={cardsContainerRef}
-        className="flex gap-8 px-24 items-center h-full w-max relative z-10"
+        className="flex gap-4 md:gap-8 px-4 md:px-24 items-center h-full w-max relative z-10"
       >
         {/* Intro Block */}
-        <div className="w-[400px] shrink-0 pr-12">
-          <div className="flex items-center gap-2 mb-6">
+        <div className="w-[85vw] md:w-[400px] shrink-0 pr-4 md:pr-12">
+          <div className="flex items-center gap-2 mb-4 md:mb-6">
             <div className="w-2 h-2 bg-[#74B868] animate-pulse" />
             <span className="text-[#74B868] text-xs tracking-[0.2em]">SYSTEM_CAPABILITIES</span>
           </div>
-          <h2 className="text-5xl font-bold text-white mb-6 tracking-tighter leading-tight">
+          <h2 className="text-3xl md:text-5xl font-bold text-white mb-4 md:mb-6 tracking-tighter leading-tight">
             专为
             <br /> <span className="text-[#74B868]">规模化</span> 设计
           </h2>
@@ -283,7 +283,7 @@ export default function AdvantagesSection() {
         {features.map((feature, idx) => (
           <motion.div
             key={idx}
-            className="w-[360px] h-[480px] shrink-0 relative group bg-[#131825] border border-white/10 hover:border-[#74B868]/50 transition-colors duration-500"
+            className="w-[85vw] md:w-[360px] h-[400px] md:h-[480px] shrink-0 relative group bg-[#131825] border border-white/10 hover:border-[#74B868]/50 transition-colors duration-500"
             whileHover={{ y: -10 }}
           >
             {/* Corner Markers */}
@@ -292,10 +292,10 @@ export default function AdvantagesSection() {
             <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-white/30 group-hover:border-[#74B868] transition-colors" />
             <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-white/30 group-hover:border-[#74B868] transition-colors" />
 
-            <div className="relative h-full p-8 flex flex-col">
+            <div className="relative h-full p-6 md:p-8 flex flex-col">
               {/* Card Header */}
-              <div className="flex justify-between items-start mb-12">
-                <div className="text-4xl font-black text-white/10 group-hover:text-[#74B868]/20 transition-colors">
+              <div className="flex justify-between items-start mb-8 md:mb-12">
+                <div className="text-3xl md:text-4xl font-black text-white/10 group-hover:text-[#74B868]/20 transition-colors">
                   {feature.id}
                 </div>
                 <div className="p-3 bg-white/5 rounded-sm text-white group-hover:text-[#74B868] group-hover:bg-[#74B868]/10 transition-all">
@@ -308,10 +308,12 @@ export default function AdvantagesSection() {
                 <div className="text-[10px] text-[#74B868] mb-2 tracking-widest">
                   {feature.subtitle}
                 </div>
-                <h3 className="text-2xl font-bold text-white mb-4 tracking-tight">
+                <h3 className="text-xl md:text-2xl font-bold text-white mb-3 md:mb-4 tracking-tight">
                   {feature.title}
                 </h3>
-                <p className="text-gray-400 text-sm leading-relaxed mb-8">{feature.desc}</p>
+                <p className="text-gray-400 text-xs md:text-sm leading-relaxed mb-6 md:mb-8">
+                  {feature.desc}
+                </p>
 
                 {/* Tech Spec Footer */}
                 <div className="pt-4 border-t border-white/5 flex justify-between items-center">

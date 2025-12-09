@@ -20,6 +20,7 @@ import {
   useSearchUsersMutation,
 } from '../../services/api'
 import type { CreateOrderForm } from '@logistics/shared'
+import InlineMapPreview from './InlineMapPreview'
 
 interface CreateOrderModalProps {
   visible: boolean
@@ -44,6 +45,14 @@ const CreateOrderModal = React.memo(({ visible, onCancel, onCreate }: CreateOrde
   const [newSenderName, setNewSenderName] = useState('')
   const [isGeocoding, setIsGeocoding] = useState(false)
   const [senderSelectKey, setSenderSelectKey] = useState(0) // 用于强制重置 Select
+
+  // 发货地图预览状态
+  const [senderMapVisible, setSenderMapVisible] = useState(false)
+  const [senderMapData, setSenderMapData] = useState({ address: '', lat: 0, lng: 0 })
+
+  // 收货地图预览状态
+  const [recipientMapVisible, setRecipientMapVisible] = useState(false)
+  const [recipientMapData, setRecipientMapData] = useState({ address: '', lat: 0, lng: 0 })
 
   // API Hooks
   const { data: addressBookData } = useGetAddressBookQuery({ merchantId: 1 }) // 默认商户 ID
@@ -124,6 +133,17 @@ const CreateOrderModal = React.memo(({ visible, onCancel, onCreate }: CreateOrde
         senderLat: sender.lat,
         senderLng: sender.lng,
       })
+
+      // 如果有经纬度，显示地图预览
+      if (sender.lat && sender.lng && sender.address) {
+        setSenderMapData({
+          address: sender.address,
+          lat: sender.lat,
+          lng: sender.lng,
+        })
+        setSenderMapVisible(true)
+      }
+
       // 填充完毕后，重置 Select 以允许再次选择同一项
       setSenderSelectKey((prev) => prev + 1)
     }
@@ -133,7 +153,8 @@ const CreateOrderModal = React.memo(({ visible, onCancel, onCreate }: CreateOrde
     addressField: string,
     latField: string,
     lngField: string,
-    label: string
+    label: string,
+    isSender: boolean
   ) => {
     const address = form.getFieldValue(addressField)
     if (!address) {
@@ -150,7 +171,16 @@ const CreateOrderModal = React.memo(({ visible, onCancel, onCreate }: CreateOrde
           [latField]: lat,
           [lngField]: lng,
         })
-        message.success(`${label}已定位: ${lng}, ${lat}`)
+        message.success(`${label}定位成功`)
+
+        // 显示对应的内嵌地图
+        if (isSender) {
+          setSenderMapData({ address, lat, lng })
+          setSenderMapVisible(true)
+        } else {
+          setRecipientMapData({ address, lat, lng })
+          setRecipientMapVisible(true)
+        }
       }
     } catch (error) {
       message.error('地址解析失败，请检查地址是否正确')
@@ -159,18 +189,58 @@ const CreateOrderModal = React.memo(({ visible, onCancel, onCreate }: CreateOrde
     }
   }
 
+  // 重置所有状态
+  const resetAllStates = () => {
+    form.resetFields()
+    setSenderMapVisible(false)
+    setRecipientMapVisible(false)
+    setSenderMapData({ address: '', lat: 0, lng: 0 })
+    setRecipientMapData({ address: '', lat: 0, lng: 0 })
+    setUserOptions([])
+    setNewSenderName('')
+  }
+
+  const handleCancel = () => {
+    resetAllStates()
+    onCancel()
+  }
+
   const handleSubmit = async () => {
     try {
       const values = await form.validateFields()
+
+      // 验证发货地址是否已定位
+      if (
+        !values.senderLat ||
+        !values.senderLng ||
+        values.senderLat === 0 ||
+        values.senderLng === 0
+      ) {
+        message.error('请先对发货地址进行定位')
+        return
+      }
+
+      // 验证收货地址是否已定位
+      if (
+        !values.recipientLat ||
+        !values.recipientLng ||
+        values.recipientLat === 0 ||
+        values.recipientLng === 0
+      ) {
+        message.error('请先对收货地址进行定位')
+        return
+      }
+
       setLoading(true)
       // 模拟 API 调用延迟
       await new Promise((resolve) => setTimeout(resolve, 1000))
       onCreate(values)
       setLoading(false)
-      form.resetFields()
+      resetAllStates()
       onCancel()
     } catch (error) {
       // 验证失败
+      setLoading(false)
     }
   }
 
@@ -178,7 +248,7 @@ const CreateOrderModal = React.memo(({ visible, onCancel, onCreate }: CreateOrde
     <Modal
       title="创建新订单"
       open={visible}
-      onCancel={onCancel}
+      onCancel={handleCancel}
       onOk={handleSubmit}
       confirmLoading={loading}
       width={700}
@@ -269,7 +339,7 @@ const CreateOrderModal = React.memo(({ visible, onCancel, onCreate }: CreateOrde
                   label="发货地址"
                   required
                   className="mb-0"
-                  help="输入地址后点击定位图标获取经纬度"
+                  help="输入地址后点击定位图标查看位置"
                 >
                   <Space.Compact style={{ width: '100%' }}>
                     <Form.Item
@@ -282,29 +352,25 @@ const CreateOrderModal = React.memo(({ visible, onCancel, onCreate }: CreateOrde
                     <Button
                       icon={isGeocoding ? <Spin size="small" /> : <MapPin size={16} />}
                       onClick={() =>
-                        geocodeAddress('senderAddress', 'senderLat', 'senderLng', '发货地址')
+                        geocodeAddress('senderAddress', 'senderLat', 'senderLng', '发货地址', true)
                       }
-                      title="定位获取经纬度"
+                      title="定位查看位置"
                       style={{ height: 'auto' }}
                     />
                   </Space.Compact>
                 </Form.Item>
-                <div className="flex gap-4 mt-2">
-                  <Form.Item
-                    name="senderLng"
-                    noStyle
-                    rules={[{ required: true, message: '请点击定位按钮获取经度' }]}
-                  >
-                    <Input placeholder="经度" disabled className="bg-gray-100" />
-                  </Form.Item>
-                  <Form.Item
-                    name="senderLat"
-                    noStyle
-                    rules={[{ required: true, message: '请点击定位按钮获取纬度' }]}
-                  >
-                    <Input placeholder="纬度" disabled className="bg-gray-100" />
-                  </Form.Item>
-                </div>
+                <Form.Item name="senderLng" hidden>
+                  <Input />
+                </Form.Item>
+                <Form.Item name="senderLat" hidden>
+                  <Input />
+                </Form.Item>
+                <InlineMapPreview
+                  visible={senderMapVisible}
+                  address={senderMapData.address}
+                  lat={senderMapData.lat}
+                  lng={senderMapData.lng}
+                />
               </div>
             </div>
           </div>
@@ -334,7 +400,7 @@ const CreateOrderModal = React.memo(({ visible, onCancel, onCreate }: CreateOrde
                   label="收货地址"
                   required
                   className="mb-0"
-                  help="输入地址后点击定位图标获取经纬度"
+                  help="输入地址后点击定位图标查看位置"
                 >
                   <Space.Compact style={{ width: '100%' }}>
                     <Form.Item
@@ -351,29 +417,26 @@ const CreateOrderModal = React.memo(({ visible, onCancel, onCreate }: CreateOrde
                           'recipientAddress',
                           'recipientLat',
                           'recipientLng',
-                          '收货地址'
+                          '收货地址',
+                          false
                         )
                       }
-                      title="定位获取经纬度"
+                      title="定位查看位置"
                     />
                   </Space.Compact>
                 </Form.Item>
-                <div className="flex gap-4 mt-2">
-                  <Form.Item
-                    name="recipientLng"
-                    noStyle
-                    rules={[{ required: true, message: '请点击定位按钮获取经度' }]}
-                  >
-                    <Input placeholder="经度" disabled className="bg-gray-100" />
-                  </Form.Item>
-                  <Form.Item
-                    name="recipientLat"
-                    noStyle
-                    rules={[{ required: true, message: '请点击定位按钮获取纬度' }]}
-                  >
-                    <Input placeholder="纬度" disabled className="bg-gray-100" />
-                  </Form.Item>
-                </div>
+                <Form.Item name="recipientLng" hidden>
+                  <Input />
+                </Form.Item>
+                <Form.Item name="recipientLat" hidden>
+                  <Input />
+                </Form.Item>
+                <InlineMapPreview
+                  visible={recipientMapVisible}
+                  address={recipientMapData.address}
+                  lat={recipientMapData.lat}
+                  lng={recipientMapData.lng}
+                />
               </div>
             </div>
           </div>

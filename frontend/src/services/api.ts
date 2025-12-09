@@ -20,7 +20,7 @@ const baseQueryWithAuth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQuery
 
   // 创建基础 query
   const rawBaseQuery = fetchBaseQuery({
-    baseUrl: 'http://localhost:3001/api',
+    baseUrl: '/api', // 使用相对路径，通过 Vite 代理转发
     prepareHeaders: (headers) => {
       // 如果有 token，添加到 Authorization header
       if (token) {
@@ -117,19 +117,6 @@ export const api = createApi({
     >({
       query: (body) => ({
         url: 'orders/batch-ship',
-        method: 'POST',
-        body,
-      }),
-      invalidatesTags: ['Order'],
-    }),
-
-    // 智能路径规划批量发货
-    batchShipOrdersOptimized: builder.mutation<
-      { data: { shipped: number } },
-      { orderIds: string[]; routePath: { lat: number; lng: number }[]; ruleId?: number }
-    >({
-      query: (body) => ({
-        url: 'orders/batch-ship-optimized',
         method: 'POST',
         body,
       }),

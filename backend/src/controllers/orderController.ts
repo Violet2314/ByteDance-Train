@@ -175,9 +175,9 @@ export class OrderController {
   }
 
   /**
-   * 批量发货（优化版）
+   * 批量发货
    */
-  async batchShipOptimized(req: AuthRequest, res: Response) {
+  async batchShipOrders(req: AuthRequest, res: Response) {
     const { orderIds, ruleId } = req.body
 
     if (!Array.isArray(orderIds) || orderIds.length === 0) {
@@ -185,26 +185,7 @@ export class OrderController {
     }
 
     try {
-      const results = await orderService.batchShipOptimized(orderIds, ruleId, this.io)
-      res.json(respond(results))
-    } catch (error) {
-      console.error(error)
-      res.status(500).json(respond(null, { code: 'InternalError', message: '批量发货失败' }))
-    }
-  }
-
-  /**
-   * 批量发货（普通版）
-   */
-  async batchShip(req: AuthRequest, res: Response) {
-    const { orderIds, ruleId } = req.body
-
-    if (!Array.isArray(orderIds) || orderIds.length === 0) {
-      return res.status(400).json(respond(null, { code: 'BadRequest', message: '无效的订单列表' }))
-    }
-
-    try {
-      const results = await orderService.batchShip(orderIds, ruleId, this.io)
+      const results = await orderService.batchShipOrders(orderIds, ruleId, this.io)
       res.json(respond(results))
     } catch (error) {
       console.error(error)

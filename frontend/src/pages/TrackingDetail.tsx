@@ -23,6 +23,7 @@ export default function TrackingDetail() {
     routePath,
     remainingDistance,
     lastUpdateTime,
+    hubPoint,
   } = useTracking(id)
 
   if (isLoading)
@@ -45,7 +46,7 @@ export default function TrackingDetail() {
 
   return (
     <div className="h-[calc(100vh-64px)] flex flex-col">
-      <div className="flex-none p-6 pb-0">
+      <div className="flex-none p-4 md:p-6 pb-0">
         <Button
           type="text"
           icon={<ArrowLeft size={18} />}
@@ -55,36 +56,40 @@ export default function TrackingDetail() {
           返回查询
         </Button>
 
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 md:mb-6 gap-2">
           <div>
-            <h1 className="text-2xl font-bold text-text-primary flex items-center gap-3">
+            <h1 className="text-xl md:text-2xl font-bold text-text-primary flex items-center gap-3">
               订单追踪 <span className="font-mono text-text-secondary">#{id}</span>
             </h1>
-            <p className="text-text-tertiary mt-1">
+            <p className="text-text-tertiary mt-1 text-sm md:text-base">
               预计送达: {dayjs(order.createdAt).add(2, 'day').format('MM月DD日')}
             </p>
           </div>
-          <Tag color="processing" className="text-lg px-4 py-1 rounded-full">
-            {currentStatus === 'in_transit'
-              ? '运输中'
-              : currentStatus === 'out_for_delivery'
-                ? '派送中'
-                : currentStatus === 'signed'
-                  ? '已签收'
-                  : currentStatus === 'picked'
-                    ? '已揽收'
-                    : '待发货'}
-          </Tag>
+          <div className="self-start md:self-auto">
+            <Tag color="processing" className="text-base md:text-lg px-3 md:px-4 py-1 rounded-full">
+              {currentStatus === 'in_transit'
+                ? '运输中'
+                : currentStatus === 'arrived_at_hub'
+                  ? '到达中转站'
+                  : currentStatus === 'out_for_delivery'
+                    ? '派送中'
+                    : currentStatus === 'signed'
+                      ? '已签收'
+                      : currentStatus === 'picked'
+                        ? '已揽收'
+                        : '待发货'}
+            </Tag>
+          </div>
         </div>
       </div>
 
-      <div className="flex-1 flex flex-col lg:flex-row gap-6 px-6 pb-6 min-h-0">
+      <div className="flex-1 flex flex-col lg:flex-row gap-4 md:gap-6 px-4 md:px-6 pb-4 md:pb-6 min-h-0 overflow-y-auto lg:overflow-hidden">
         {/* 地图区域 - 占据更多空间 */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5 }}
-          className="flex-[2] bg-white rounded-2xl shadow-moderate overflow-hidden relative min-h-[400px]"
+          className="flex-none lg:flex-[2] h-[300px] lg:h-auto bg-white rounded-2xl shadow-moderate overflow-hidden relative"
         >
           <TrackingMap
             points={realtimePoints}
@@ -97,6 +102,8 @@ export default function TrackingDetail() {
                 : { lat: 39.9042, lng: 116.4074 }
             }
             endPoint={{ lat: order.address.lat, lng: order.address.lng }}
+            hubPoint={hubPoint}
+            status={currentStatus}
           />
 
           {/* Floating Info Card on Map */}
@@ -104,14 +111,15 @@ export default function TrackingDetail() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.5 }}
-            className="absolute top-4 left-4 bg-white/90 backdrop-blur-md p-4 rounded-xl shadow-lg max-w-xs"
+            className="absolute top-4 left-4 right-4 md:right-auto bg-white/90 backdrop-blur-md p-3 md:p-4 rounded-xl shadow-lg md:max-w-xs"
           >
             <div className="flex items-center gap-3 mb-2">
-              <div className="w-10 h-10 bg-primary-base rounded-full flex items-center justify-center text-white">
-                <Truck size={20} />
+              <div className="w-8 h-8 md:w-10 md:h-10 bg-primary-base rounded-full flex items-center justify-center text-white">
+                <Truck size={16} className="md:hidden" />
+                <Truck size={20} className="hidden md:block" />
               </div>
               <div>
-                <p className="font-bold text-text-primary">
+                <p className="font-bold text-text-primary text-sm md:text-base">
                   {currentStatus === 'signed' ? '已送达' : '正在配送中'}
                 </p>
                 <p className="text-xs text-text-secondary">
@@ -132,11 +140,13 @@ export default function TrackingDetail() {
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="flex-1 bg-white/80 backdrop-blur-sm rounded-2xl shadow-subtle p-6 overflow-y-auto"
+          className="flex-none lg:flex-1 bg-white/80 backdrop-blur-sm rounded-2xl shadow-subtle p-4 md:p-6 overflow-y-auto"
         >
-          <h3 className="font-bold text-lg mb-6">物流详情</h3>
-          <TrackingTimeline currentStatus={currentStatus} />
-          <OrderInfo recipient={order.recipient} address={order.address} />
+          <h3 className="font-bold text-lg mb-4 md:mb-6">物流详情</h3>
+          <TrackingTimeline currentStatus={currentStatus} order={order} />
+          <div className="mt-6 pt-6 border-t border-gray-100">
+            <OrderInfo recipient={order.recipient} address={order.address} />
+          </div>
         </motion.div>
       </div>
     </div>

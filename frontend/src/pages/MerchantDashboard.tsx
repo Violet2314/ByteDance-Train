@@ -55,13 +55,6 @@ const MerchantDashboard = memo(function MerchantDashboard() {
           >
             创建订单
           </Button>
-          <Button
-            type="primary"
-            icon={<Truck size={16} />}
-            className="bg-[#0B0F19] hover:!bg-[#2a3142] border-none h-10 px-6 rounded-xl font-bold shadow-lg shadow-[#0B0F19]/20"
-          >
-            批量发货
-          </Button>
         </div>
       </div>
 

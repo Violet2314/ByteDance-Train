@@ -188,7 +188,7 @@ const Navbar = memo(function Navbar({
                   {link.name}
                 </Link>
               ))}
-              {role === 'guest' && (
+              {role === 'guest' ? (
                 <div className="mt-8 flex flex-col gap-4">
                   <Link to="/login" onClick={() => setMobileMenuOpen(false)}>
                     <button className="w-full py-4 text-center font-bold border border-gray-200 rounded-xl">
@@ -200,6 +200,32 @@ const Navbar = memo(function Navbar({
                       注册账户
                     </button>
                   </Link>
+                </div>
+              ) : (
+                <div className="mt-8 flex flex-col gap-4">
+                  <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl border border-gray-100">
+                    <div className="w-12 h-12 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-600 shadow-sm">
+                      <User size={24} />
+                    </div>
+                    <div>
+                      <div className="font-bold text-lg text-[#0B0F19]">
+                        {user?.name || user?.username || 'Guest'}
+                      </div>
+                      <div className="text-xs text-[#74B868] font-medium tracking-wider uppercase">
+                        {role === 'merchant' ? '商家账户' : '用户账户'}
+                      </div>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => {
+                      handleLogout()
+                      setMobileMenuOpen(false)
+                    }}
+                    className="w-full py-4 text-center font-bold bg-red-50 text-red-500 border border-red-100 rounded-xl flex items-center justify-center gap-2 hover:bg-red-100 transition-colors"
+                  >
+                    <LogOut size={20} />
+                    退出登录
+                  </button>
                 </div>
               )}
             </div>
