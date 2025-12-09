@@ -168,7 +168,7 @@ export function useTrackingWorker() {
         type: 'AGGREGATE_TO_GRID',
         payload: { points, gridSize },
       }
-      workerRef.current.postMessage(message)
+      workerRef.current?.postMessage(message)
     })
   }
 

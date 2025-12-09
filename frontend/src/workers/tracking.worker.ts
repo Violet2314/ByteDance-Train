@@ -146,8 +146,8 @@ function processBatch(points: TrackPoint[]) {
     )
   }
 
-  const processingTime = performance.now() - startTime
-  console.log(`[Worker] 批量处理完成：${points.length} 个点，耗时 ${processingTime.toFixed(2)}ms`)
+  // const processingTime = performance.now() - startTime
+  // console.log(`[Worker] 批量处理完成：${points.length} 个点，耗时 ${processingTime.toFixed(2)}ms`)
 
   return { ...trackingData }
 }
@@ -218,7 +218,7 @@ function clearOldData() {
     }
   })
 
-  console.log(`[Worker] 清理过期数据：移除 ${removedCount} 个订单`)
+  // console.log(`[Worker] 清理过期数据：移除 ${removedCount} 个订单`)
   return removedCount
 }
 
@@ -259,12 +259,12 @@ function aggregateToGrid(points: TrackPoint[], gridSize: number = 0.01): GridBuc
   })
 
   const result = Array.from(buckets.values())
-  const processingTime = performance.now() - startTime
+  // const processingTime = performance.now() - startTime
 
-  console.log(
-    `[Worker] 网格聚合完成：${points.length} 个点 → ${result.length} 个桶，` +
-      `网格大小 ${gridSize}°，耗时 ${processingTime.toFixed(2)}ms`
-  )
+  // console.log(
+  //   `[Worker] 网格聚合完成：${points.length} 个点 → ${result.length} 个桶，` +
+  //     `网格大小 ${gridSize}°，耗时 ${processingTime.toFixed(2)}ms`
+  // )
 
   return result
 }

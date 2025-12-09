@@ -29,15 +29,7 @@ export const useUserOrders = () => {
 
     // 2. 状态过滤
     if (statusFilter !== 'all') {
-      if (statusFilter === 'pending') {
-        result = result.filter((o) => o.status === 'pending')
-      } else if (statusFilter === 'in_transit') {
-        result = result.filter((o) =>
-          ['picked', 'in_transit', 'out_for_delivery'].includes(o.status)
-        )
-      } else if (statusFilter === 'signed') {
-        result = result.filter((o) => o.status === 'signed')
-      }
+      result = result.filter((o) => o.status === statusFilter)
     }
 
     // 3. 排序
