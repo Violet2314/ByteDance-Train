@@ -96,6 +96,30 @@ export class OrderService {
   }
 
   /**
+   * 根据距离智能选择配送时效
+   * @param rule 配送规则
+   * @param distance 配送距离（米）
+   * @returns 配送时效字符串
+   */
+  private selectDeliveryTime(rule: any, distance: number): string {
+    // 距离阈值（单位：米）
+    const INTRA_CITY_THRESHOLD = 50000 // 50公里内：同城
+    const IN_PROVINCE_THRESHOLD = 500000 // 500公里内：省内
+    const INTER_PROVINCE_THRESHOLD = 2000000 // 2000公里内：跨省
+    // 超过2000公里：偏远
+
+    if (distance <= INTRA_CITY_THRESHOLD) {
+      return rule.intraCity || rule.inProvince || rule.interProvince || '次日达'
+    } else if (distance <= IN_PROVINCE_THRESHOLD) {
+      return rule.inProvince || rule.interProvince || '1-2天'
+    } else if (distance <= INTER_PROVINCE_THRESHOLD) {
+      return rule.interProvince || rule.remote || '2-3天'
+    } else {
+      return rule.remote || '3-5天'
+    }
+  }
+
+  /**
    * 发货
    */
   async shipOrder(orderId: string, ruleId: number | undefined, io: Server) {
@@ -130,8 +154,18 @@ export class OrderService {
           }
         }
 
-        deliveryDays = rule.days || '3-5天'
+        // ✅ 计算发货地到收货地的距离
+        const senderPoint: [number, number] = [order.sender.lng, order.sender.lat]
+        const recipientPoint: [number, number] = [order.address.lng, order.address.lat]
+        const distance = getDistance(senderPoint, recipientPoint)
+
+        // ✅ 根据距离智能选择配送时效
+        deliveryDays = this.selectDeliveryTime(rule, distance)
         deliveryCompany = rule.company || '默认快递'
+
+        if (process.env.NODE_ENV !== 'production') {
+          console.log(`[Ship] Order ${orderId}: Distance=${(distance / 1000).toFixed(2)}km, DeliveryTime=${deliveryDays}, Company=${deliveryCompany}`);
+        }
       }
     }
 
@@ -343,7 +377,9 @@ export class OrderService {
           outForDeliveryAt: updatedOrder?.outForDeliveryAt,
           signedAt: updatedOrder?.signedAt
         })
-      }
+      },
+      undefined,
+      deliveryDays 
     )
 
     return { ok: true }

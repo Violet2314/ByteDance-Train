@@ -117,7 +117,7 @@ export function useHeatmapAnalysis() {
 
       const fetchTracking = async () => {
         const deliveringOrders = orders.filter(
-          (order) => order.status === 'delivering' || order.status === 'in_transit'
+          (order) => order.status === 'out_for_delivery' || order.status === 'in_transit'
         )
 
         if (deliveringOrders.length === 0) {

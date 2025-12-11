@@ -28,7 +28,7 @@ async function createOrders(nums) {
     console.log(`开始创建 ${nums} 个订单...`);
     
     // 固定的商家ID
-    const merchantId = 1;
+    const merchantId = 2;
     
     // 发货信息（商家）
     const sender = {
@@ -86,7 +86,7 @@ async function createOrders(nums) {
     
     for (let i = 0; i < nums; i++) {
       // 用户ID在1和2之间交替
-      const userId = (i % 2) + 1;
+      const userId = 2;
       
       // 随机价格 10-1000
       const amount = Math.floor(Math.random() * 991) + 10;

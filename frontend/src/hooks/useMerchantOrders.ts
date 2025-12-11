@@ -59,7 +59,7 @@ export function useMerchantOrders() {
             quantity: values.goodsCount || 1,
           },
         }),
-        userId: values.userId,
+        userId: Number(values.userId),
       }
 
       try {

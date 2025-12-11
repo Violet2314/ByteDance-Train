@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const AMAP_KEY = process.env.AMAP_WEB_KEY || '372f94a059e1a8e2ac6e308c2706486c';
+const AMAP_KEY = process.env.AMAP_WEB_KEY;
 
 interface Point {
   lat: number;
